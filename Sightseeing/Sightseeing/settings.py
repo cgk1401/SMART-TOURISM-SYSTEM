@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-a)6ly5m_@0*%$qq7!ae&y)y1q^3fpb8ocpo1_xy$5oy9zp!x5e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'LoginScreen',
     'MainScreen',
+    'ChatBoxAI'
 ]
 
 MIDDLEWARE = [
@@ -118,6 +120,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'ChatBoxAI' / 'templates' / 'static',
+]
+
+# Load .env
+from dotenv import load_dotenv
+env_path = BASE_DIR / '..' / '.env'
+try:
+    load_dotenv(dotenv_path=env_path)
+except Exception:
+    pass
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

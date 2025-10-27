@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "chat_widget.css" %}">
+</head>
+<body>
+    <div id="AI-Bubble">
+        <button id="AI-Toggle">💬</button>
+        <div id="AI-Panel" hidden>
+            <div id="AI-Head">
+                <strong>AI</strong>
+                <button id="AI-Close">✕</button>
+            </div>
+            <div id="AI-Chat"></div>
+            <div id="AI-Input">
+                <input id="Button-Input" type="text" placeholder="Input ...."/>
+                <button id="Button-Send">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!--
+    axios là thư viện dùng để gửi request trong JavsScript
+    thay vì cài đặt thư viện npm install axios chỉ cần để dùng như này trong html là có thể chạy được thư viện
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{% static "chat_widget.js" %}"></script>
+</body>
+</html>
