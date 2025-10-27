@@ -14,10 +14,18 @@
     </head>
     <body>
         <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
         <h2> Screen Main </h2>
         <script src="" async defer></script>
         {% include 'app/chat_widget.html' %}
+        <!-- newly add -->
+        <a href="{% url 'map' %}" <!--style="
+        padding:10px 20px;
+        background-color:#008CBA;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+    "-->>Go to Map</a>
     </body>
 </html>

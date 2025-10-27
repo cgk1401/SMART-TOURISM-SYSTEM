@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path ('', include('LoginScreen.urls')),
     path ('MainScreen/', include('MainScreen.urls')),
+    path ('', include('MapScreen.urls')),
     path('chat/', include('ChatBoxAI.urls')),
 ]

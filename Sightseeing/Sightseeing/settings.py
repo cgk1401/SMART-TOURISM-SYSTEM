@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'LoginScreen',
     'MainScreen',
+    'MapScreen',
     'ChatBoxAI'
 ]
 

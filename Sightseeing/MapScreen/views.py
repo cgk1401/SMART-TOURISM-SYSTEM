@@ -1,15 +1,30 @@
-from django.shortcuts import render
-from django.http import HttpRequest
-import folium
-import requests
 from django.http import HttpResponse
+import requests
+import folium
 
-# Create your views here.
+def main_screen(request):
+    return HttpResponse("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Main Screen</title>
+        </head>
+        <body style="text-align:center;">
+            <h1>Main Screen</h1>
+            <p>Welcome to the OSM Web!</p>
+            <a href="/MapScreen" style="
+                padding:10px 20px;
+                background-color:#008CBA;
+                color:white;
+                text-decoration:none;
+                border-radius:5px;
+            ">Go to Map Screen</a>
+        </body>
+        </html>
+    """)
 
-def function_Main(request):
-    return render(request, 'app/Main.html')
 
-def function_Map(request):
+def map_screen(request):
     lat, lon = 10.762622, 106.660172
 
     url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json"
