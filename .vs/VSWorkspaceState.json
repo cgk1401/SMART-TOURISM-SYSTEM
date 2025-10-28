@@ -2,13 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\Sightseeing",
-    "\\Sightseeing\\LoginScreen\\templates\\app",
-    "\\Sightseeing\\MainScreen",
-    "\\Sightseeing\\MainScreen\\templates",
     "\\Sightseeing\\MainScreen\\templates\\app",
-    "\\Sightseeing\\MapScreen",
-    "\\Sightseeing\\MapScreen\\templates"
+    "\\Sightseeing\\MapScreen\\static",
+    "\\Sightseeing\\MapScreen\\static\\app",
+    "\\Sightseeing\\MapScreen\\templates",
+    "\\Sightseeing\\MapScreen\\templates\\app"
   ],
-  "SelectedNode": "\\Sightseeing\\MapScreen\\views.py",
+  "SelectedNode": "\\Sightseeing\\MapScreen",
   "PreviewInSolutionExplorer": false
 }
