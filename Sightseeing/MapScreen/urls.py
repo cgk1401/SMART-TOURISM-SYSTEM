@@ -5,4 +5,3 @@ urlpatterns = [
     path('', main_screen),
     path('MapScreen', map_screen),
 ]
-
