@@ -1,8 +1,6 @@
+{% load static %}
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html class="no-js">
 <html>
     <head>
         <meta charset="utf-8">
@@ -10,21 +8,21 @@
         <title> Sightseeing - GOST </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{% static 'login.css' %}">
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <h2> Screen Login </h2>
-        <form method="POST" action="/check_login/">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Login</button>
-        </form>
-
-        <p>Don't have an account? <a href="/register/">Register here</a></p>
+        <div class="login-container">
+            <div class="login-card">
+                <h2> Screen Login </h2>
+                <form method="POST" action="/check_login/">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Username">
+                    <input type="password" name="password" placeholder="Password">
+                    <button type="submit">Login</button>
+                </form>
+                <p class="signup-link">Don’t have an account? <a href="/register/">Register</a></p>
+            </div>
+        </div>
 
         <script src="" async defer></script>
         {# {% include 'app/chat_widget.html' %} #}
