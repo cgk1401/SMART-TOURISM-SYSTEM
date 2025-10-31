@@ -1,9 +1,39 @@
-﻿<!DOCTYPE html>
+﻿{% load static %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
-<head>
-    <title>Map Screen</title>
-</head>
-<body style="text-align:center;">
-    <h1 style="margin-top:10px;">Map Screen</h1>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title> Sightseeing - GOST </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <link rel="stylesheet" href=" {% static 'Map.css' %}">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    </head>
+    <body>
+        <div id = "map"> </div>
+
+        {% comment %} <a href="/MainScreen/" style="
+                display:inline-block;
+                padding:10px 20px;
+                background-color:#4CAF50;
+                color:white;
+                text-decoration:none;
+                border-radius:5px;
+                margin-bottom:10px;
+            ">Back to Main Screen</a> {% endcomment %
+
+        {% comment %} thư viện để đọc mã của api trả về của OpenRouteService {% endcomment %}
+        <script src="https://unpkg.com/@mapbox/polyline@1.2.1/src/polyline.js"></script>
+
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src = "{% static 'Map.js' %}" > </script>
+    </body>
 </html>
