@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.render_map),
+    path('api/route/', views.get_route),
 ]
