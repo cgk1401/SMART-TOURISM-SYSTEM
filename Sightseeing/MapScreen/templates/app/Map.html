@@ -18,17 +18,25 @@
 
     </head>
     <body>
-        <div id = "map"> </div>
+        <div class="wrap">
+            <aside class="left">
+                <div id="map"></div>
+            </aside>
 
-        {% comment %} <a href="/MainScreen/" style="
-                display:inline-block;
-                padding:10px 20px;
-                background-color:#4CAF50;
-                color:white;
-                text-decoration:none;
-                border-radius:5px;
-                margin-bottom:10px;
-            ">Back to Main Screen</a> {% endcomment %
+        <main class="right">
+            <section class="dest">
+                <div class="dest-head">
+                    <h3>Destinations</h3>
+                    <button id="btnDraw" class="btn">Draw route</button>
+                </div>
+                <ul id="destList" class="dest-list"> </ul>
+            </section>
+
+            <section class="image-box">
+                <img id="placeImage" src = '{% static 'images/HCMUS.jpg' %}' alt="Preview">
+            </section>
+        </main>
+  </div>
 
         {% comment %} thư viện để đọc mã của api trả về của OpenRouteService {% endcomment %}
         <script src="https://unpkg.com/@mapbox/polyline@1.2.1/src/polyline.js"></script>

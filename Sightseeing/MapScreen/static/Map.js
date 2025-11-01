@@ -1,43 +1,91 @@
-var map = L.map('map').setView([10.762622, 106.660172], 13);
+  var PLACES = [
+    { 
+        id:1, 
+        name:"Chợ Bến Thành", 
+        lat: 10.7725168, 
+        lon: 106.6980208, 
+        img:"/static/images/Cho_Ben_Thanh.jpg" 
+    },
+    { 
+        id:2, 
+        name:"Nhà Thờ Đức Bà", 
+        lat: 10.7797855, 
+        lon: 106.6990189, 
+        img:"/static/images/Nha_Tho_Duc_Ba.jpg" 
+    },
+    { 
+        id:3, 
+        name:"Dinh Độc Lập", 
+        lat: 10.7769942, 
+        lon: 106.6953021, 
+        img: "/static/images/Dinh_Doc_Lap.jpg" 
+    },
+];
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
 
-// const A = [10.762622, 106.660172];
-// const B = [10.823099, 106.629662];
-// const C = [10.776889, 106.700806];
+let routeLayer = null;
+const destList = document.getElementById('destList');
+const previewImg = document.getElementById('placeImage');
 
-const A = [10.779783, 106.699018]
-const B = [10.780150, 106.700804]
-const C = [10.772338, 106.698281]
-const D = [10.777182, 106.695389]
+PLACES.forEach((p, idx) => {
+    p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
+    
+    const li = document.createElement('li');
+    li.className = 'dest-item';
+    
+    li.innerHTML = `
+        <input type="checkbox" class="sel" data-id="${p.id}">
+        <div>
+            <div class="name">${idx + 1}. ${p.name}</div>
+            <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
+        </div>`;
+    
+    li.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('sel')) {
+            li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
+        }
+        
+        map.panTo([p.lat, p.lon]); 
+        p.marker.openPopup(); 
+        previewImg.src = p.img;
+    });
+    
+    destList.appendChild(li);
+});
 
-//L.marker(A).addTo(map).bindPopup("Điểm Nhà Thờ Đức Bà").openPopup;
-L.marker(B).addTo(map).bindPopup("Điểm Bưu Điện Trung Tâm Sài Gòn").openPopup;
-L.marker(C).addTo(map).bindPopup("Điểm Chợ Bến thành").openPopup;
-//L.marker(D).addTo(map).bindPopup("Điểm Dinh Độc Lập".openPopup)
+document.getElementById('btnDraw').addEventListener('click', async () => {
+    const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
+    if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
+    if (routeLayer){
+        map.removeLayer(routeLayer);
+        routeLayer = null;
+    }
 
-axios.post('/MainScreen/MapScreen/api/route/',
-    { coordinates: [ B, C] }, 
-    { headers: { 'Content-Type': 'application/json' } }
-)
-.then(res => {
+    const coords = ids.map(id => {
+    const p = PLACES.find(x => x.id === id);
+    return [p.lat, p.lon];
+    });
 
-    console.log('Response:', res.data);
-
+  try {
+    const res = await axios.post('/MainScreen/MapScreen/api/route/', 
+        { coordinates: coords }, 
+        { headers:{'Content-Type':'application/json'} });
     const encoded = res.data.routes[0].geometry;
-    const coords = polyline.decode(encoded);  // giải mã 
 
-    // đảo ngươc lon, lat dể dùng với leaflet
-    const latlngs = coords.map(c => [c[0], c[1]]);
+    const tmp = polyline.decode(encoded);
+    const latlngs = tmp.map(c => [c[0], c[1]]);
+    
+    routeLayer = L.polyline(latlngs, {
+        color: 'blue',
+        weight: 8,
+        opacity: 0.8,
+    }
+    ).addTo(map);
+    map.fitBounds(routeLayer.getBounds());
 
-    const line = L.polyline(latlngs, {
-      color: 'blue',
-      weight: 8,
-      opacity: 0.8
-    }).addTo(map);
-    map.fitBounds(line.getBounds());
-
-  })
-  .catch(err => console.error('Lỗi khi gọi API', err));
+  } catch (e) {
+    console.error(e); alert('Lỗi gọi API.');
+  }
+});
