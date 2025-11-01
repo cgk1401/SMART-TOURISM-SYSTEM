@@ -1,6 +1,7 @@
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -16,10 +17,11 @@ def check_login(request):
         user = authenticate(username=username, password=password)
 
     if user is not None:
+        login(request, user)
         return redirect('/MainScreen/')
 
     else:
-        return render(request, 'app/login.html', {'error': 'Invalid credentials'})
+        return render(request, 'login.html', {'error': 'Invalid credentials'})
 def register_user(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -32,4 +34,4 @@ def register_user(request):
             messages.success(request, "Account created successfully")
             return redirect('/')
 
-    return render(request, 'app/register.html')
+    return render(request, 'register.html')
