@@ -29,6 +29,59 @@ let routeLayer = null;
 const destList = document.getElementById('destList');
 const previewImg = document.getElementById('placeImage');
 
+
+const coordInput = documen
+coordInput.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+        const input = coordInput.value.trim();
+
+        const regex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+        if (regex.test(input)) {
+            const [lat, lon] = input.split(',').map(coord => parseFloat(coord.trim()));
+
+            const newId = PLACES.length > 0 ? PLACES[PLACES.length - 1].id + 1 : 1;
+
+            const newPlace = {
+                id: newId,
+                name: `New Place ${newId}`,
+                lat: lat,
+                lon: lon,
+                img: "/static/images/default.jpg",
+            };
+
+            PLACES.push(newPlace);
+
+            newPlace.marker = L.marker([lat, lon])
+                .addTo(map)
+                .bindPopup(`<b>${newPlace.name}</b>`);
+
+            const listItem = document.createElement('li');
+            listItem.className = 'dest-item';
+            listItem.innerHTML = `
+                <input type="checkbox" class="sel" data-id="${newPlace.id}">
+                <div>
+                    <div class="name">${PLACES.length}. ${newPlace.name}</div>
+                    <div class="sub">${lat.toFixed(5)}, ${lon.toFixed(5)}</div>
+                </div>`;
+
+            listItem.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('sel')) {
+                    listItem.querySelector('.sel').checked = !listItem.querySelector('.sel').checked;
+                }
+                map.panTo([newPlace.lat, newPlace.lon]);
+                newPlace.marker.openPopup();
+                previewImg.src = newPlace.img;
+            });
+
+            destList.appendChild(listItem);
+
+            coordInput.value = '';
+        } else {
+            alert('Invalid coordinates! Please use the format: lat, lon');
+        }
+    }
+});
+
 PLACES.forEach((p, idx) => {
     p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
     
@@ -89,3 +142,4 @@ document.getElementById('btnDraw').addEventListener('click', async () => {
     console.error(e); alert('Lỗi gọi API.');
   }
 });
+
