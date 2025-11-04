@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'LoginScreen',
     'MainScreen',
     'MapScreen',
+    'PreferenceScreen',
     'ChatBoxAI'
 ]
 
