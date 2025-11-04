@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 import os
+from MapScreen.models import location
 
 API_KEY_MAP = os.getenv("API_KEY_MAP") 
 
@@ -25,7 +26,26 @@ def get_route(request):
     }
     body = {"coordinates": coords}
     
-    response = requests.post(url, json=body, headers=headers)
+    response = requests.post(url, json = body, headers = headers)
     
     return JsonResponse(response.json())
+
+def all_location(request):
+    # trả về dạng list cho place []
+    row = location.objects.values(
+        'id', 'name', 'latitude', 'longtitude', 'description', "image_path"
+    )
+    data = []
+    for r in row:
+        data.append({
+            "id": r["id"],
+            "name": r["name"],
+            "lat": float(r["latitude"]),
+            "lon": float(r["longtitude"]),
+            "description": r["description"] or "",
+            "img": r["image_path"]
+        })
+    
+    return JsonResponse(data, safe = False, json_dumps_params={"ensure_ascii": False})
+    
     
