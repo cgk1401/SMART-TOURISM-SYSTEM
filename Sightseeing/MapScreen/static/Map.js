@@ -1,6 +1,12 @@
 let PLACES = []
 
-axios.get('/MainScreen/MapScreen/full_location/').then(res => {
+axios.get('/MainScreen/MapScreen/full_location/',{
+    params: {
+        near_id: 2,
+        r_km: 1,
+        limit: 10,
+    }
+}).then(res => {
     PLACES = res.data;
 
 

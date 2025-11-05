@@ -4,8 +4,8 @@
         "model": "MapScreen.location",
         "fields":{
             "name": "Chợ Bến Thành",
-            "latitude": "10.7725168",
-            "longtitude": "106.6980208",
+            "latitude": 10.7725168,
+            "longtitude": 106.6980208,
             "description": "Chợ nổi tiếng ở trung tâm thành phố Hồ Chí Minh",
             "image_path": "/static/images/Cho_Ben_Thanh.jpg"
         }
@@ -16,8 +16,8 @@
         "model" : "MapScreen.location",
         "fields":{
             "name": "Nhà Thờ Đức Bà",
-            "latitude": "10.7797855",
-            "longtitude": "106.6990189",
+            "latitude": 10.7797855,
+            "longtitude": 106.6990189,
             "description": "Biểu tượng kiến trúc cổ kính giữa trung tâm TP.HCM, nổi bật với hai tháp chuông và gạch đỏ Pháp.",
             "image_path": "/static/images/Nha_Tho_Duc_Ba.jpg"
         }
@@ -28,8 +28,8 @@
         "model" : "MapScreen.location",
         "fields":{
             "name": "Dinh Độc Lập",
-            "latitude": "10.7769942",
-            "longtitude": "106.6953021",
+            "latitude": 10.7769942,
+            "longtitude": 106.6953021,
             "description": "Di tích lịch sử nổi tiếng, từng là dinh Tổng thống Việt Nam Cộng hòa, nay là điểm tham quan trung tâm TP.HCM.",
             "image_path": "/static/images/Dinh_Doc_Lap.jpg"
         }
