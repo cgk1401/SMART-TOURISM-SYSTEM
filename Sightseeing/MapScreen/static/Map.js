@@ -1,330 +1,145 @@
-  var PLACES = [
-    { 
-        id:1, 
-        name:"Chợ Bến Thành", 
-        lat: 10.7725168, 
-        lon: 106.6980208, 
-        img:"/static/images/Cho_Ben_Thanh.jpg" 
-    },
-    { 
-        id:2, 
-        name:"Nhà Thờ Đức Bà", 
-        lat: 10.7797855, 
-        lon: 106.6990189, 
-        img:"/static/images/Nha_Tho_Duc_Ba.jpg" 
-    },
-    { 
-        id:3, 
-        name:"Dinh Độc Lập", 
-        lat: 10.7769942, 
-        lon: 106.6953021, 
-        img: "/static/images/Dinh_Doc_Lap.jpg" 
-    },
-];
+let PLACES = []
 
-const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
-
-let routeLayer = null;
-const destList = document.getElementById('destList');
-const previewImg = document.getElementById('placeImage');
+axios.get('/MainScreen/MapScreen/full_location/').then(res => {
+    PLACES = res.data;
 
 
-const coordInput = document.getElementById('coordInput');
-function deletePlace(placeId) {
-    const placeIndex = PLACES.findIndex(p => p.id === placeId);
-    if (placeIndex === -1) return;
+    const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
 
-    const place = PLACES[placeIndex];
-    if (place.marker) {
-        map.removeLayer(place.marker);
-    }
+    let routeLayer = null;
+    const destList = document.getElementById('destList');
+    const previewImg = document.getElementById('placeImage');
 
-    PLACES.splice(placeIndex, 1);
-
-    const listItem = document.querySelector(`.dest-item[data-id="${placeId}"]`);
-    if (listItem) {
-        listItem.remove();
-    }
-}
-
-coordInput.addEventListener('keypress', async function (event) {
-    if (event.key === 'Enter') {
-        const input = coordInput.value.trim();
-
-        const coordRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
-        if (coordRegex.test(input)) {
-            const [lat, lon] = input.split(',').map(coord => parseFloat(coord.trim()));
-
-            const newId = PLACES.length > 0 ? PLACES[PLACES.length - 1].id + 1 : 1;
-
-            const newPlace = {
-                id: newId,
-                name: `New Place ${newId}`,
-                lat: lat,
-                lon: lon,
-                img: "/static/images/default.jpg",
-            };
-
-            PLACES.push(newPlace);
-
-            newPlace.marker = L.marker([lat, lon])
-                .addTo(map)
-                .bindPopup(`<b>${newPlace.name}</b>`);
-
-            const listItem = document.createElement('li');
-            listItem.className = 'dest-item';
-            listItem.setAttribute('data-id', newPlace.id);
-            listItem.innerHTML = `
-                <input type="checkbox" class="sel" data-id="${newPlace.id}">
-                <div>
-                    <div class="name">${PLACES.length}. ${newPlace.name}</div>
-                    <div class="sub">${lat.toFixed(5)}, ${lon.toFixed(5)}</div>
-                </div>
-                <button class="delete-btn" data-id="${newPlace.id}">X</button>`;
-
-            listItem.addEventListener('click', (e) => {
-                if (e.target.classList.contains('delete-btn')) {
-                    deletePlace(newPlace.id);
-                } else if (!e.target.classList.contains('sel')) {
-                    listItem.querySelector('.sel').checked = !listItem.querySelector('.sel').checked;
-                }
-                map.panTo([newPlace.lat, newPlace.lon]);
-                newPlace.marker.openPopup();
-                previewImg.src = newPlace.img;
-            });
-
-            destList.appendChild(listItem);
-
-            coordInput.value = '';
-        } else {
-            try {
-                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&format=json&addressdetails=1&limit=1`;
-
-                const res = await axios.get(url);
-                if (res.data.length === 0) {
-                    alert('Không tìm thấy địa điểm. Vui lòng thử lại.');
-                    return;
-                }
-
-                const place = res.data[0];
-                const lat = parseFloat(place.lat);
-                const lon = parseFloat(place.lon);
-                const name = place.display_name;
-
-                const newId = PLACES.length > 0 ? PLACES[PLACES.length - 1].id + 1 : 1;
-
-                const newPlace = {
-                    id: newId,
-                    name: name,
-                    lat: lat,
-                    lon: lon,
-                    img: "/static/images/default.jpg",
-                };
-
-                PLACES.push(newPlace);
-
-                newPlace.marker = L.marker([lat, lon])
-                    .addTo(map)
-                    .bindPopup(`<b>${newPlace.name}</b>`);
-
-                const listItem = document.createElement('li');
-                listItem.className = 'dest-item';
-                listItem.setAttribute('data-id', newPlace.id);
-                listItem.innerHTML = `
-                    <input type="checkbox" class="sel" data-id="${newPlace.id}">
-                    <div>
-                        <div class="name">${PLACES.length}. ${newPlace.name}</div>
-                        <div class="sub">${lat.toFixed(5)}, ${lon.toFixed(5)}</div>
-                    </div>
-                    <button class="delete-btn" data-id="${newPlace.id}">X</button>`;
-
-                listItem.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-btn')) {
-                        deletePlace(newPlace.id);
-                    } else if (!e.target.classList.contains('sel')) {
-                        listItem.querySelector('.sel').checked = !listItem.querySelector('.sel').checked;
-                    }
-                    map.panTo([newPlace.lat, newPlace.lon]);
-                    newPlace.marker.openPopup();
-                    previewImg.src = newPlace.img;
-                });
-
-                destList.appendChild(listItem);
-
-                coordInput.value = '';
-            } catch (error) {
-                console.error(error);
-                alert('Lỗi khi gọi Nominatim API. Vui lòng thử lại.');
+    PLACES.forEach((p, idx) => {
+        p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
+        
+        const li = document.createElement('li');
+        li.className = 'dest-item';
+        
+        li.innerHTML = `
+            <input type="checkbox" class="sel" data-id="${p.id}">
+            <div>
+                <div class="name">${idx + 1}. ${p.name}</div>
+                <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
+            </div>`;
+        
+        li.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('sel')) {
+                li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
             }
-        }
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Currently building autocomplete dest
-
-const suggestions = document.getElementById('suggestions');
-
-async function showSuggestions(query) {
-    try {
-        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5`;
-        const res = await axios.get(url);
-
-        suggestions.innerHTML = '';
-
-        if (res.data.length === 0) {
-            const noResult = document.createElement('li');
-            noResult.textContent = 'No results found.';
-            noResult.style.color = 'gray';
-            suggestions.appendChild(noResult);
-            return;
-        }
-
-        res.data.forEach(place => {
-            const suggestionItem = document.createElement('li');
-            suggestionItem.textContent = place.display_name;
-            suggestionItem.dataset.lat = place.lat;
-            suggestionItem.dataset.lon = place.lon;
-            suggestionItem.dataset.name = place.display_name;
-
-            suggestionItem.addEventListener('click', () => {
-                addPlaceToList(place.display_name, parseFloat(place.lat), parseFloat(place.lon));
-                suggestions.innerHTML = '';
-                coordInput.value = '';
-            });
-
-            suggestions.appendChild(suggestionItem);
+            
+            map.panTo([p.lat, p.lon]); 
+            p.marker.openPopup(); 
+            previewImg.src = p.img;
         });
-    } catch (error) {
-        console.error('Error fetching suggestions:', error);
-    }
-}
-
-function addPlaceToList(name, lat, lon) {
-    const newId = destList.children.length + 1;
-
-    const listItem = document.createElement('li');
-    listItem.className = 'dest-item';
-    listItem.innerHTML = `
-        <div>
-            <div class="name">${newId}. ${name}</div>
-            <div class="sub">${lat.toFixed(5)}, ${lon.toFixed(5)}</div>
-        </div>
-        <button class="delete-btn">X</button>`;
-
-    listItem.querySelector('.delete-btn').addEventListener('click', () => {
-        listItem.remove();
+        
+        destList.appendChild(li);
     });
 
-    destList.appendChild(listItem);
-
-    const marker = L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b>`);
-    map.panTo([lat, lon]);
-}
-
-coordInput.addEventListener('input', (event) => {
-    const query = event.target.value.trim();
-    if (query.length > 2) {
-        showSuggestions(query);
-    } else {
-        suggestions.innerHTML = ''; 
-    }
-});
-
-let debounceTimeout;
-
-coordInput.addEventListener('input', (event) => {
-    const query = event.target.value.trim();
-
-    clearTimeout(debounceTimeout); 
-
-    if (query.length > 2) {
-        debounceTimeout = setTimeout(() => {
-            showSuggestions(query); 
-        }, 300); 
-    } else {
-        suggestions.innerHTML = '';
-    }
-});
-
-
-
-
-
-PLACES.forEach((p, idx) => {
-    p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
-
-    const li = document.createElement('li');
-    li.className = 'dest-item';
-    li.setAttribute('data-id', p.id);
-
-    li.innerHTML = `
-        <input type="checkbox" class="sel" data-id="${p.id}">
-        <div>
-            <div class="name">${idx + 1}. ${p.name}</div>
-            <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
-        </div>
-        <button class="delete-btn" data-id="${p.id}">X</button>`;
-
-    li.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-            deletePlace(p.id);
-        } else if (!e.target.classList.contains('sel')) {
-            li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
+    document.getElementById('btnDraw').addEventListener('click', async () => {
+        const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
+        if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
+        if (routeLayer){
+            map.removeLayer(routeLayer);
+            routeLayer = null;
         }
 
-        map.panTo([p.lat, p.lon]);
-        p.marker.openPopup();
-        previewImg.src = p.img;
-    });
+        const coords = ids.map(id => {
+        const p = PLACES.find(x => x.id === id);
+        return [p.lat, p.lon];
+        });
 
-    destList.appendChild(li);
-});
+    try {
+        const res = await axios.post('/MainScreen/MapScreen/api/route/', 
+            { coordinates: coords }, 
+            { headers:{'Content-Type':'application/json'} });
+        const encoded = res.data.routes[0].geometry;
 
-document.getElementById('btnDraw').addEventListener('click', async () => {
-    const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
-    if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
-    if (routeLayer){
-        map.removeLayer(routeLayer);
-        routeLayer = null;
+        const tmp = polyline.decode(encoded);
+        const latlngs = tmp.map(c => [c[0], c[1]]);
+        
+        routeLayer = L.polyline(latlngs, {
+            color: 'blue',
+            weight: 8,
+            opacity: 0.8,
+        }
+        ).addTo(map);
+        map.fitBounds(routeLayer.getBounds());
+
+    } catch (e) {
+        console.error(e); alert('Lỗi gọi API.');
     }
-
-    const coords = ids.map(id => {
-    const p = PLACES.find(x => x.id === id);
-    return [p.lat, p.lon];
     });
-
-  try {
-    const res = await axios.post('/MainScreen/MapScreen/api/route/', 
-        { coordinates: coords }, 
-        { headers:{'Content-Type':'application/json'} });
-    const encoded = res.data.routes[0].geometry;
-
-    const tmp = polyline.decode(encoded);
-    const latlngs = tmp.map(c => [c[0], c[1]]);
     
-    routeLayer = L.polyline(latlngs, {
-        color: 'blue',
-        weight: 8,
-        opacity: 0.8,
-    }
-    ).addTo(map);
-    map.fitBounds(routeLayer.getBounds());
+}).catch(err => {
+    console.error("Lỗi lấy dữ liệu từ db", err);
+})
 
-  } catch (e) {
-    console.error(e); alert('Lỗi gọi API.');
-  }
-});
+// const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
+// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
 
+// let routeLayer = null;
+// const destList = document.getElementById('destList');
+// const previewImg = document.getElementById('placeImage');
+
+// PLACES.forEach((p, idx) => {
+//     p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
+    
+//     const li = document.createElement('li');
+//     li.className = 'dest-item';
+    
+//     li.innerHTML = `
+//         <input type="checkbox" class="sel" data-id="${p.id}">
+//         <div>
+//             <div class="name">${idx + 1}. ${p.name}</div>
+//             <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
+//         </div>`;
+    
+//     li.addEventListener('click', (e) => {
+//         if (!e.target.classList.contains('sel')) {
+//             li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
+//         }
+        
+//         map.panTo([p.lat, p.lon]); 
+//         p.marker.openPopup(); 
+//         previewImg.src = p.img;
+//     });
+    
+//     destList.appendChild(li);
+// });
+
+// document.getElementById('btnDraw').addEventListener('click', async () => {
+//     const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
+//     if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
+//     if (routeLayer){
+//         map.removeLayer(routeLayer);
+//         routeLayer = null;
+//     }
+
+//     const coords = ids.map(id => {
+//     const p = PLACES.find(x => x.id === id);
+//     return [p.lat, p.lon];
+//     });
+
+//   try {
+//     const res = await axios.post('/MainScreen/MapScreen/api/route/', 
+//         { coordinates: coords }, 
+//         { headers:{'Content-Type':'application/json'} });
+//     const encoded = res.data.routes[0].geometry;
+
+//     const tmp = polyline.decode(encoded);
+//     const latlngs = tmp.map(c => [c[0], c[1]]);
+    
+//     routeLayer = L.polyline(latlngs, {
+//         color: 'blue',
+//         weight: 8,
+//         opacity: 0.8,
+//     }
+//     ).addTo(map);
+//     map.fitBounds(routeLayer.getBounds());
+
+//   } catch (e) {
+//     console.error(e); alert('Lỗi gọi API.');
+//   }
+// });

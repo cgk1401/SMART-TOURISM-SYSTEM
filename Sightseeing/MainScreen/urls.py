@@ -5,4 +5,5 @@ from . import views
 
 urlpatterns = [
     path('', views.function_Main),
+    path('logout/', views.logout_user, name='logout') # could be put in sightseeing/url
 ]
