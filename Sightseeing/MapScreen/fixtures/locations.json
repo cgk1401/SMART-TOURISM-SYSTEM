@@ -3,10 +3,10 @@
         "pk": 1,
         "model": "MapScreen.location",
         "fields":{
-            "name": "Chợ Bến Thành",
-            "latitude": "10.7725168",
-            "longtitude": "106.6980208",
-            "description": "Chợ nổi tiếng ở trung tâm thành phố Hồ Chí Minh",
+            "name": "Ben Thanh market",
+            "latitude": 10.7725168,
+            "longtitude": 106.6980208,
+            "description": "Iconic market selling souvenirs and local food in the center of HCMC",
             "image_path": "/static/images/Cho_Ben_Thanh.jpg"
         }
     },
@@ -15,10 +15,10 @@
         "pk": 2,
         "model" : "MapScreen.location",
         "fields":{
-            "name": "Nhà Thờ Đức Bà",
-            "latitude": "10.7797855",
-            "longtitude": "106.6990189",
-            "description": "Biểu tượng kiến trúc cổ kính giữa trung tâm TP.HCM, nổi bật với hai tháp chuông và gạch đỏ Pháp.",
+            "name": "Notre-Dame Cathedral of Saigon",
+            "latitude": 10.7797855,
+            "longtitude": 106.6990189,
+            "description": "French-built cathedral with twin bell towers",
             "image_path": "/static/images/Nha_Tho_Duc_Ba.jpg"
         }
     },
@@ -27,10 +27,10 @@
         "pk": 3,
         "model" : "MapScreen.location",
         "fields":{
-            "name": "Dinh Độc Lập",
-            "latitude": "10.7769942",
-            "longtitude": "106.6953021",
-            "description": "Di tích lịch sử nổi tiếng, từng là dinh Tổng thống Việt Nam Cộng hòa, nay là điểm tham quan trung tâm TP.HCM.",
+            "name": "Independence Palace",
+            "latitude": 10.7769942,
+            "longtitude": 106.6953021,
+            "description": "Historic building showcasing presidential rooms and war command bunkers reflecting Vietnam's political changes and important events during the twentieth century.",
             "image_path": "/static/images/Dinh_Doc_Lap.jpg"
         }
     },
@@ -39,10 +39,10 @@
         "pk": 4,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Bưu điện Trung tâm Sài Gòn",
+            "name": "Saigon Central Post Office",
             "latitude": 10.7790,
             "longtitude": 106.6995,
-            "description": "Tòa nhà mang kiến trúc châu Âu cổ kính, nằm đối diện Nhà thờ Đức Bà.",
+            "description": "Classic French colonial building designed by Gustave Eiffel featuring ornate ceilings and active postal counters.",
             "image_path": "/static/images/Buu_Dien_Trung_Tam.jpg"
         }
 
@@ -55,7 +55,7 @@
             "name": "Landmark 81",
             "latitude": 10.79511,
             "longtitude": 106.72209,
-            "description": "Tòa nhà cao nhất Việt Nam, biểu tượng hiện đại của TP.HCM với khu mua sắm và quan sát.",
+            "description": "Vietnam tallest building featuring luxury shops fine dining and observation decks with breathtaking skyline views.",
             "image_path": "/static/images/Landmark81.jpg"
         }
     },
@@ -64,10 +64,10 @@
         "pk": 6,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Công viên Tao Đàn",
+            "name": "Tao Dan park",
             "latitude": 10.77455,
             "longtitude": 106.69244,
-            "description": "Công viên xanh mát giữa lòng thành phố, thích hợp để thư giãn và tập thể dục.",
+            "description": "Central green park perfect for jogging relaxing and bird watching amidst Saigon’s busy center.",
             "image_path": "/static/images/Cong_Vien_Tao_Dan.jpg"
         }
     },
@@ -76,10 +76,10 @@
         "pk": 7,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Công viên Lê Văn Tám",
+            "name": "Le Van Tam park",
             "latitude": 10.78816,
             "longtitude": 106.69377,
-            "description": "Công viên yên tĩnh với nhiều hàng cây xanh, thường được chọn làm nơi tập thể dục, dạo mát và tổ chức hội chợ ngoài trời.",
+            "description": "Family-friendly city park with trees benches and community events on weekends.",
             "image_path": "/static/images/Cong_Vien_Le_Van_Tam.jpg"
         }
     },
@@ -88,10 +88,10 @@
         "pk": 8,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Gigamall Thủ Đức",
+            "name": "Gigamall Thu Duc",
             "latitude": 10.82768,
             "longtitude": 106.72161,
-            "description": "Trung tâm thương mại hiện đại ở Thủ Đức, có khu mua sắm, ẩm thực, rạp chiếu phim và khu vui chơi giải trí cho gia đình.",
+            "description": "Gigamall is a new style shopping center, a great combination of shopping and entertainment experience, JP World, cuisine paradise, shopping paradise.",
             "image_path": "/static/images/Giga_Mall.jpg"
         }
     },
@@ -100,10 +100,10 @@
         "pk": 9,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Tân Phú AOEN Mall",
+            "name": "Tan Phu AOEN Mall",
             "latitude": 10.80159,
             "longtitude": 106.61745,
-            "description": "Trung tâm thương mại lớn tại quận Tân Phú, có khu mua sắm, ẩm thực, rạp chiếu phim, khu vui chơi và siêu thị AEON nổi tiếng.",
+            "description": "Japanese-style shopping complex with restaurants cinema and spacious layout suitable for families.",
             "image_path": "/static/images/Tan_Phu_AEON_MALL.jpg"
         }
     },
@@ -112,11 +112,22 @@
         "pk": 10,
         "model": "MapScreen.location",
         "fields": {
-            "name": "Đường Sách TP. Hồ Chí Minh",
+            "name": "HCMC Nguyen Van Binh book street",
             "latitude": 10.78096,
             "longtitude": 106.70007,
-            "description": "Không gian văn hóa đọc nằm gần Nhà thờ Đức Bà, tập trung nhiều nhà sách, quán cà phê và các hoạt động giao lưu văn học.",
+            "description": "Famous pedestrian street full of bookshops, cafes, and mini exhibitions.",
             "image_path": "/static/images/Duong_Sach.jpg"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "War remnants Museum",
+            "latitude": 10.77957351522801,
+            "longitude": 106.69209510688114,
+            "description": "the Museum of thematic research, collection , storage, preservation and display of the material, photographs, artifacts on the evidence of the crime and the consequences of the war that the invasion force has caused to Vietnam",
+            "image_path": "/static/images/War_remnants_museum.jpg"
         }
     }
 ]
