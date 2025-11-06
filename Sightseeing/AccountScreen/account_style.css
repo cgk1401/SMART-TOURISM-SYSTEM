@@ -1,0 +1,50 @@
+/* CSS */
+
+
+/* 1. KIỂU DÁNG CƠ BẢN CỦA NÚT CHÍNH (.edit-button-style) */
+.edit-button-style {
+    /* Đặt các giá trị kích thước và căn chỉnh từ các div cũ */
+    width: 118px;
+    height: 48px;
+    padding: 8px 16px; /* padding-top/bottom: 8px, padding-left/right: 16px */
+    
+    /* Thiết lập Flexbox để căn giữa nội dung (từ justify-content: center, align-items: center) */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    
+    /* Thiết lập viền (Outline/Border) */
+    border-radius: 4px;
+    border: 1px solid #276968; /* Thay thế outline bằng border */
+    background: none; /* Quan trọng: Xóa nền mặc định của button */
+    cursor: pointer; /* Cho biết đây là một nút bấm */
+}
+
+/* 2. KIỂU DÁNG CỦA ICON (.edit-icon-reusable) */
+.edit-icon-reusable {
+    /* Màu mặc định cho icon  */
+    fill: #276968; 
+    width: 20px;
+    height: 20px;
+}
+
+/* 3. KIỂU DÁNG CỦA VĂN BẢN (.edit-text-style) */
+.edit-text-style {
+    color: #276968; 
+    font-size: 16px; 
+    font-family: Karla; 
+    font-weight: 500;
+}
+
+/* 4. HIỆU Ứng TƯƠNG TÁC (Ví dụ: Đổi màu khi hover) */
+.edit-button-style:hover {
+    background-color: #f0f8ff; /* Hiệu ứng nền nhẹ khi hover */
+}
+
+.edit-button-style:hover .edit-icon-reusable,
+.edit-button-style:hover .edit-text-style {
+    /* Đổi màu chữ và icon khi di chuột qua nút */
+    color: #051721;
+    fill: #051721; 
+}
