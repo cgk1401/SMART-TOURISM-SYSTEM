@@ -7,3 +7,5 @@ class location(models.Model):
     # cho phép để trống cột descrition, lưu bằng null
     description = models.TextField(blank = True, null = True)
     image_path = models.CharField(max_length = 255, blank = True, default = "")
+    tags = models.JSONField(default = list, blank = True)
+    
