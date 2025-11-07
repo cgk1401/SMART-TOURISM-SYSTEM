@@ -109,11 +109,11 @@
     justify-content: flex-start;
     align-items: center;
     gap: 16px;
-    padding-left: 24px;
+    padding:16px 16px;
     background: white;
     border-radius: 12px;
     border: 0.80px solid #D7E2EE;
-    height: 81.60px; /* Chiều cao cố định */
+    min-height: 50.60px; /* Chiều cao cố định */
 }
 
 .place-icon {
@@ -126,9 +126,9 @@
 .place-name-location {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
-    height: 48px; /* Chiều cao cố định */
+    /* height: 48px; */
 }
 
 .place-name {

@@ -107,3 +107,50 @@
     color: #051721;
     fill: #051721; 
 }
+
+/* --- BỔ SUNG: 5. KIỂU DÁNG CHO KHUNG ACCOUNT ĐỘNG --- */
+
+/* Khối chứa chung toàn bộ 3 hàng thông tin (Name, Pass, DOB) */
+#account-info-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 41px; 
+    width: 1272px; 
+}
+
+/* Khối chứa một hàng thông tin duy nhất (.account-row) */
+.account-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Khối chứa Label và Value (.info-details-wrapper) */
+.info-details-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* --- BỔ SUNG: 6. KIỂU DÁNG CHO VĂN BẢN ĐỘNG --- */
+
+/* Định kiểu cho Label (Name, Password, DOB) */
+.info-label-text {
+    opacity: 0.75;
+    color: #37454D;
+    font-size: 16px;
+    font-family: Karla;
+    font-weight: 400;
+}
+
+/* Định kiểu cho Value (Minh Triet, •••, 02-24-1996) */
+.info-value-text {
+    color: #051721;
+    font-size: 24px;
+    font-family: Karla;
+    font-weight: 500;
+}
