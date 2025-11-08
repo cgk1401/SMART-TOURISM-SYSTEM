@@ -13,16 +13,21 @@
         <link rel = "stylesheet" href = "{% static 'Main.css' %}?v=3">
     </head>
     <body>
-        <h2> Screen Main </h2>
-        <script src="" async defer></script>
+        <img class="hero-img" src="{% static 'images/image_page.jpg' %}">
+
+
+        <button id="ButtonHome">Home</button>
+        <button> Discover </button>
+        <button> About Us </button>
+        <button> Contact </button>
 
         <p>Welcome, {{ request.user.username }}</p>
 
         <a href="{% url 'logout' %}">Sign Out</a> <br>
         <a href = "MapScreen/" > Go to map </a> <br>
         <a href = "/PreferenceScreen/" > Go to preference </a>
-
         {% include 'app/chat_widget.html' %}
+        <script src = "{% static 'Main.js' %}" > </script>
         {% include 'common/footer.html' %}
     </body>
 </html>
