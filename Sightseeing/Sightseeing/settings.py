@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'LoginScreen',
     'MainScreen',
     'MapScreen',
-    'ChatBoxAI'
+    'PreferenceScreen',
+    'ChatBoxAI',
+    'AccountScreen'
 ]
 
 MIDDLEWARE = [
@@ -122,12 +124,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Đường dẫn static chung cho toàn project nếu có
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+STATICFILES_DIRS = [
+    
+]
 
-
+STATIC_ROOT = BASE_DIR / "staticfiles"  # Optional, but good practice
 
 # Load .env
 from dotenv import load_dotenv
