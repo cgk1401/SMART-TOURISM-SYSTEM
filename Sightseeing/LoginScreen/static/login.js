@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     loginbtn.addEventListener("click", async()=> {
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const password = document.getElementById("passwordInput").value.trim();
         const msg = document.getElementById("message");
         msg.textContent = "";
 
