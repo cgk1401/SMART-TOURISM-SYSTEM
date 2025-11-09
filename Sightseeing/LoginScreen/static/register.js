@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function(){
     const registerbtn = document.getElementById("register");
-
+    //
     registerbtn.addEventListener("click", async() => {
-        const username = document.getElementById("username").value.trim()
-        const password = document.getElementById("passwordInput").value.trim()
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("passwordInput").value.trim();
         const msg = document.getElementById("message");
         msg.textContent = "";
 
