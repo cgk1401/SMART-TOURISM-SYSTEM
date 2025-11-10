@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         if (!username || !password){
             msg.style.color = "red";
-            msg.textContent = "Thiếu username hoặc password";
+            msg.textContent = "Username or password missing";
             return;
         }
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         } catch(err){
             msg.style.color = "red";
-            msg.textContent = "Lỗi kết nối";
+            msg.textContent = "Connection error";
         }
     })
 })
