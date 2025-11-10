@@ -1,9 +1,12 @@
-// Dữ liệu giả định:
-const ACCOUNT_FIELDS_DATA = [
-    { label: "Name", value: "Minh Triet", id: "user-name" },
-    { label: "Password", value: "•••••••••••••••••", id: "user-password" },
-    { label: "Date of birth", value: "02-24-1996", id: "user-dob" }
-];
+// Convert backend data to display format
+function getAccountFieldsData() {
+    const userData = window.USER_DATA || {};
+    return [
+        { label: "Name", value: userData.name || "Not set", id: "user-name" },
+        { label: "Email", value: userData.email || "Not set", id: "user-email" },
+        { label: "Username", value: userData.username || "Not set", id: "user-username" }
+    ];
+}
 
 // Chờ cho toàn bộ DOM được tải xong trước khi chạy script
 document.addEventListener('DOMContentLoaded', initializeAccountView);
@@ -22,8 +25,9 @@ function initializeAccountView() {
         return;
     }
     
-    // Bắt đầu render các hàng thông tin
-    renderAccountRows(ACCOUNT_FIELDS_DATA, template, container);
+    // Get data and render rows
+    const accountData = getAccountFieldsData();
+    renderAccountRows(accountData, template, container);
 }
 
 

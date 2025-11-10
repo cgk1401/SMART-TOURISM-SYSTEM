@@ -1,40 +1,22 @@
 
-const TRIP_DATA = [
-    {
-        id: 1,
-        date: "Dec 15, 2024",
-        totalPlaces: 3,
-        duration: "4 hrs",
-        places: [
-            { name: "Quan 3", location: "HCMC" },
-            { name: "Quan 5", location: "HCMC" },
-            { name: "Quan 10", location: "HCMC" }
-        ]
-    },
-    {
-        id: 2,
-        date: "Nov 2, 2024",
-        totalPlaces: 4,
-        duration: "5 hrs",
-        places: [
-            { name: "Quan 8", location: "HCMC" },
-            { name: "Quan 1", location: "HCMC" },
-            { name: "Binh Thanh", location: "HCMC" },
-            { name: "Thu Duc", location: "HCMC" }
-        ]
-    },
-    {
-        id: 3,
-        date: "Oct 10, 2024",
-        totalPlaces: 2,
-        duration: "5 days",
-        places: [
-            { name: "Quan 6", location: "HCMC" },
-            { name: "Quan 11", location: "HCMC" }
-        ]
-    }
-];
+// Function to format date from backend format (YYYY-MM-DD) to display format (MMM DD, YYYY)
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
 
+// Get trip history data from backend
+function getTripHistoryData() {
+    const tripHistory = window.TRIP_HISTORY || [];
+    return tripHistory.map(trip => ({
+        ...trip,
+        date: formatDate(trip.date)  // Format the date for display
+    }));
+}
 
 // Chờ cho toàn bộ DOM được tải xong trước khi chạy script
 document.addEventListener('DOMContentLoaded', initializeHistoryRenderer);
@@ -54,8 +36,9 @@ function initializeHistoryRenderer() {
         return;
     }
     
-    // Trong môi trường thật, thay thế dòng này bằng Fetch API
-    renderTripHistory(TRIP_DATA, template, historyListContainer);
+    // Get data from backend and render
+    const tripData = getTripHistoryData();
+    renderTripHistory(tripData, template, historyListContainer);
 }
 
 

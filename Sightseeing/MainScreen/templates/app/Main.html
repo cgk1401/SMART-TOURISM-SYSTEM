@@ -19,7 +19,10 @@
         <button id="ButtonHome">Home</button>
         <button> Discover </button>
         <button> About Us </button>
-        <button> Contact </button>
+    <button> Contact </button>
+    <a href="{% url 'AccountScreen:index' %}">Account</a>
+
+    
 
         <p>Welcome, {{ request.user.username }}</p>
 

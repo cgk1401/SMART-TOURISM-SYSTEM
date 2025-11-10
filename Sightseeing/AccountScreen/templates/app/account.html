@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Account</title>
-    <link rel="stylesheet" href="/static/account_style.css">
+    <link rel="stylesheet" href="{% static 'account_style.css' %}">
 </head>
 
 <body>
@@ -35,10 +36,10 @@
     
     <div style="width: 1512px; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFC solid; border-bottom: 1px #FAFBFC solid">
         <div style="width: 1341px; padding-left: 50px; padding-right: 50px; left: 85px; top: 31px; position: absolute; justify-content: space-between; align-items: center; display: inline-flex">
-            <a href="/templates/account.html" class="nav-tab active-tab">
+            <a href="{% url 'AccountScreen:index' %}" class="nav-tab active-tab">
                 <span class="tab-text">Account</span>
             </a>
-            <a href="/templates/history.html" class="nav-tab">
+            <a href="{% url 'AccountScreen:history' %}" class="nav-tab">
                 <span class="tab-text">History</span>
             </a>
         </div>
@@ -56,7 +57,13 @@
     </div>
 </div>
 
-<script src="/static/account_renderer.js"></script>
+<script type="text/javascript">
+    // Pass data from Django backend to JavaScript
+    window.USER_DATA = JSON.parse('{{ user_data_json|escapejs }}');
+    // Log data to verify
+    console.log('User data loaded:', window.USER_DATA);
+</script>
+<script type="text/javascript" src="{% static 'account_renderer.js' %}"></script>
 
 </body>
 </html>

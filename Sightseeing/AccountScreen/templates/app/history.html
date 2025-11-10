@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Trip History</title>
-    <link rel="stylesheet" href="/static/history_style.css">
+    <link rel="stylesheet" href="{% static 'history_style.css' %}">
 </head>
 
 <body>
@@ -75,11 +76,11 @@
 <div style="width: 100%; height: 100%; flex-direction: column; justify-content: space-between; align-items: center; display: inline-flex">
     <div style="width: 1512px; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFB solid; border-bottom: 1px #FAFBFB solid">
         <div style="width: 1341px; padding-left: 50px; padding-right: 50px; left: 85px; top: 31px; position: absolute; justify-content: space-between; align-items: center; display: inline-flex">
-            <a href="/templates/account.html" class="nav-tab">
+            <a href="{% url 'AccountScreen:index' %}" class="nav-tab">
                 <span class="tab-text">Account</span>
             </a>
 
-            <a href="/templates/history.html" class="nav-tab active-tab">
+            <a href="{% url 'AccountScreen:history' %}" class="nav-tab active-tab">
                 <span class="tab-text">History</span>
             </a>
         </div>
@@ -97,7 +98,11 @@
     </div>
 </div>
 
-<script src="/static/history_renderer.js"></script>
+<script>
+    // Pass trip history data from Django backend to JavaScript
+    window.TRIP_HISTORY = JSON.parse('{{ trip_history|escapejs }}');
+</script>
+<script src="{% static 'history_renderer.js' %}"></script>
 
 </body>
 </html>
