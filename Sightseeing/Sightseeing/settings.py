@@ -125,7 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    
+    BASE_DIR / "AccountScreen" / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"  # Optional, but good practice
