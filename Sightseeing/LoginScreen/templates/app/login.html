@@ -1,30 +1,29 @@
+{% extends "common/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html class="no-js">
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title> Sightseeing - GOST </title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{% static 'login.css' %}">
-    </head>
-    <body>
-        <div class="login-container">
-            <div class="login-card">
-                <h2> Screen Login </h2>
-                    <input type = "text" id = "username" placeholder="Username">
-                    <input type = "password" id = "password" placeholder = "Password">
-                    <div id = "message"> </div>
-                    <button id = "ButtonLogin" > Login </button>
-                <p class="signup-link">Don't have an account? <a href="/register/">Register</a></p>
-            </div>
-        </div>
 
-        <script src="" async defer></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
-        <script src = "{% static 'login.js' %}" > </script>
-        {# {% include 'app/chat_widget.html' %} #}
-    </body>
-</html>
+{% block title %} Login - GOST {% endblock %}
+
+{% block body_class %} login-page {% endblock %}
+
+{% block extra_css %}
+    <link rel = "stylesheet" href = "{% static 'login.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="login-container">
+        <div class="login-card">
+            <h2> Screen Login </h2>
+                <input type = "text" id = "username" placeholder="Username">
+                <input type = "password" id = "password" placeholder = "Password">
+                <div id = "message"> </div>
+                <button id = "ButtonLogin" > Login </button>
+            <p class="signup-link">Don't have an account? <a href="/register/">Register</a></p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+    <script src = "{% static 'login.js' %}"> </script>
+{% endblock %}
