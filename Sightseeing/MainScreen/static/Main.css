@@ -1,0 +1,40 @@
+/* Main.css – Global Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* GREY BACKGROUND */
+body {
+    background-color: #e0e0e0 !important; /* Light grey */
+    /* Or use: #bdbdbd for medium grey */
+    /* Or use: #9e9e9e for darker grey */
+    font-family: Arial, sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* Keep your links blue */
+a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0.5rem 1rem;
+    display: inline-block;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Optional: Make text more readable on grey */
+h2, p {
+    color: #1a1a1a;
+}
