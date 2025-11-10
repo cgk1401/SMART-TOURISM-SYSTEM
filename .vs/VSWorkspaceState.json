@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\Sightseeing",
-    "\\Sightseeing\\AccountScreen",
-    "\\Sightseeing\\AccountScreen\\static",
-    "\\Sightseeing\\AccountScreen\\templates",
-    "\\Sightseeing\\AccountScreen\\templates\\app",
-    "\\Sightseeing\\MainScreen\\static",
+    "\\Sightseeing\\MainScreen",
     "\\Sightseeing\\MainScreen\\templates",
     "\\Sightseeing\\MainScreen\\templates\\app",
+    "\\Sightseeing\\MapScreen",
+    "\\Sightseeing\\media",
+    "\\Sightseeing\\media\\avatars",
+    "\\Sightseeing\\PreferenceScreen",
     "\\Sightseeing\\Sightseeing"
   ],
-  "SelectedNode": "\\Sightseeing\\AccountScreen\\views.py",
+  "SelectedNode": "\\Sightseeing\\MainScreen\\templates\\app\\Main.html",
   "PreviewInSolutionExplorer": false
 }

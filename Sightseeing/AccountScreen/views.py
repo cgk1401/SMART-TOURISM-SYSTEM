@@ -1,17 +1,19 @@
-from django.shortcuts import render, redirect
+﻿from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Profile  # ← ADD THIS LINE
 
 @login_required
 def account_view(request):
+    # Create profile if not exists
+    Profile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST' and 'avatar' in request.FILES:
-        if not hasattr(request.user, 'profile'):
-            from .models import Profile
-            Profile.objects.create(user=request.user)
         request.user.profile.avatar = request.FILES['avatar']
         request.user.profile.save()
-        messages.success(request, 'Avatar updated successfully!')
+        messages.success(request, 'Avatar updated!')
         return redirect('account')
+
     return render(request, 'app/account.html')
 
 @login_required
