@@ -1,0 +1,122 @@
+[
+    {
+        "pk": 1,
+        "model": "MapScreen.location",
+        "fields":{
+            "name": "Chợ Bến Thành",
+            "latitude": 10.7725168,
+            "longtitude": 106.6980208,
+            "description": "Chợ nổi tiếng ở trung tâm thành phố Hồ Chí Minh",
+            "image_path": "/static/images/Cho_Ben_Thanh.jpg"
+        }
+    },
+
+    {
+        "pk": 2,
+        "model" : "MapScreen.location",
+        "fields":{
+            "name": "Nhà Thờ Đức Bà",
+            "latitude": 10.7797855,
+            "longtitude": 106.6990189,
+            "description": "Biểu tượng kiến trúc cổ kính giữa trung tâm TP.HCM, nổi bật với hai tháp chuông và gạch đỏ Pháp.",
+            "image_path": "/static/images/Nha_Tho_Duc_Ba.jpg"
+        }
+    },
+        
+    {
+        "pk": 3,
+        "model" : "MapScreen.location",
+        "fields":{
+            "name": "Dinh Độc Lập",
+            "latitude": 10.7769942,
+            "longtitude": 106.6953021,
+            "description": "Di tích lịch sử nổi tiếng, từng là dinh Tổng thống Việt Nam Cộng hòa, nay là điểm tham quan trung tâm TP.HCM.",
+            "image_path": "/static/images/Dinh_Doc_Lap.jpg"
+        }
+    },
+    
+    {
+        "pk": 4,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Bưu điện Trung tâm Sài Gòn",
+            "latitude": 10.7790,
+            "longtitude": 106.6995,
+            "description": "Tòa nhà mang kiến trúc châu Âu cổ kính, nằm đối diện Nhà thờ Đức Bà.",
+            "image_path": "/static/images/Buu_Dien_Trung_Tam.jpg"
+        }
+
+    },
+
+    {
+        "pk": 5,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Landmark 81",
+            "latitude": 10.79511,
+            "longtitude": 106.72209,
+            "description": "Tòa nhà cao nhất Việt Nam, biểu tượng hiện đại của TP.HCM với khu mua sắm và quan sát.",
+            "image_path": "/static/images/Landmark81.jpg"
+        }
+    },
+
+    {
+        "pk": 6,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Công viên Tao Đàn",
+            "latitude": 10.77455,
+            "longtitude": 106.69244,
+            "description": "Công viên xanh mát giữa lòng thành phố, thích hợp để thư giãn và tập thể dục.",
+            "image_path": "/static/images/Cong_Vien_Tao_Dan.jpg"
+        }
+    },
+
+    {
+        "pk": 7,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Công viên Lê Văn Tám",
+            "latitude": 10.78816,
+            "longtitude": 106.69377,
+            "description": "Công viên yên tĩnh với nhiều hàng cây xanh, thường được chọn làm nơi tập thể dục, dạo mát và tổ chức hội chợ ngoài trời.",
+            "image_path": "/static/images/Cong_Vien_Le_Van_Tam.jpg"
+        }
+    },
+
+    {
+        "pk": 8,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Gigamall Thủ Đức",
+            "latitude": 10.82768,
+            "longtitude": 106.72161,
+            "description": "Trung tâm thương mại hiện đại ở Thủ Đức, có khu mua sắm, ẩm thực, rạp chiếu phim và khu vui chơi giải trí cho gia đình.",
+            "image_path": "/static/images/Giga_Mall.jpg"
+        }
+    },
+
+    {
+        "pk": 9,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Tân Phú AOEN Mall",
+            "latitude": 10.80159,
+            "longtitude": 106.61745,
+            "description": "Trung tâm thương mại lớn tại quận Tân Phú, có khu mua sắm, ẩm thực, rạp chiếu phim, khu vui chơi và siêu thị AEON nổi tiếng.",
+            "image_path": "/static/images/Tan_Phu_AEON_MALL.jpg"
+        }
+    },
+
+    {
+        "pk": 10,
+        "model": "MapScreen.location",
+        "fields": {
+            "name": "Đường Sách TP. Hồ Chí Minh",
+            "latitude": 10.78096,
+            "longtitude": 106.70007,
+            "description": "Không gian văn hóa đọc nằm gần Nhà thờ Đức Bà, tập trung nhiều nhà sách, quán cà phê và các hoạt động giao lưu văn học.",
+            "image_path": "/static/images/Duong_Sach.jpg"
+        }
+    }
+]

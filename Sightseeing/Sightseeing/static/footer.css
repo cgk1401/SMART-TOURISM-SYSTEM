@@ -1,0 +1,63 @@
+footer.footer {
+    /*footer full chiều rộng màn hình, out và không phụ thuộc vào container cha*/
+    width: 100vw;             
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    box-sizing: border-box; 
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #276968;
+    padding: 80px 35px;
+    margin-top: 40px; /*cách khoảng trên 40px*/
+    color: white;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+.social {
+    flex: 1;
+}
+
+.social img {
+  width: 24px;
+  height: 24px;
+}
+
+.social p {
+    color: #FFFFFF;
+    font-family: "Montserrat Alternates", sans-serif;
+    font-weight: 600;
+}
+
+.footer-right {
+    display: flex;
+    gap: 50px;
+}
+
+.footer-right h4,
+.footer-right p {
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF;
+    line-height: 1.2;
+}
+
+.footer-right h4 {
+    font-family: "Montserrat Alternates", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+.footer-right p  {
+    font-family: "Karla", sans-serif;
+    font-weight: 200;
+    font-size: 12px;
+}
+
+.footer-right p + p {
+    margin-top: 6px;
+}

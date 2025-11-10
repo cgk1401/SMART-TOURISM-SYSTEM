@@ -10,17 +10,24 @@
         <title> Sightseeing - GOST </title>
         {% comment %} giúp hiển thị giao diện web trên mobile {% endcomment %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel = "stylesheet" href = "{% static "Main.css" %}">
+        <link rel = "stylesheet" href = "{% static 'Main.css' %}?v=3">
     </head>
     <body>
-        <!--[if lt IE 7]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-        <h2> Screen Main </h2>
-        <script src="" async defer></script>
+        <img class="hero-img" src="{% static 'images/image_page.jpg' %}">
 
-        <a href = "MapScreen/" > Go to map </a>
 
+        <button id="ButtonHome">Home</button>
+        <button> Discover </button>
+        <button> About Us </button>
+        <button> Contact </button>
+
+        <p>Welcome, {{ request.user.username }}</p>
+
+        <a href="{% url 'logout' %}">Sign Out</a> <br>
+        <a href = "MapScreen/" > Go to map </a> <br>
+        <a href = "/PreferenceScreen/" > Go to preference </a>
         {% include 'app/chat_widget.html' %}
+        <script src = "{% static 'Main.js' %}" > </script>
+        {% include 'common/footer.html' %}
     </body>
 </html>

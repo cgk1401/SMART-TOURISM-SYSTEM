@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'LoginScreen',
     'MainScreen',
     'MapScreen',
+    'PreferenceScreen',
     'ChatBoxAI'
 ]
 
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'Sightseeing.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'Sightseeing', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,9 +124,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Đường dẫn static chung cho toàn project nếu có
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'Sightseeing', 'static'),
+]
 
 
 
