@@ -26,8 +26,4 @@ urlpatterns = [
     path('MainScreen/MapScreen/', include('MapScreen.urls')),
     path('PreferenceScreen/', include('PreferenceScreen.urls')),
     path('chat/', include('ChatBoxAI.urls')),
-    path('account/', include('AccountScreen.urls')),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

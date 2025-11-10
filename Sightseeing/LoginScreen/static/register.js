@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function(){
-    const loginbtn = document.getElementById("ButtonLogin");
+    const registerbtn = document.getElementById("register");
 
-    loginbtn.addEventListener("click", async()=> {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
+    registerbtn.addEventListener("click", async() => {
+        const username = document.getElementById("username").value.trim()
+        const password = document.getElementById("password").value.trim()
         const msg = document.getElementById("message");
         msg.textContent = "";
 
@@ -14,18 +14,17 @@ document.addEventListener("DOMContentLoaded", function(){
         }
 
         try{
-            // gửi request
-            const res = await axios.post("/check_login/", {username, password});
+            const res = await axios.post("/check_register/", {username, password});
             msg.textContent = res.data.message;
 
             if (res.data.success){
                 msg.style.color = "green";
-                // redirect trang, delay thời gian trước khi chuyển
-                setTimeout(() => window.location.href = "/MainScreen/", 1000);
+                setTimeout(() => window.location.href = "/", 1000);
             }else{
                 msg.style.color = "red";
             }
-        } catch(err){
+
+        } catch (err){
             msg.style.color = "red";
             msg.textContent = "Lỗi kết nối";
         }

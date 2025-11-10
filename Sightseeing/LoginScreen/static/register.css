@@ -39,7 +39,7 @@ button {
     padding: 10px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(90deg, #5de0e6, #004aad); /* Gradient 2 */
+    background: linear-gradient(90deg, #5de0e6, #004aad);
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -47,7 +47,7 @@ button {
 }
 
 button:hover {
-    background: linear-gradient(90deg, #000, #3533cd); /* Gradient 1 */
+    background: linear-gradient(90deg, #000, #3533cd)
 }
 
 .signin-link {
@@ -61,12 +61,12 @@ button:hover {
 }
 
 .signin-link a {
-    color: #4f9eb1; /* primary */
+    color: #4f9eb1;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .signin-link a:hover {
-    color: #3533cd; /* secondary */
+    color: #3533cd;
 }

@@ -10,16 +10,17 @@
     <div class="register-container">
         <div class="register-card">
             <h2> Register </h2>
-            <form method = "POST">
-                {% csrf_token %}
-                <input type="text" name="username" placeholder="Username">
-                <input type="password" name="password" placeholder="Password">
-
-                <button type="submit">Register</button>
-            </form>
+            <input type = "text" id = "username" placeholder = "Username">
+            <input type = "password" id = "password" placeholder = "password">
+            <div id = "message"> </div>
+            <button id = "register"> Register </button>
 
             <p class="signin-link">Have an account? <a href="/">Login</a></p>
         </div>
     </div>
+
+    <script src="" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+    <script src = "{% static 'register.js' %}" > </script>
 </body>
 </html>
