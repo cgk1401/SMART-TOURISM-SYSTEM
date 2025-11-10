@@ -1,0 +1,26 @@
+/* Định nghĩa các css chung cho toàn bộ các trang 
+Xóa mặc định margin, padding của trình duyệt tạo ra 
+Đặt phông chữ, màu nền, màu chữ cơ bản có thể chỉnh sửa trong các css của các trang cụ thể sau
+Phần main chiếm không gian chính giữa flex 1 0 :auto
+Cho phép trang con kế thừa có style riêng */
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: #f6f7f2;  
+    color: #222;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+ul { margin: 0; padding: 0; list-style: none; }
+a  { color: inherit; text-decoration: none; }
