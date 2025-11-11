@@ -116,7 +116,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 41px; 
-    width: 80%; 
+    width: 100%; 
 }
 
 /* Khối chứa một hàng thông tin duy nhất (.account-row) */
