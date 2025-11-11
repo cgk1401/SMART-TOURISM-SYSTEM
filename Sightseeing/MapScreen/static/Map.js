@@ -1,8 +1,11 @@
 let PLACES = []
 
+const params = new URLSearchParams(window.location.search);
+const nearid = params.get("near_id");
+
 axios.get('/MainScreen/MapScreen/full_location/',{
     params: {
-        near_id: 2531662,
+        near_id: nearid,
         r_km: 1,
         limit: 10,
     }
