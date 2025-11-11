@@ -91,7 +91,8 @@
 
 <script type="text/javascript">
     // Pass data from Django backend to JavaScript
-    window.USER_DATA = JSON.parse('{{ user_data_json|escapejs }}');
+    var userData = '{{ user_data_json|escapejs }}';
+    window.USER_DATA = JSON.parse(userData);
     // Log data to verify
     console.log('User data loaded:', window.USER_DATA);
 </script>
