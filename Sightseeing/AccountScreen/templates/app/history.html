@@ -1,13 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Trip History</title>
-    <link rel="stylesheet" href="{% static 'history_style.css' %}">
-</head>
+{% extends "common/base.html" %}
+{% load static %} 
 
-<body>
+{% block title %} History {% endblock %}
+
+{% block body_class %} {% endblock %}
+
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'history_style.css' %}">
+    {% include 'app/chat_widget.html' %}
+{% endblock %}
+
+
+{% block content %}
 <svg style="display: none;">
     <symbol id="icon-location-heart" viewBox="0 0 20 20">
         <path d="M16.6668 8.33317C16.6668 12.494 12.051 16.8273 10.501 18.1657C10.3566 18.2742 10.1808 18.333 10.0002 18.333C9.8195 18.333 9.64373 18.2742 9.49933 18.1657C7.94933 16.8273 3.3335 12.494 3.3335 8.33317C3.3335 6.56506 4.03588 4.86937 5.28612 3.61913C6.53636 2.36888 8.23205 1.6665 10.0002 1.6665C11.7683 1.6665 13.464 2.36888 14.7142 3.61913C15.9645 4.86937 16.6668 6.56506 16.6668 8.33317Z" stroke="#276968" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -30,6 +34,8 @@
         <path d="M7.5 15L12.5 10L7.5 5" fill="none" stroke="#276968" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 </svg>
+
+
 
 <template id="trip-history-item-template">
     <div class="trip-card">
@@ -73,8 +79,37 @@
     </div>
 </template>
 
-<div style="width: 100%; height: 100%; flex-direction: column; justify-content: space-between; align-items: center; display: inline-flex">
-    <div style="width: 1512px; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFB solid; border-bottom: 1px #FAFBFB solid">
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <div class="avatar-wrapper">
+            {% if request.user.profile and request.user.profile.avatar %}
+            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                 class="user-avatar" id="avatar-img"
+                 onclick="document.getElementById('avatar-input').click()">
+            {% else %}
+            <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                 class="user-avatar" id="avatar-img"
+                 onclick="document.getElementById('avatar-input').click()">
+            {% endif %}
+
+            <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
+                Edit
+            </div>
+
+            <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" id="avatar-input" name="avatar" accept="image/*"
+                       onchange="submitAvatar()">
+            </form>
+        </div>
+
+        <div class="user-name">
+            {{ request.user.get_full_name|default:request.user.username }}
+        </div>
+    </div>
+
+<div style="width: 100%; height: 100%; flex-direction: column; align-items: center; display: inline-flex; gap: 40px">
+    <div style="width: 100%; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFB solid; border-bottom: 1px #FAFBFB solid">
         <div style="width: 1341px; padding-left: 50px; padding-right: 50px; left: 85px; top: 31px; position: absolute; justify-content: space-between; align-items: center; display: inline-flex">
             <a href="{% url 'AccountScreen:index' %}" class="nav-tab">
                 <span class="tab-text">Account</span>
@@ -102,7 +137,11 @@
     // Pass trip history data from Django backend to JavaScript
     window.TRIP_HISTORY = JSON.parse('{{ trip_history|escapejs }}');
 </script>
-<script src="{% static 'history_renderer.js' %}"></script>
+{% endblock %}
 
-</body>
-</html>
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'history_renderer.js' %}"></script>
+{% endblock %}
+
+
+

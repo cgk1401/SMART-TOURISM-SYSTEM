@@ -1,13 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Account</title>
-    <link rel="stylesheet" href="{% static 'account_style.css' %}">
-</head>
+{% extends "common/base.html" %}
+{% load static %} 
 
-<body>
+{% block title %} Account {% endblock %}
+
+{% block body_class %} {% endblock %}
+
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'account_style.css' %}">
+    {% include 'app/chat_widget.html' %}
+{% endblock %}
+
+{% block content %}
 <svg style="display: none;">
     <symbol id="icon-edit-pencil" viewBox="0 0 20 20">
         <path d="M2.5 19.75V4.75H11.6042L5.83333 10.5208V16.4167H11.7292L17.5 10.625V19.75H2.5ZM7.5 14.75V11.2083L13.4792 5.22917L17.0417 8.72917L11.0417 14.75H7.5ZM18.2292 7.54167L14.6667 4.04167L16.7708 1.9375L20.2708 5.5L18.2292 7.54167Z" />
@@ -31,10 +34,39 @@
     </div>
 </template>
 
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <div class="avatar-wrapper">
+            {% if request.user.profile and request.user.profile.avatar %}
+            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                 class="user-avatar" id="avatar-img"
+                 onclick="document.getElementById('avatar-input').click()">
+            {% else %}
+            <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                 class="user-avatar" id="avatar-img"
+                 onclick="document.getElementById('avatar-input').click()">
+            {% endif %}
 
-<div style="width: 100%; height: 100%; flex-direction: column; justify-content: space-between; align-items: center; display: inline-flex">
+            <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
+                Edit
+            </div>
+
+            <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" id="avatar-input" name="avatar" accept="image/*"
+                       onchange="submitAvatar()">
+            </form>
+        </div>
+
+        <div class="user-name">
+            {{ request.user.get_full_name|default:request.user.username }}
+        </div>
+    </div>
+
+
+<div style="width: 100%; height: 100%; flex-direction: column; align-items: center; display: inline-flex; gap: 40px">
     
-    <div style="width: 1512px; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFC solid; border-bottom: 1px #FAFBFC solid">
+    <div style="width: 100%; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFC solid; border-bottom: 1px #FAFBFC solid">
         <div style="width: 1341px; padding-left: 50px; padding-right: 50px; left: 85px; top: 31px; position: absolute; justify-content: space-between; align-items: center; display: inline-flex">
             <a href="{% url 'AccountScreen:index' %}" class="nav-tab active-tab">
                 <span class="tab-text">Account</span>
@@ -63,7 +95,10 @@
     // Log data to verify
     console.log('User data loaded:', window.USER_DATA);
 </script>
-<script type="text/javascript" src="{% static 'account_renderer.js' %}"></script>
+{% endblock %}
 
-</body>
-</html>
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'account_renderer.js' %}"></script>
+{% endblock %}
+
+
