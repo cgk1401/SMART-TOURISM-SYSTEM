@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
-import folium
-import requests
 from django.http import HttpResponse
 from django.contrib.auth import logout
 

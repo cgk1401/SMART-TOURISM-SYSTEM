@@ -16,15 +16,23 @@
     <div class="hero__overlay"></div>
 
     <div class="hero__content">
-        <h1>Plan now. Travel tomorrow</h1>
+        <h1 >Plan now. Travel tomorrow </h1>
         <p>Make your one-day trip plan easier than ever.</p>
     </div>
 
     </header>
 
-    <h1> Hello </h1>
+    <section class = "custom-trip-section">
+        <div class = "custom-trip-card">
+            <p class = "small-text"> Still didn't satisfied ? </p>
+            <h2 class = "main-text"> CUSTOMIZED YOUR OWN <br> TRIP </h2>
+            <button class="customize-btn"> Customize </button>
+        </div>
+    </section>
+
+
+    
     <a href = "MapScreen/"> Go to map </a>
-    <a href = "/PreferenceScreen/"> Go to preferences </a>
 
 {% endblock %}
 
@@ -32,4 +40,5 @@
 {% block extra_js %}
     <script src="" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+    <script src = "{% static 'Main.js' %}"> </script>
 {% endblock %}
