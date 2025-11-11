@@ -73,5 +73,29 @@ function renderAccountRows(data, template, container) {
 }
 
 
-// *Lưu ý: Cần một hàm fetchAccountData() 
-// để lấy dữ liệu từ Python Backend và gọi renderAccountRows với dữ liệu thực.*
+
+function submitAvatar() {
+            const form = document.getElementById('avatar-form');
+            const file = document.getElementById('avatar-input').files[0];
+            if (file) {
+                const formData = new FormData(form);
+                fetch('/account/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert('Upload failed. Please try again.');
+                        }
+                    })
+                    .catch(() => {
+                        alert('Network error. Please check your connection.');
+                    });
+            }
+        }

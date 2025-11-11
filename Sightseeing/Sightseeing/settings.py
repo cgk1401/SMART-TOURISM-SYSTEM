@@ -143,3 +143,10 @@ except Exception:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# URL mà trình duyệt sẽ sử dụng để truy cập các tệp media (avatar)
+MEDIA_URL = '/media/'
+
+# Đường dẫn vật lý trên hệ thống file nơi các tệp media được lưu trữ
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

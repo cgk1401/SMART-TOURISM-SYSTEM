@@ -132,3 +132,4 @@ function renderTripHistory(data, template, container) {
     // Chèn tất cả vào DOM chỉ trong một thao tác
     container.appendChild(fragment);
 }
+

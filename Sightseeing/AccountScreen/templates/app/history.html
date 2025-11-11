@@ -84,23 +84,11 @@
         <div class="avatar-wrapper">
             {% if request.user.profile and request.user.profile.avatar %}
             <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
-                 class="user-avatar" id="avatar-img"
-                 onclick="document.getElementById('avatar-input').click()">
+                 class="user-avatar" id="avatar-img">
             {% else %}
             <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
-                 class="user-avatar" id="avatar-img"
-                 onclick="document.getElementById('avatar-input').click()">
+                 class="user-avatar" id="avatar-img">
             {% endif %}
-
-            <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
-                Edit
-            </div>
-
-            <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;">
-                {% csrf_token %}
-                <input type="file" id="avatar-input" name="avatar" accept="image/*"
-                       onchange="submitAvatar()">
-            </form>
         </div>
 
         <div class="user-name">
@@ -111,7 +99,7 @@
 <div style="width: 100%; height: 100%; flex-direction: column; align-items: center; display: inline-flex; gap: 40px">
     <div style="width: 100%; height: 74px; position: relative; background: #FAFBFC; overflow: hidden; border-top: 1px #FAFBFB solid; border-bottom: 1px #FAFBFB solid">
         <div style="width: 1341px; padding-left: 50px; padding-right: 50px; left: 85px; top: 31px; position: absolute; justify-content: space-between; align-items: center; display: inline-flex">
-            <a href="{% url 'AccountScreen:index' %}" class="nav-tab">
+            <a href="{% url 'AccountScreen:account' %}" class="nav-tab">
                 <span class="tab-text">Account</span>
             </a>
 
