@@ -1,27 +1,35 @@
-{% load static %}
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title> Sightseeing - GOST </title>
-        {% comment %} giúp hiển thị giao diện web trên mobile {% endcomment %}
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel = "stylesheet" href = "{% static "Main.css" %}?v=2">
-    </head>
-    <body>
-        <h2> Screen Main </h2>
-        <script src="" async defer></script>
+{% extends "common/base.html" %}
+{% load static %} 
 
-        <p>Welcome, {{ request.user.username }}</p>
+{% block title %} MainScreen {% endblock %}
 
-        <a href="{% url 'logout' %}">Sign Out</a>
-        <a href = "MapScreen/" > Go to map </a>
-        <a href = "/PreferenceScreen/" > Go to preference </a>
+{% block body_class %} {% endblock %}
 
-        {% include 'app/chat_widget.html' %}
-    </body>
-</html>
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'Main.css' %}">
+    {% include 'app/chat_widget.html' %}
+{% endblock %}
+
+{% block content %}
+    <header class="hero">
+    <img class="hero__img" src="{% static 'images/image_page.jpg' %}" alt="City night skyline">
+    <div class="hero__overlay"></div>
+
+    <div class="hero__content">
+        <h1>Plan now. Travel tomorrow</h1>
+        <p>Make your one-day trip plan easier than ever.</p>
+    </div>
+
+    </header>
+
+    <h1> Hello </h1>
+    <a href = "MapScreen/"> Go to map </a>
+    <a href = "/PreferenceScreen/"> Go to preferences </a>
+
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+{% endblock %}

@@ -15,7 +15,6 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <link rel="stylesheet" href=" {% static 'Map.css' %}">
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
     </head>
     <body>
         <div class="wrap">
@@ -29,12 +28,6 @@
                     <h3>Destinations</h3>
                     <button id="btnDraw" class="btn">Draw route</button>
                 </div>
-
-                <div class="coord-input">
-                    <input id="coordInput" type="text" placeholder="Enter coordinates (lat, lon)" />
-                    <ul id="suggestions" class="suggestions-list"></ul>
-                </div>
-
                 <ul id="destList" class="dest-list"> </ul>
             </section>
 
@@ -49,5 +42,6 @@
 
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src = "{% static 'Map.js' %}" > </script>
+        {% include 'common/footer.html' %}
     </body>
 </html>

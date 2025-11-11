@@ -1,53 +1,56 @@
-<!DOCTYPE html>
-<html class="no-js">
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title> Sightseeing - GOST </title>
-    </head>
+{% extends "common/base.html" %}
 
-    <body>
-        <h2> Preference </h2>
+{% block title %} Preference Screen {% endblock %}
 
-        <form method="POST" action="{% url 'save_preference' %}">
-            {% csrf_token %}
+{% block body_class %} {% endblock %}
 
-            <label>Interests:</label><br>
-            <input type="checkbox" name="interest" value="sightseeing"> Sightseeing<br>
-            <input type="checkbox" name="interest" value="history"> History<br>
-            <input type="checkbox" name="interest" value="entertainment"> Entertainment<br>
-            <input type="checkbox" name="interest" value="shopping"> Shopping<br>
-            <input type="checkbox" name="interest" value="art"> Art<br>
-            <input type="checkbox" name="interest" value="nature"> Nature<br>
+{% block extra_css %}
 
-            <label>Group Type:</label><br>
-            <input type="checkbox" name="group_type" value="solo"> Solo<br>
-            <input type="checkbox" name="group_type" value="duo"> Duo<br>
-            <input type="checkbox" name="group_type" value="group"> Group<br>
+{% endblock %}
 
-            <label>Activity Level:</label><br>
-            <input type="checkbox" name="activity_level" value="relaxed"> Relaxed<br>
-            <input type="checkbox" name="activity_level" value="moderated"> Moderated<br>
-            <input type="checkbox" name="activity_level" value="relaxed"> Active<br>
+{% block content %}
+    <h2> Preference </h2>
 
-            <label></label>
+    <form method="POST" action="{% url 'save_preference' %}">
+        {% csrf_token %}
 
-            <button type="submit"> Save Preference </button>
-        </form>
+        <label>Interests:</label><br>
+        <input type="checkbox" name="interest" value="sightseeing"> Sightseeing<br>
+        <input type="checkbox" name="interest" value="history"> History<br>
+        <input type="checkbox" name="interest" value="entertainment"> Entertainment<br>
+        <input type="checkbox" name="interest" value="shopping"> Shopping<br>
+        <input type="checkbox" name="interest" value="art"> Art<br>
+        <input type="checkbox" name="interest" value="nature"> Nature<br>
 
-        <h3>Your saved preferences:</h3>
-            {% for p in prefs %}
-                <p>Interests: {{ p.interests }}</p>
-                <p>Group types: {{ p.group_types }}</p>
-                <p>Activity levels: {{ p.activity_levels }}</p>
-                <form method="POST" action="{% url 'delete_preference' p.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-            {% empty %}
-                <p>No saved preferences yet.</p>
-            {% endfor %}
+        <label>Group Type:</label><br>
+        <input type="checkbox" name="group_type" value="solo"> Solo<br>
+        <input type="checkbox" name="group_type" value="duo"> Duo<br>
+        <input type="checkbox" name="group_type" value="group"> Group<br>
 
+        <label>Activity Level:</label><br>
+        <input type="checkbox" name="activity_level" value="relaxed"> Relaxed<br>
+        <input type="checkbox" name="activity_level" value="moderated"> Moderated<br>
+        <input type="checkbox" name="activity_level" value="relaxed"> Active<br>
 
-    </body>
-</html>
+        <label></label>
+
+        <button type="submit"> Save Preference </button>
+    </form>
+
+    <h3>Your saved preferences:</h3>
+        {% for p in prefs %}
+            <p>Interests: {{ p.interests }}</p>
+            <p>Group types: {{ p.group_types }}</p>
+            <p>Activity levels: {{ p.activity_levels }}</p>
+            <form method="POST" action="{% url 'delete_preference' p.id %}">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        {% empty %}
+            <p>No saved preferences yet.</p>
+        {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

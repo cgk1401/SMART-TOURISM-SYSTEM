@@ -1,0 +1,35 @@
+footer.footer {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    box-sizing: border-box;
+
+    background-color: #276968;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 80px 35px;
+    margin-top: 40px;
+}
+
+.footer-right { 
+    display: flex; 
+    gap: 50px; 
+}
+.footer-right h4 { 
+    margin: 0 0 6px; 
+    font-size: 16px; 
+    font-weight: 600; 
+}
+
+.footer-right p  { 
+    margin: 0; 
+    font-size: 12px; 
+    line-height: 1.4; 
+}
+
+.social img { 
+    width: 24px; 
+    height: 24px; 
+}

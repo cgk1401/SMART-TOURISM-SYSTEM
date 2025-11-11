@@ -30,14 +30,14 @@ def check_login(request):
             login(request, user)
             return JsonResponse({
                 "success": True,
-                "message": "Đăng nhập thành công"
+                "message": "Login Successful"
             })
 
         else:
             return JsonResponse(
                 {
                     "success": False,
-                    "message": "Username hoặc password sai"
+                    "message": "Incorrect username or password"
                 }
             )
             
@@ -64,13 +64,13 @@ def check_register(request):
         if User.objects.filter(username = username).exists():
             return JsonResponse({
                 "success": False,
-                "message": "User đã tồn tại"
+                "message": "Username already existed"
             })
         else :
             User.objects.create_user(username = username, password = password)
             return JsonResponse({
                 "success": True,
-                "message": "Đã đăng ký thành công"
+                "message": "Register Successful"
             })
             
     except Exception as e:

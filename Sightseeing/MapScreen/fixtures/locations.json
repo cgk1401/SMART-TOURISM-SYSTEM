@@ -3,10 +3,10 @@
         "pk": 1,
         "model": "MapScreen.location",
         "fields":{
-            "name": "Ben Thanh market",
+            "name": "Chợ Bến Thành",
             "latitude": 10.7725168,
             "longtitude": 106.6980208,
-            "description": "Iconic market selling souvenirs and local food in the center of HCMC",
+            "description": "Chợ nổi tiếng ở trung tâm thành phố Hồ Chí Minh",
             "image_path": "/static/images/Cho_Ben_Thanh.jpg"
         }
     },
@@ -15,10 +15,10 @@
         "pk": 2,
         "model" : "MapScreen.location",
         "fields":{
-            "name": "Notre-Dame Cathedral of Saigon",
+            "name": "Nhà Thờ Đức Bà",
             "latitude": 10.7797855,
             "longtitude": 106.6990189,
-            "description": "French-built cathedral with twin bell towers",
+            "description": "Biểu tượng kiến trúc cổ kính giữa trung tâm TP.HCM, nổi bật với hai tháp chuông và gạch đỏ Pháp.",
             "image_path": "/static/images/Nha_Tho_Duc_Ba.jpg"
         }
     },
@@ -27,10 +27,10 @@
         "pk": 3,
         "model" : "MapScreen.location",
         "fields":{
-            "name": "Independence Palace",
+            "name": "Dinh Độc Lập",
             "latitude": 10.7769942,
             "longtitude": 106.6953021,
-            "description": "Historic building showcasing presidential rooms and war command bunkers reflecting Vietnam's political changes and important events during the twentieth century.",
+            "description": "Di tích lịch sử nổi tiếng, từng là dinh Tổng thống Việt Nam Cộng hòa, nay là điểm tham quan trung tâm TP.HCM.",
             "image_path": "/static/images/Dinh_Doc_Lap.jpg"
         }
     },
