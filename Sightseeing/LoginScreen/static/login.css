@@ -27,10 +27,10 @@ body {
 /* Background Image */
 .background-img {
     position: absolute;
-    height: 982px;
+    height: 741px;
     left: 0;
     top: 0;
-    width: 1512px;
+    width: 1540px;
 }
 
 .background-wrapper {
@@ -88,11 +88,11 @@ body {
 .login-frame {
     position: absolute;
     background-color: white;
-    height: 848px;
+    height: 720px;
     left: calc(50% + 49px);
     overflow: clip;
     border-radius: 30px;
-    top: 67px;
+    top: 10px;
     width: 627px;
 }
 

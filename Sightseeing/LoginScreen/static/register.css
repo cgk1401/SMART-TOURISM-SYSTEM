@@ -9,10 +9,6 @@ input::-ms-reveal {
     box-sizing: border-box;
 }
 
-input::-ms-reveal {
-  display: none;
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -31,10 +27,10 @@ body {
 /* Background Image */
 .image-77 {
     position: absolute;
-    height: 982px;
+    height: 741px;
     left: 0;
     top: 0;
-    width: 1512px;
+    width: 1540px;
 }
 
 .image-wrapper {
@@ -72,7 +68,7 @@ body {
     font-style: normal;
     font-size: 48px;
     color: white;
-    top: 491px;
+    top: 470px;
     transform: translateY(-50%);
     width: 725px;
 }
@@ -85,11 +81,11 @@ body {
 .login-box {
     position: absolute;
     background-color: white;
-    height: 848px;
+    height: 720px;
     left: calc(50% + 49px);
     overflow: clip;
     border-radius: 30px;
-    top: 67px;
+    top: 10px;
     width: 627px;
 }
 
