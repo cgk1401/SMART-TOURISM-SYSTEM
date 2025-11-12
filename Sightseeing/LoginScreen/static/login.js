@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
     loginbtn.addEventListener("click", async()=> {
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const password = document.getElementById("passwordInput").value.trim();
         const msg = document.getElementById("message");
         msg.textContent = "";
 
         if (!username || !password){
             msg.style.color = "red";
-            msg.textContent = "Thiếu username hoặc password";
+            msg.textContent = "Username or password missing";
             return;
         }
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         } catch(err){
             msg.style.color = "red";
-            msg.textContent = "Lỗi kết nối";
+            msg.textContent = "Connection error";
         }
     })
 })

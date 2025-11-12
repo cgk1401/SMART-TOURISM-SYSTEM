@@ -1,46 +1,677 @@
-.login-page main {
-    min-height: 70vh;           
-    display: grid;
-    place-items: center;         
-    padding: 40px 16px;       
+input::-ms-reveal {
+    display: none;
 }
 
-.login-container { 
-    width: 100%; 
-    max-width: 400px; 
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.login-card {
-    background: #fff;
-    border: 1px solid #a1bab9;
-    border-radius: 12px;
-    padding: 32px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
-input {
+/* Main Container */
+.login-page {
+    background-color: white;
+    position: relative;
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #a1bab9;
-    border-radius: 8px;
+    height: 100%;
+    min-height: 100vh;
 }
 
-button {
+/* Background Image */
+.background-img {
+    position: absolute;
+    height: 741px;
+    left: 0;
+    top: 0;
+    width: 1540px;
+}
+
+.background-wrapper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.background-image {
+    position: absolute;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 50%;
     width: 100%;
-    padding: 10px;
-    border: 0;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #5de0e6, #004aad);
-    color: #fff;
-    font-weight: 700;
+    height: 100%;
+}
+
+.background-overlay {
+    position: absolute;
+    background-color: rgba(5, 23, 33, 0.42);
+    inset: 0;
+}
+
+/* Team Name */
+.team-name-wrapper {
+    position: absolute;
+    display: contents;
+    left: 31px;
+    top: 438.81px;
+}
+
+.team-name {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-weight: 600;
+    height: 62.379px;
+    justify-content: center;
+    line-height: 0;
+    left: 31px;
+    font-style: normal;
+    font-size: 48px;
+    color: white;
+    top: 470px;
+    transform: translateY(-50%);
+    width: 725px;
+}
+
+.team-name p {
+    line-height: normal;
+}
+
+/* Login Frame */
+.login-frame {
+    position: absolute;
+    background-color: white;
+    height: 720px;
+    left: calc(50% + 49px);
+    overflow: clip;
+    border-radius: 30px;
+    top: 10px;
+    width: 627px;
+}
+
+/* Functional Frame */
+.functional-frame {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: flex-start;
+    left: 58px;
+    top: 177px;
+    width: 512px;
+}
+
+/* Login Header */
+.login-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    line-height: normal;
+    position: relative;
+    flex-shrink: 0;
+    white-space: nowrap;
+    width: 100%;
+    white-space: pre;
+}
+
+.login-title {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    position: relative;
+    flex-shrink: 0;
+    color: #051721;
+    font-size: 40px;
+}
+
+.login-subtitle {
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    opacity: 0.75;
+    position: relative;
+    flex-shrink: 0;
+    color: #37454d;
+    font-size: 16px;
+}
+
+/* Login Space */
+.login-space {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: flex-start;
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+/* Fields */
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-start;
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+/* Text Field */
+.text-field {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    position: relative;
+    border-radius: 4px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.field-border {
+    position: absolute;
+    border: 1px solid #9ba2a6;
+    border-style: solid;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+/* State Layer */
+.state-layer {
+    position: relative;
+    border-radius: 4px 4px 0 0;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.state-layer-password {
+    height: 56px;
+}
+
+.state-layer-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.state-layer-content {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    position: relative;
+    width: 100%;
+}
+
+.state-layer-content-password {
+    height: 56px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+/* Content */
+.content {
+    flex-basis: 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 1px;
+    min-width: 1px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Input Text */
+.input-text {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.input-text-inner {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    justify-content: center;
+    line-height: 0;
+    position: relative;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: rgba(5, 23, 33, 0.6);
+    white-space: nowrap;
+    width: 100%;
+}
+
+.password-input-inner {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.input-text-inner p {
+    line-height: normal;
+    white-space: pre;
+}
+
+/* Input Field */
+.input-field {
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    color: #051721;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 0;
+    line-height: normal;
+}
+
+.input-field::placeholder {
+    color: rgba(5, 23, 33, 0.6);
+}
+
+/* Label Text */
+.label-text {
+    position: absolute;
+    background-color: white;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    left: -4px;
+    padding: 0 4px;
+    top: -16px;
+}
+
+.label-text p {
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    line-height: normal;
+    position: relative;
+    flex-shrink: 0;
+    color: #051721;
+    font-size: 14px;
+    white-space: nowrap;
+    white-space: pre;
+}
+
+/* Trailing Icon */
+.trailing-icon {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    position: relative;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
     cursor: pointer;
-    transition: .3s;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
 
-button:hover { background: linear-gradient(90deg, #000, #3533cd); }
+.trailing-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
 
-.signup-link { text-align: center; margin-top: 16px; }
-.signup-link a { color: #4f9eb1; }
-.signup-link a:hover { color: #3533cd; }
+.eye-icon {
+    width: 24px;
+    height: 24px;
+    color: #051721;
+}
 
+/* Frame 1 (Remember Me & Forgot Password) */
+.frame1 {
+    display: flex;
+    gap: 252px;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.frame {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Checkbox */
+.checkbox-wrapper {
+    position: relative;
+    width: 18px;
+    height: 18px;
+}
+
+.checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.checkbox-visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #9ba2a6;
+    border-radius: 2px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.checkbox:checked + .checkbox-visual {
+    background-color: #276968;
+    border-color: #276968;
+}
+
+.checkbox:checked + .checkbox-visual::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.remember-text {
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    line-height: normal;
+    position: relative;
+    flex-shrink: 0;
+    color: #37454d;
+    font-size: 14px;
+    white-space: nowrap;
+    white-space: pre;
+}
+
+.forgot-password {
+    flex-basis: 0;
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    flex-grow: 1;
+    line-height: normal;
+    min-height: 1px;
+    min-width: 1px;
+    position: relative;
+    flex-shrink: 0;
+    color: #ff6f6b;
+    font-size: 14px;
+    text-align: right;
+}
+
+/* Frame 2 (Button & Sign Up) */
+.frame2 {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.button-wrapper {
+    width: 100%;
+    border: 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+/* hover effect */
+.button-wrapper .style-layer-inner {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.button-wrapper p {
+    margin: 0;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.button-wrapper:hover {
+    background: #45a049;
+}
+
+.button-wrapper:hover p {
+    color: #f0f0f0;
+}
+
+.button-wrapper:hover .style-layer-inner {
+    transform: scale(1.05); 
+}
+/* end hover effect */
+.style-layer {
+    background-color: #276968;
+    height: 48px;
+    position: relative;
+    border-radius: 4px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.style-layer-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.style-layer-content {
+    box-sizing: border-box;
+    display: flex;
+    gap: 4px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    position: relative;
+    width: 100%;
+}
+
+.style-layer-content p {
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    line-height: normal;
+    position: relative;
+    flex-shrink: 0;
+    font-size: 16px;
+    white-space: nowrap;
+    color: white;
+    white-space: pre;
+}
+
+/* Sign Up Text */
+.signup-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    line-height: normal;
+    min-width: 100%;
+    position: relative;
+    flex-shrink: 0;
+    color: #37454d;
+    font-size: 14px;
+    text-align: center;
+    width: min-content;
+}
+
+.signup-normal {
+    font-family: 'Karla', sans-serif;
+}
+
+.signup-link {
+    font-family: 'Karla', sans-serif;
+    color: #ff6f6b;
+}
+
+/* Responsive Design */
+@media (max-width: 1600px) {
+    .login-frame {
+        left: calc(50% + 20px);
+    }
+}
+
+@media (max-width: 1400px) {
+    .background-img {
+        width: 100%;
+    }
+    
+    .team-name {
+        width: 600px;
+        font-size: 40px;
+    }
+    
+    .login-frame {
+        left: auto;
+        right: 40px;
+        width: 550px;
+        height: 750px;
+    }
+    
+    .functional-frame {
+        width: 450px;
+        left: 50px;
+        top: 140px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .team-name {
+        width: 500px;
+        font-size: 36px;
+        left: 20px;
+    }
+    
+    .team-name-wrapper {
+        left: 20px;
+    }
+    
+    .login-frame {
+        right: 20px;
+        width: 500px;
+    }
+    
+    .functional-frame {
+        width: 400px;
+        left: 50px;
+    }
+    
+    .frame1 {
+        gap: 150px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .background-img {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .team-name-wrapper {
+        display: none;
+    }
+    
+    .login-frame {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        width: 100%;
+        max-width: 550px;
+        height: auto;
+        margin: 20px auto;
+    }
+    
+    .functional-frame {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: 100%;
+        padding: 40px 30px;
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-frame {
+        max-width: 100%;
+        border-radius: 20px;
+    }
+    
+    .functional-frame {
+        padding: 30px 20px;
+        gap: 30px;
+    }
+    
+    .login-title {
+        font-size: 32px;
+    }
+    
+    .frame1 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .forgot-password {
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-frame {
+        border-radius: 15px;
+    }
+    
+    .functional-frame {
+        padding: 20px 15px;
+        gap: 25px;
+    }
+    
+    .login-title {
+        font-size: 28px;
+    }
+    
+    .login-subtitle {
+        font-size: 14px;
+    }
+}
