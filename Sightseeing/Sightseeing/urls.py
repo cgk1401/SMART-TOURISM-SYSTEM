@@ -25,4 +25,5 @@ urlpatterns = [
     path('PreferenceScreen/', include('PreferenceScreen.urls')),
     path('chat/', include('ChatBoxAI.urls')),
     path('Discover/', include('Discover.urls')),
+    path('MainScreen/RouteScreen/', include('RouteScreen.urls')),
 ]

@@ -1,0 +1,47 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block title %} Route Screen {% endblock %}
+
+{% block body_class %} route {% endblock %}
+
+{% block extra_css %}
+    <link rel = "stylesheet" href = "{% static 'Route.css' %}" >
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+    <div class = "route-container">
+        <aside class = "trip-panel">
+            <div class = "trip-header">
+                <img src = "{% static 'images/Cho_Ben_Thanh.jpg' %}" alt = "Trip-banner">
+                <div class = "trip-title">
+                    <h1> Tên mặc định </h1>
+                    <p> 11/11 - 14/11 </p>
+                </div>
+            </div>
+
+            <section class="trip-section">
+                <h2> Destination </h2>
+                <div class="flight-card">
+                    <div class="flight-route">
+                        <h3> Test → Test</h3>
+                        <p> Time </p>
+                        <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
+                    </div>
+                </div>
+            </section>
+        </aside> 
+
+        <div id="map"></div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+    <script src="https://unpkg.com/@mapbox/polyline@1.2.1/src/polyline.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src = "{% static 'Route.js' %}"> </script>
+{% endblock %}
