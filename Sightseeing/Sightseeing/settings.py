@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'MainScreen',
     'MapScreen',
     'PreferenceScreen',
-    'ChatBoxAI'
+    'ChatBoxAI',
+    'Discover'
 ]
 
 MIDDLEWARE = [

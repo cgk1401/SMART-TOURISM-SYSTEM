@@ -1,0 +1,92 @@
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* cho ảnh phủ đủ màn hình*/
+    overflow: hidden;
+}
+
+.hero__img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* giữ tỉ lệ ảnh crop tự nhiên không méo */
+    object-position: center; /*giữ phần trung tâm của ảnh*/
+    z-index: -1;
+}
+
+.hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.hero__content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    font-family: "Montserrat Alternates", sans-serif; /*font cho nội dung chữ bên trong*/
+}
+
+.hero__content h1 {
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.hero__content p {
+    font-size: clamp(14px, 1.8vw, 18px);
+    opacity: 0.9;
+}
+
+.custom-trip-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.custom-trip-card {
+    background-color: #276968;
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    border-radius: 20px;
+    max-width: 1400px;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.custom-trip-card .small-text {
+    font-family: "Karla", sans-serif;
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.custom-trip-card .main-text {
+    font-family: "Montserrat Alternates", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.customize-btn {
+    background-color: #fff;
+    color: #386a6c;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Karla", sans-serif;
+}
+
+.customize-btn:hover {
+    background-color: #e8f1f0;
+    transform: scale(1.05);
+}

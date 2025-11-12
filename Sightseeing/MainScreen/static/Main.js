@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(){
-    const homebutton = document.getElementById("ButtonHome");
+    const customizeButton = document.querySelector(".customize-btn");
 
-    homebutton.addEventListener("click", e => {
-        e.preventDefault();
-        window.location.href = window.location.href;
+    customizeButton.addEventListener("click", ()=> {
+        window.location.href = "/PreferenceScreen/";
     })
 })

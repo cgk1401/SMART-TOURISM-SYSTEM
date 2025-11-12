@@ -1,12 +1,15 @@
+{% extends "common/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
 
-    <link rel="stylesheet" href="{% static 'register.css' %}">
-</head>
-<body>
+{% block title%} Register - GOST {% endblock %}
+
+{% block body_class %} register-page {% endblock %}
+
+{% block extra_css %}
+<link rel = "stylesheet" href = "{% static 'register.css' %}">
+{% endblock %}
+
+{% block content %}
     <div class="register-container">
         <div class="register-card">
             <h2> Register </h2>
@@ -18,9 +21,10 @@
             <p class="signin-link">Have an account? <a href="/">Login</a></p>
         </div>
     </div>
+{% endblock %}
 
+{% block extra_js %}
     <script src="" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
     <script src = "{% static 'register.js' %}" > </script>
-</body>
-</html>
+{% endblock %}

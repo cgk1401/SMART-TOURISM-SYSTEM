@@ -2,7 +2,7 @@ let PLACES = []
 
 axios.get('/MainScreen/MapScreen/full_location/',{
     params: {
-        near_id: 2,
+        near_id: 2531662,
         r_km: 1,
         limit: 10,
     }
