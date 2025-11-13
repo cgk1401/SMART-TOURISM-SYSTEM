@@ -31,6 +31,7 @@ urlpatterns = [
     path('chat/', include('ChatBoxAI.urls')),
     path('Discover/', include('Discover.urls')),
     path('account/', include('AccountScreen.urls')),
+    path('MainScreen/RouteScreen/', include('RouteScreen.urls')),
 ]
 
 if settings.DEBUG:

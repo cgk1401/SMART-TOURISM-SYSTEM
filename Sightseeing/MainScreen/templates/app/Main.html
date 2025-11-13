@@ -12,15 +12,110 @@
 
 {% block content %}
     <header class="hero">
-    <img class="hero__img" src="{% static 'images/image_page.jpg' %}" alt="City night skyline">
-    <div class="hero__overlay"></div>
+    <img class = "hero__img" src = "{% static 'images/image_page.jpg' %}" alt="City night skyline">
+    <div class = "hero__overlay"> </div>
 
     <div class="hero__content">
-        <h1 >Plan now. Travel tomorrow </h1>
-        <p>Make your one-day trip plan easier than ever.</p>
+        <h1> Plan now. <br/> Travel tomorrow. </h1>
+        <p> Make your one-day trip plan easier than ever.</p>
     </div>
 
     </header>
+
+        <!-- Top Destinations -->
+    <section class="destinations">
+        <div class="destinations__header">
+            <p class="destinations__eyebrow">Top Destinations</p>
+            <h2 class="destinations__title">Discover your love</h2>
+        </div>
+
+      <div class="destinations__grid">
+        <!-- 1 -->
+        <a class = "card" data-id = "">
+            <div class = "card__image" >
+                <img src = "{% static 'images/Giga_Mall.jpg' %}" alt="Giga_Mall">
+            </div>
+            <div class = "card__body">
+                <h3 class = "card__title"> Giga_Mall </h3>
+                <p class = "card__meta"> Ho Chi Minh City </p>
+            </div>
+        </a>
+
+        <!-- 2 -->
+        <a class = "card" data-id = "">
+            <div class = "card__image">
+                <img src = "{% static 'images/Dinh_Doc_Lap.jpg' %}" alt="Dinh_Doc_Lap">
+            </div>
+            <div class = "card__body">
+                <h3 class = "card__title"> Independence Palace </h3>
+                <p class = "card__meta">Ho Chi Minh City</p>
+            </div>
+        </a>
+
+        <!-- 3 -->
+        <a class = "card" data-id = "">
+            <div class = "card__image">
+                <img src = "{% static 'images/Duong_Sach.jpg' %}" alt="Duong_Sach">
+            </div>
+            <div class = "card__body">
+                <h3 class = "card__title"> Ho Chi Minh City Book Street </h3>
+                <p class = "card__meta"> Ho Chi Minh City </p>
+            </div>
+        </a>
+
+        <!-- 4 -->
+        <a class = "card" data-id = "39514795">
+            <div class = "card__image">
+                <img src = "{% static 'images/Cho_Ben_Thanh.jpg' %}" alt="Ben Thanh market">
+            </div>
+            <div class = "card__body">
+                <h3 class = "card__title"> Ben Thanh Market </h3>
+                <p class = "card__meta"> Ho Chi Minh City </p>
+            </div>
+            </a>
+      </div>
+    </section>
+
+    <section class = "recommended">
+        <p class="recommended__eyebrow">Don't find them attractive?</p>
+        <h2 class="recommended__title">More recommended routes</h2>
+
+        <div class = "recommended__list">
+            <div class = "route-card" 
+                data-name = "Giga_Mall"
+                
+                >
+                <img src = "{% static 'images/Giga_Mall.jpg' %}" alt = "Route 1" class = "route-card__img">
+                <div class = "route-card__content">
+                    <h3 class = "route-card__title"> Recommend Route 1 </h3>
+                    <p class = "route-card__info"> 3 stop . 4 - 5 hours </p>
+                    <p class = "route-card_desc"> Giga_Mall ⭢ Giga_Mall </p>
+                </div>
+            </div>
+
+            <div class = "route-card"
+                data-name = "Independence Place"
+                >
+                <img src = "{% static 'images/Cho_Ben_Thanh.jpg' %}" alt = "Route 2" class = "route-card__img">
+                <div class = "route-card__content">
+                    <h3 class = "route-card__title"> Recommend Route 2 </h3>
+                    <p class = "route-card__info"> 4 stop . 5 - 6 hours </p>
+                    <p class = "route-card__desc"> Ben Thanh Market ⭢ Independence Place </p>
+                </div>
+            </div>
+
+            <div class = "route-card"
+                data-name = "Book Street"
+                >
+                <img src = "{% static 'images/Duong_Sach.jpg' %}" alt = "Route 2" class = "route-card__img">
+                <div class = "route-card__content">
+                    <h3 class = "route-card__title"> Recommend Route 2 </h3>
+                    <p class = "route-card__info"> 4 stop . 5 - 6 hours </p>
+                    <p class = "route-card__desc"> Book Street ⭢ Independence Place </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <section class = "custom-trip-section">
         <div class = "custom-trip-card">
@@ -30,9 +125,6 @@
         </div>
     </section>
 
-
-    
-    <a href = "MapScreen/"> Go to map </a>
 
 {% endblock %}
 

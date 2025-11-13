@@ -1,38 +1,41 @@
 .login-page main {
-  min-height: 70vh;           
-  display: grid;
-  place-items: center;         
-  padding: 40px 16px;       
+    min-height: 70vh;           
+    display: grid;
+    place-items: center;         
+    padding: 40px 16px;       
 }
 
-.login-container { width: 100%; max-width: 400px; }
+.login-container { 
+    width: 100%; 
+    max-width: 400px; 
+}
 
 .login-card {
-  background: #fff;
-  border: 1px solid #a1bab9;
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+    background: #fff;
+    border: 1px solid #a1bab9;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
 }
 
 input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #a1bab9;
-  border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #a1bab9;
+    border-radius: 8px;
 }
 
 button {
-  width: 100%;
-  padding: 10px;
-  border: 0;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #5de0e6, #004aad);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .3s;
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #5de0e6, #004aad);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .3s;
 }
 
 button:hover { background: linear-gradient(90deg, #000, #3533cd); }
@@ -40,3 +43,4 @@ button:hover { background: linear-gradient(90deg, #000, #3533cd); }
 .signup-link { text-align: center; margin-top: 16px; }
 .signup-link a { color: #4f9eb1; }
 .signup-link a:hover { color: #3533cd; }
+
