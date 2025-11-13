@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'PreferenceScreen',
     'ChatBoxAI',
     'Discover',
-    'AccountScreen',
 ]
 
 MIDDLEWARE = [
