@@ -32,45 +32,97 @@
     margin-bottom: 10px;
 }
 
+.container {
+    display: flex;
+    width: 100%;
+}
 .description {
+    width: 60%;
+    float: left;
     position: relative;
     margin-top: 50px;
     margin-left: 50px;
-    margin-right: 500px;
+    margin-right: 50px;
     margin-bottom: 50px;
 }
 
 #content02 {
     display: none;
 }
+#content03 {
+    display: none;
+}
+#content04 {
+    display: none;
+}
 
+.right-column {
+    width: 33%;
+    float: right;
+}
 .map {
-    position: absolute;
-    margin-left: 1000px;
-    margin-top: -450px;
+    position: relative;
+    margin-left: 10px;
+    margin-top: 10px;
     margin-bottom: 50px;
     width: 400px;
-    padding-left: 50px;
+    padding-left: 10px;
     padding-right: 50px;
     padding-top: 50px;
     padding-bottom: 50px;
 }
 .map img {
-    width: 400px;
-    height: 280px;
+    width: 100%;
+    height: 100%;
 }
 .map h3 {
     text-align: center;
 }
 
 .slideshow {
-    margin-left: 1000px;
+    margin-left: 10px;
+}
+#place01 {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place01 img {
+    object-fit: contain;
+    width: 60%;
+    height: 60%;
+}
+#place02 {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place02 img {
+    object-fit: contain;
+    width: 60%;
+    height: 60%;
 }
 #place03 {
     padding-top: 10px;
     padding-left: 10px;
 }
 #place03 img {
+    object-fit: contain;
+    width: 60%;
+    height: 60%;
+}
+#place04 {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place04 img {
+    object-fit: contain;
+    width: 60%;
+    height: 60%;
+}
+#place05 {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place05 img {
     object-fit: contain;
     width: 60%;
     height: 60%;
