@@ -10,9 +10,52 @@
 {% endblock %}
 
 {% block content %}
-    <h1> Discover page </h1>
+    <header class="hero">
+    <img class="hero__img" src="{% static 'images/Discover.jpg' %}" alt="Vietnam HCMC">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+        <h1 >Discover</h1>
+    </div>
+    </header>
+
+    <div class="description">
+        <div class="content" id="content1">
+            <h2>Independence Palace</h2>
+            <p>
+                On June 25, 1976, the Independence Palace was recognized as a National Cultural and Historical Relic (77A/VHQD Decision). It was then designated a National Special Relic on August 12, 2009 by Vietnam’s Prime Minister (1272/QD-TTg Decision). The Independence Palace is among Vietnam’s first ten special national relics.
+                <br>
+                Reunification Hall is the management agency for the Independence Palace. Pursuant to Decision 709/QĐ-VPCP dated June 14, 2013 by the Minister, Chairman of the Government Office, Reunification Hall is a state-run business unit tasked with Palace management and preservation; as well as serving delegations attending government, Party, and State meetings, conferences, and other functions.
+            </p>
+            <img src="{% static 'images/Independence_Palace.jpg' %}" alt="Independence Palace (Dinh Doc Lap)">
+        </div>
+        <div class="content" id="content02">
+            <h2>War Remnants Museum</h2>
+            <p>
+                The War Remnants Museum, established on September 4, 1975, is a member of the Vietnam Museum System, INMP and ICOM. The museum specializes in researching, collecting, preserving and displaying evidence of crimes and consequences of the war of aggression against Vietnam, thereby calling for awareness against unjust wars, protecting peace and promoting solidarity between nations. With 9 permanent exhibition themes, many short-term, mobile exhibitions and activities to interact with war witnesses, the Museum welcomes nearly 1 million visitors each year and is a cultural - tourism destination that attracts a large number of domestic and foreign public.
+            </p>
+            <img src="{% static 'images/War_Remnants_Museum.jpg' %}" alt="War Remnants Museum (Bao tang chung tich chien tranh)">
+        </div>
+
+    </div>
+
+    <div class="map">
+        <h3>Choose your place</h3>
+        <img src="{% static 'images/tmp_map.png' %}" alt="map saigon">
+    </div>
+
+    <div class="slideshow">
+        <h2>Others</h2>
+        <div class="places" id="place03">
+            <h3>Suoi Tien Amusement Park</h3>
+            <img src="{% static 'images/tmp_suoitien.jpg' %}" alt="suoitien">
+            <p>Ho Chi Minh city</p>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 
 {% block extra_js %}
+            <script src = "{% static 'discover.js' %}" > </script>
 {% endblock %}
