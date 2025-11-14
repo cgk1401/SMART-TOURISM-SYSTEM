@@ -1,46 +1,275 @@
-.login-page main {
-    min-height: 70vh;           
-    display: grid;
-    place-items: center;         
-    padding: 40px 16px;       
+/* =========================
+   GLOBAL & BACKGROUND/// LOGIN
+========================= */
+
+input::-ms-reveal {
+    display: none;
 }
 
-.login-container { 
-    width: 100%; 
-    max-width: 400px; 
-}
-
-.login-card {
-    background: #fff;
-    border: 1px solid #a1bab9;
-    border-radius: 12px;
-    padding: 32px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #a1bab9;
-    border-radius: 8px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    border: 0;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #5de0e6, #004aad);
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat Alternates', sans-serif;
     color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    transition: .3s;
+    overflow: hidden;
 }
 
-button:hover { background: linear-gradient(90deg, #000, #3533cd); }
+/* Background */
+.background-container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
 
-.signup-link { text-align: center; margin-top: 16px; }
-.signup-link a { color: #4f9eb1; }
-.signup-link a:hover { color: #3533cd; }
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
+.background-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+/* TAGLINE */
+
+.team-name {
+    position: fixed;
+    top: 40%;
+    left: 5%;
+    max-width: 60%;
+    width: auto;
+    text-align: left;
+    z-index: 5;
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+
+.team-name p {
+    font-size: clamp(24px, 4vw + 1rem, 48px);
+    font-family: "Montserrat Alternates", sans-serif;
+    opacity: 0.9;
+    margin: 0;
+}
+/* Responsive team-name */
+@media (max-width: 1400px) {
+    .team-name p { font-size: 42px; max-width: 600px; top: 38%; }
+}
+@media (max-width: 1200px) {
+    .team-name p { font-size: 36px; max-width: 500px; top: 35%; left: 3%; }
+}
+@media (max-width: 1024px) {
+    .team-name { display: none; }
+}
+
+/* =========================
+   LOGIN / FRAME
+========================= */
+
+.login-frame {
+    position: absolute;
+    left: 70%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 520px);
+    padding: 40px 40px 10%;
+    border-radius: 22px;
+
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+
+    z-index: 10;
+}
+
+/* Header */
+
+.login-header {
+    margin-bottom: 35px;
+}
+
+.login-title {
+    font-size: 38px;
+    font-family: "Montserrat Alternates", sans-serif;
+    margin: 0;
+    padding-top: 10%;
+}
+
+.login-subtitle {
+    opacity: 0.85;
+    margin-top: 6px;
+    margin-bottom: 10%;
+    font-family: 'Karla', sans-serif;
+}
+
+/* Input Group */
+
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 16px 15px;
+    font-size: 16px;
+    color: #fff;
+
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    outline: none;
+    box-sizing: border-box;
+}
+
+.input-field::placeholder {
+    color: transparent;
+}
+
+.input-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: 0.25s ease;
+}
+
+.input-field:focus + label,
+.input-field:not(:placeholder-shown) + label {
+    top: 4px;
+    font-size: 12px;
+    opacity: 0.9;
+}
+/* Password Toggle */
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.toggle-password:hover {
+    color: #fff;
+}
+
+/* Login Button */
+
+.login-button {
+    width: 100%;
+    padding: 15px 0;
+    margin-top: 2%;
+
+    background: #0C7C78;
+    color: white;
+
+    font-size: 17px;
+    font-family: "Montserrat", sans-serif;
+
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.login-button:hover {
+    background: #0a615e;
+}
+
+/* Sign up Text */
+.signup-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.signup-link {
+    color: #ff6f6b;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVENESS
+========================= */
+
+@media (max-width: 1024px) {
+    .login-frame {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: min(90%, 500px);
+        padding: 30px 30px 10%;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-frame {
+        padding: 25px 20px 10%;
+    }
+    .login-title {
+        font-size: 32px;
+    }
+    .login-subtitle {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-frame {
+        padding: 20px 15px 10%;
+        border-radius: 15px;
+    }
+    .login-title {
+        font-size: 28px;
+    }
+}
+
+
+@media (max-width: 1920) {
+    .team-name { max-width: 55%; }
+}
+
+@media (max-width: 1700px) {
+    .team-name { max-width: 45%; }
+}
+
+/* Hide completely on small mobile screens if needed */
+@media (max-width: 1200px) {
+    .team-name { display: none; }
+}
+
+/* =========================
+   MESSAGE
+========================= */
+.message-frame {
+    font-family: "Montserrat Alternatives", sans-serif;
+    color: red;
+}

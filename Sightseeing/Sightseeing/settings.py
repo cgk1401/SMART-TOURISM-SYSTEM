@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'ChatBoxAI',
     'Discover',
     'RouteScreen',
+    'AboutUs'
 ]
 
 MIDDLEWARE = [
