@@ -19,9 +19,9 @@
 /* 2. KIỂU DÁNG VĂN BẢN (tab-text) */
 .tab-text {
     /* Kiểu dáng chung (từ font-size, font-family, font-weight) */
-    font-size: 20px;
+    font-size: 25px;
     font-family: 'Karla', sans-serif;
-    font-weight: 500;
+    font-weight: bold;
     letter-spacing: 0.10px;
     
     /* Màu mặc định (cho các tab KHÔNG active, như tab History) */
@@ -119,6 +119,15 @@
     width: 100%; 
 }
 
+#account-info-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 41px; 
+    width: 100%; 
+}
+
+
 /* Khối chứa một hàng thông tin duy nhất (.account-row) */
 .account-row {
     width: 100%;
@@ -210,3 +219,74 @@
             font-family: 'Montserrat Alternates', sans-serif;
             text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
+
+/* Định kiểu cho Profile chi tiết */
+.Profile_details{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Định kiểu cho phần đầu Profile */
+.Profile_details_header {
+    /* Sử dụng Flexbox để căn giữa nội dung theo chiều dọc */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa theo chiều ngang (trục chính) */
+    
+    /* Thêm khoảng cách nếu cần */
+    padding-bottom: 20px; 
+}
+
+
+/* Định kiểu cho "Member Since" */
+.member-since {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+
+.profile-divider {
+    /* Quan trọng: Thiết lập đường kẻ */
+    border: none; /* Loại bỏ đường viền mặc định của thẻ <hr> */
+    border-top: 1px solid #D7E2EE; /* Tạo đường kẻ mỏng màu xám nhạt */
+    
+    /* Thiết lập kích thước và vị trí */
+    width: 100%; /* Đảm bảo đường kẻ kéo dài toàn bộ chiều rộng của khối Profile_details */
+    margin: 15px 0; /* Thêm khoảng cách (margin) trên và dưới đường kẻ */
+}
+
+/* Định kiểu cho phần about Profile */
+.Profile_details_about {
+    /* Sắp xếp tiêu đề và các hàng thông tin */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các hàng thông tin */
+    
+    padding-top: 10px; /* Khoảng cách từ đường kẻ */
+}
+
+/* Tiêu đề "About me" */
+.Profile_details_about h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
+}
+
+/* Định kiểu cho từng hàng thông tin (icon + text) */
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa icon và text */
+    font-size: 16px;
+    color: #051721;
+}
+
+/* Định kiểu cho Icon (nếu là chữ/emoji) */
+.info-row i {
+    font-size: 18px; /* Đảm bảo icon lớn hơn một chút */
+    color: #333; /* Màu sắc icon */
+}

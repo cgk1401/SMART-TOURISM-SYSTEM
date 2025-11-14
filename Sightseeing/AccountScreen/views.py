@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Profile
 import json
+from datetime import datetime
 
 
 # Minimal account views for AccountScreen app.
@@ -84,35 +86,93 @@ def history(request):
 @login_required
 def account_view(request):
     """
-    Handles both account display (GET) and avatar upload (POST).
-    This view replaces the functionality of the old 'index' view.
+    Handles account display (GET), avatar upload (POST form-data), 
+    and general profile updates (POST JSON via AJAX).
     """
     user = request.user
-    # 1. Create profile if not exists
-    Profile.objects.get_or_create(user=user)
+    profile, created = Profile.objects.get_or_create(user=user)
 
-    # 2. Handle Avatar Upload (POST request)
-    if request.method == 'POST' and 'avatar' in request.FILES:
-        request.user.profile.avatar = request.FILES['avatar']
-        request.user.profile.save()
-        messages.success(request, 'Avatar updated!')
-        # CHỈNH SỬA: Dùng 'AccountScreen:account' để đảm bảo chuyển hướng đúng
-        return redirect('AccountScreen:account') 
+    # --- 1. Xử lý yêu cầu POST ---
+    if request.method == 'POST':
+        
+        # A. Xử lý Avatar Upload (form-data)
+        if 'avatar' in request.FILES:
+            profile.avatar = request.FILES['avatar']
+            profile.save()
+            messages.success(request, 'Avatar updated!')
+            return redirect('AccountScreen:account')
+        
+        # B. Xử lý Cập nhật Thông tin AJAX (JSON)
+        try:
+            # Nếu không phải là form-data, giả định là JSON từ AJAX
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            # Nếu không phải JSON hợp lệ, có thể là lỗi hoặc POST form khác
+            # Trường hợp này có thể xảy ra nếu bạn cố gắng dùng POST form cho update_profile
+            return HttpResponseBadRequest("Invalid JSON or unsupported content type.")
+        
+        
+        changed_fields = []
+        
+        # Lặp qua các trường được gửi đến
+        for field, value in data.items():
+            
+            # Xử lý giá trị 'Not set' thành None/trống
+            new_value = value.strip() if isinstance(value, str) else value
+            new_value = None if new_value == 'Not set' or new_value == '' else new_value
+            
+            is_user_field = field in ['email', 'first_name', 'last_name']
+            is_profile_field = field in ['phone_number', 'address', 'date_of_birth']
 
-    # 3. Prepare User Data for Template (GET request or after POST)
-    user_data = {
-        'name': f"{user.first_name} {user.last_name}" if user.first_name or user.last_name else user.username,
-        'email': user.email if user.email else "Not set",
-        'username': user.username
-    }
-    user_data_json = json.dumps(user_data)
-    
-    # 4. Render the page
-    return render(request, 'app/account.html', {'user_data_json': user_data_json})
+            if is_user_field:
+                if getattr(user, field) != new_value:
+                    setattr(user, field, new_value)
+                    changed_fields.append(field)
+            
+            elif is_profile_field:
+                if field == 'date_of_birth' and new_value:
+                    try:
+                        # Chuyển đổi chuỗi ngày (d/m/Y) thành đối tượng date
+                        new_value = datetime.strptime(new_value, '%d/%m/%Y').date()
+                    except ValueError:
+                        return JsonResponse({'error': 'Invalid date format. Use DD/MM/YYYY.'}, status=400)
+                
+                if getattr(profile, field) != new_value:
+                    setattr(profile, field, new_value)
+                    changed_fields.append(field)
+            
+            # (Không cần xử lý password ở đây vì lý do bảo mật)
+            # Nếu có trường không hợp lệ, bạn có thể bỏ qua hoặc trả lỗi 400
+
+        if changed_fields:
+            user.save()
+            profile.save()
+            return JsonResponse({'success': True, 'message': 'Profile updated successfully.'})
+        else:
+            return JsonResponse({'success': True, 'message': 'No changes detected.'})
 
 
-@login_required
-def history_view(request):
-    # CHÚ Ý: View này có vẻ dư thừa vì bạn đã có view 'history' ở trên.
-    # Nếu bạn giữ cả hai, hãy đảm bảo chỉ có một được sử dụng trong urls.py.
-    return render(request, 'app/history.html')
+    # --- 2. Xử lý yêu cầu HIỂN THỊ (GET) ---
+    else:
+        # Lấy thông tin từ User và Profile để chuẩn bị JSON
+        
+        # Định dạng ngày sinh cho JavaScript (DD/MM/YYYY)
+        dob_str = profile.date_of_birth.strftime('%d/%m/%Y') if profile.date_of_birth else None
+
+        user_data = {
+            'name': f"{user.first_name} {user.last_name}" if user.first_name or user.last_name else user.username,
+            'email': user.email,
+            'username': user.username,
+            
+            # Thông tin bổ sung
+            'phonenumber': profile.phone_number,
+            'address': profile.address,
+            'dateofbirth': dob_str, 
+        }
+        
+        user_data_json = json.dumps(user_data)
+        
+        context = {
+            'user_data_json': user_data_json,
+        }
+        return render(request, 'app/account.html', context)
