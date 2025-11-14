@@ -1,4 +1,3 @@
-{% extends "common/base.html" %}
 {% load static %}
 
 
@@ -14,205 +13,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@600&family=Montserrat:wght@400;500&family=Karla:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="signup-page" data-name="Sign Up">
-        <!-- Background Image -->
-        <div class="image-77" data-name="image 77">
-            <div aria-hidden="true" class="image-wrapper">
-                <img alt="" class="background-image" src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80" />
-                <div class="background-overlay"></div>
+    <!-- Background -->
+    <div class="background-container">
+        <img class="background-image" src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80" alt="Background">
+        <div class="background-overlay"></div>
+    </div>
+
+    <!-- Tagline -->
+    <div class="team-name">
+        <p>Plan now. Travel tomorrow</p>
+    </div>
+
+    <!-- Sign Up Frame -->
+    <div class="signup-frame">
+
+        <!-- Header -->
+        <div class="signup-header">
+            <p class="signup-title">Sign Up</p>
+            <p class="signup-subtitle">Let's get you all set up so you can access your personal account.</p>
+        </div>
+
+        <!-- Form -->
+        <div class="signup-form">
+            <!-- Username -->
+            <div class="input-group">
+                <input type="text" id="username" class="input-field" placeholder=" " required>
+                <label for="username">Username</label>
             </div>
-        </div>
 
-        <!-- Team Name -->
-        <div class="team-name">
-            <p>Plan now. Travel tomorrow</p>
-        </div>
-
-        <!-- Login Box -->
-        <div class="login-box" data-name="Login box">
-            <!-- Frame 7 -->
-            <div class="frame7">
-                <!-- Frame 6 -->
-                <div class="frame6">
-                    <!-- Frame 5 (Header) -->
-                    <div class="frame5">
-                        <p class="signup-title">Sign up</p>
-                        <p class="signup-subtitle">Let's get you all set up so you can access your personal account.</p>
-                    </div>
-
-                    <!-- Frame 2 (Main Content) -->
-                    <div class="frame2">
-                        <!-- Frame 3 (Fields) -->
-                        <div class="frame3">
-                            <!-- Username Text Field -->
-                            <div class="text-field" data-name="text field">
-                                <div aria-hidden="true" class="field-border"></div>
-                                <div class="state-layer" data-name="state-layer">
-                                    <div class="state-layer-inner">
-                                        <div class="state-layer-content">
-                                            <div class="content" data-name="content">
-                                                <!-- Input Text -->
-                                                <div class="input-text" data-name="input-text">
-                                                    <div class="input-text-inner">
-                                                        <input type="text" id="username" class="input-field name-field" placeholder="Username" />
-                                                    </div>
-                                                </div>
-                                                <!-- Label Text -->
-                                                <div class="label-text" data-name="label-text">
-                                                    <p>Username</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Password Text Field -->
-                            <div class="text-field password-field" data-name="text field">
-                                <div aria-hidden="true" class="field-border"></div>
-                                <div class="state-layer state-layer-password" data-name="state-layer">
-                                    <div class="state-layer-inner">
-                                        <div class="state-layer-content state-layer-content-password">
-                                            <div class="content" data-name="content">
-                                                <!-- Input Text -->
-                                                <div class="input-text" data-name="input-text">
-                                                    <div class="input-text-inner password-input-inner">
-                                                        <input type="password" id="passwordInput" class="input-field password-input-field" placeholder="•••••••••••••••••" />
-                                                    </div>
-                                                </div>
-                                                <!-- Label Text -->
-                                                <div class="label-text" data-name="label-text">
-                                                    <p>Password</p>
-                                                </div>
-                                            </div>
-                                            <!-- Trailing Icon -->
-                                            <div class="trailing-icon" id="togglePassword" data-name="trailing-icon">
-                                                <!-- Eye Icon (visible when password is hidden) -->
-                                                <svg class="eye-icon eye-closed" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                                <!-- Eye Open Icon (visible when password is shown) -->
-                                                <svg class="eye-icon eye-open" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
-                                                    <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Confirm Password Text Field -->
-                            <div class="text-field password-field" data-name="text field">
-                                <div aria-hidden="true" class="field-border"></div>
-                                <div class="state-layer state-layer-password" data-name="state-layer">
-                                    <div class="state-layer-inner">
-                                        <div class="state-layer-content state-layer-content-password">
-                                            <div class="content" data-name="content">
-                                                <!-- Input Text -->
-                                                <div class="input-text" data-name="input-text">
-                                                    <div class="input-text-inner password-input-inner">
-                                                        <input type="password" id="confirmPasswordInput" class="input-field password-input-field" placeholder="•••••••••••••••••" />
-                                                    </div>
-                                                </div>
-                                                <!-- Label Text -->
-                                                <div class="label-text" data-name="label-text">
-                                                    <p>Confirm Password</p>
-                                                </div>
-                                            </div>
-                                            <!-- Trailing Icon -->
-                                            <div class="trailing-icon" id="toggleConfirmPassword" data-name="trailing-icon">
-                                                <!-- Eye Icon (visible when password is hidden) -->
-                                                <svg class="eye-icon eye-closed-confirm" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                                <!-- Eye Open Icon (visible when password is shown) -->
-                                                <svg class="eye-icon eye-open-confirm" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
-                                                    <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Frame 1 (Checkbox & Terms) -->
-                            <div class="frame1" id="message">
-                                <div class="frame">
-                                    <div class="checkbox-wrapper" hidden>
-                                        <input type="checkbox" class="checkbox" id="agreeTerms" />
-                                        <label for="agreeTerms" class="checkbox-visual"></label>
-                                    </div>
-                                    <p class="terms-text" hidden><span>I agree to all the </span><span class="terms-link">Terms</span><span> and </span><span class="terms-link">Privacy Policies</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Frame 4 (Button & Login) -->
-                        <div class="frame4">
-                            <!-- Create Account Button -->
-                            <button class="button-wrapper" id="register">
-                                <div class="style-layer" data-name="style_layer">
-                                    <div class="style-layer-inner">
-                                        <div class="style-layer-content">
-                                            <p>Create account</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </button>
-                            <!-- Login Text -->
-                            <p class="login-text">
-                                <span class="login-normal">Already have an account?</span> <a class="login-link" href="/">Login</a>
-                            </p>
-                        </div>
-                    </div>
+            <!-- Password -->
+            <div class="input-group password-group">
+                <input type="password" id="passwordInput" class="input-field" placeholder=" " required>
+                <label for="passwordInput">Password</label>
+                <div class="toggle-password" id="togglePassword">
+                    <svg class="eye-closed" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg class="eye-open" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+                        <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" 
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
             </div>
+
+            <!-- Confirm Password -->
+            <div class="input-group password-group">
+                <input type="password" id="confirmPasswordInput" class="input-field" placeholder=" " required>
+                <label for="confirmPasswordInput">Confirm Password</label>
+                <div class="toggle-password" id="toggleConfirmPassword">
+                    <svg class="eye-closed" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <svg class="eye-open" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+                        <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" 
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="message-frame" id="message"></div>
+            <!-- Sign Up Button -->
+            <button class="signup-button" id="registerButton">Create Account</button>
+
+            <!-- Login Link -->
+            <p class="login-text">Already have an account? <a class="login-link" href="login.html">Login</a></p>
         </div>
     </div>
-{% endblock %}
 
-    <script>
-        // Password toggle functionality
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('passwordInput');
-        const eyeClosed = document.querySelector('.eye-closed');
-        const eyeOpen = document.querySelector('.eye-open');
-
-        togglePassword.addEventListener('click', function() {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeClosed.style.display = 'none';
-                eyeOpen.style.display = 'block';
-            } else {
-                passwordInput.type = 'password';
-                eyeClosed.style.display = 'block';
-                eyeOpen.style.display = 'none';
-            }
-        });
-
-        // Confirm Password toggle functionality
-        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
-        const eyeClosedConfirm = document.querySelector('.eye-closed-confirm');
-        const eyeOpenConfirm = document.querySelector('.eye-open-confirm');
-
-        toggleConfirmPassword.addEventListener('click', function() {
-            if (confirmPasswordInput.type === 'password') {
-                confirmPasswordInput.type = 'text';
-                eyeClosedConfirm.style.display = 'none';
-                eyeOpenConfirm.style.display = 'block';
-            } else {
-                confirmPasswordInput.type = 'password';
-                eyeClosedConfirm.style.display = 'block';
-                eyeOpenConfirm.style.display = 'none';
-            }
-        });
-    </script>
-    <script src="" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
     <script src = "{% static 'register.js' %}" > </script>
-{% endblock %}
+</body>
+</html>
