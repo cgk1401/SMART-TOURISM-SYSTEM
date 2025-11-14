@@ -26,3 +26,13 @@ function showSlides(n) {
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
 }
+
+function showDes(n) {
+    let i;
+    let contents = document.getElementsByClassName("content");
+    for (i = 0; i < contents.length; i++) {
+        contents[i].style.display = "none";
+    }
+    contents[n-1].style.display = "block";
+    contents[n-1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
