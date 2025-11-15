@@ -15,22 +15,44 @@
     <symbol id="icon-edit-pencil" viewBox="0 0 20 20">
         <path d="M2.5 19.75V4.75H11.6042L5.83333 10.5208V16.4167H11.7292L17.5 10.625V19.75H2.5ZM7.5 14.75V11.2083L13.4792 5.22917L17.0417 8.72917L11.0417 14.75H7.5ZM18.2292 7.54167L14.6667 4.04167L16.7708 1.9375L20.2708 5.5L18.2292 7.54167Z" />
     </symbol>
+    <symbol id="icon-email" viewBox="0 0 24 24">
+        <path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z"/>
+    </symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24">
+        <path d="M20.01 15.38C18.78 15.38 17.56 15.19 16.42 14.73C16.03 14.58 15.68 14.65 15.38 14.95L13.21 17.12C10.38 15.68 8.19 13.49 6.75 10.66L8.92 8.47C9.22 8.17 9.29 7.82 9.14 7.43C8.68 6.29 8.49 5.07 8.49 3.84C8.49 3.32 8.07 3 7.55 3H4C3.48 3 3 3.48 3 4C3 13.39 10.61 21 20 21C20.52 21 21 20.52 21 20V16.45C21 15.93 20.68 15.38 20.01 15.38Z"/>
+    </symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24">
+        <path d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3 4.9 3 6V20C3 21.1 3.89 22 5 22H19C20.11 22 21 21.1 21 20V6C21 4.9 20.11 4 19 4ZM19 20H5V9H19V20Z"/>
+    </symbol>
+    <symbol id="icon-location" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z"/>
+    </symbol>
 </svg>
 
 <template id="account-row-template">
-    <div class="account-row">
         
-        <div class="info-details-wrapper">
-            <div class="info-label-text"></div> 
-            <div class="info-value-text"></div>
-        </div>
+        <div class="account-row">
+            
+            <div class="info-details-wrapper">
+                <div class="info-label-text"></div> 
+                <div class="info-value-text"></div>
+            </div>
+            
+            <button type="button" class="edit-button-style">
+                <svg class="edit-icon-reusable" width="20" height="20">
+                    <use href="#icon-edit-pencil" xlink:href="#icon-edit-pencil"></use>
+                </svg>
+                <span class="edit-text-style">Edit</span>
+            </button>
         
-        <button type="button" class="edit-button-style">
-            <svg class="edit-icon-reusable" width="20" height="20">
-                <use href="#icon-edit-pencil" xlink:href="#icon-edit-pencil"></use>
+    </div>
+</template>
+
+<template id="summary-info-template">
+    <div class="summary-info-row" style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <svg class="summary-icon" width="24" height="24">
             </svg>
-            <span class="edit-text-style">Edit</span>
-        </button>
+        <span class="summary-value-text" style="color: #051721; font-size: 20px;"></span>
     </div>
 </template>
 
@@ -78,12 +100,37 @@
     
     <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 33px; display: flex">
         <div style="width: 153px; text-align: center; color: #051721; font-size: 32px; font-family: Montserrat Alternates; font-weight: 700; line-height: 40px; letter-spacing: 0.16px; word-wrap: break-word">Account</div>
+
+        
+
+        
       
         <div style="width: 80%; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 33px; display: flex">
             
             <div class="profile-summary-box" style="width: 40%; padding: 54px 5%; background: #FAFBFC; box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05); overflow: hidden; border-radius: 30px; flex-direction: column; justify-content: space-between; align-items: center; display: flex">
                 <div class = "Profile_details">
                     <div class = "Profile_details_header">
+                        <div class="avatar-wrapper">
+                            {% if request.user.profile and request.user.profile.avatar %}
+                            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                                class="user-avatar" id="avatar-img"
+                                onclick="document.getElementById('avatar-input').click()">
+                            {% else %}
+                            <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                                class="user-avatar" id="avatar-img"
+                                onclick="document.getElementById('avatar-input').click()">
+                            {% endif %}
+
+                            <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
+                                Edit
+                            </div>
+
+                            <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;"action="{% url 'AccountScreen:account' %}">
+                                {% csrf_token %}
+                                <input type="file" id="avatar-input" name="avatar" accept="image/*"
+                                    onchange="submitAvatar()">
+                            </form>
+                        </div>
                         <div class="user-name">
                             {{ request.user.get_full_name|default:request.user.username }}
                         </div>
@@ -97,7 +144,8 @@
 
                         <div class = "Profile_details_about">
                             <div style="text-align: center; color: #051721; font-size: 22px; font-family: Montserrat Alternates; font-weight: 700; line-height: 40px; letter-spacing: 0.16px; word-wrap: break-word">About me</div>
-                            
+                                <div id="summary-info-container" style="margin-top: 20px;">
+                                    </div>                          
                             </div>
                     </div>
                 </div> 

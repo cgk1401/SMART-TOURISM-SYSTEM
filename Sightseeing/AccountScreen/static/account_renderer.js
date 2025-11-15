@@ -17,6 +17,58 @@ function getAccountFieldsData() {
     ];
 }
 
+
+/**
+ * @function validateEmail
+ * Kiểm tra xem chuỗi có khớp với định dạng email cơ bản không: user@domain.tld
+ *
+ * @param {string} emailString - Chuỗi email cần kiểm tra.
+ * @returns {boolean} True nếu email hợp lệ, False nếu ngược lại.
+ */
+function validateEmail(emailString) {
+    // Regex cơ bản và phổ biến nhất để kiểm tra email.
+    // ^[^\s@]+ : Bắt đầu bằng một hoặc nhiều ký tự không phải khoảng trắng hoặc @
+    // @ : Theo sau là ký tự @
+    // [^\s@]+\. : Theo sau là tên miền (một hoặc nhiều ký tự không phải khoảng trắng hoặc @, kết thúc bằng dấu chấm)
+    // [^\s@]+$ : Kết thúc bằng phần mở rộng tên miền (một hoặc nhiều ký tự không phải khoảng trắng hoặc @)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    // Kiểm tra chuỗi đầu vào (sau khi đã được trim ở hàm handleEditClick)
+    return emailRegex.test(emailString);
+}
+
+
+function validateDate(dateString) {
+    // Regex kiểm tra định dạng DD/MM/YYYY
+    const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/; 
+    const match = dateString.match(dateRegex);
+
+    if (!match) {
+        return false; // Sai format
+    }
+
+    // Lấy giá trị ngày, tháng, năm từ Regex
+    const day = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const year = parseInt(match[3], 10);
+
+    // Kiểm tra tính hợp lệ của ngày tháng năm
+    const date = new Date(year, month - 1, day); // month - 1 vì JS dùng 0-11
+    
+    // Kiểm tra: 
+    // 1. Có phải là ngày hợp lệ không (date.getTime() là NaN nếu không hợp lệ)
+    // 2. Ngày, tháng, năm sau khi tạo Date có khớp với giá trị ban đầu không (để loại bỏ ngày 30/02)
+    return date.getFullYear() === year &&
+           date.getMonth() === month - 1 &&
+           date.getDate() === day;
+}
+
+
+function validatePhoneNumber(value) {
+    const phoneRegex = /^\+?\d{9,15}$/; 
+    return phoneRegex.test(value);
+}
+
 /**
  * @function renderAccountRows
  * Hàm chính để lặp qua dữ liệu và chèn các hàng thông tin vào DOM.
@@ -38,13 +90,23 @@ function renderAccountRows(data, template, container) {
         // Gán Label cho nút EDIT để JS biết đang chỉnh sửa trường nào
         editButton.dataset.label = field.label; 
         
-        // Thêm data attribute cho kiểu input (cho phép tùy chỉnh sau này)
-        if (field.id === "user-date_of_birth") {
-            editButton.dataset.inputType = 'date_text'; // Sử dụng text input để nhập DD/MM/YYYY
-        } else {
-            editButton.dataset.inputType = 'text';
+        let type;
+        switch (field.id) {
+            case "user-email":
+                type = 'email'; // Kiểu input email
+                break;
+            case "user-phone_number":
+                type = 'tel'; // Kiểu input điện thoại 
+                break;
+            case "user-date_of_birth":
+                type = 'date_text'; // Vẫn giữ date_text 
+                break;
+            default:
+                type = 'text'; // Mặc định là text
+                break;
         }
-        
+        editButton.dataset.inputType = type; // Gán kiểu input đã xác định
+
         // 2. Điền Label và Value
         labelElement.textContent = field.label;
         valueElement.textContent = field.value;
@@ -77,17 +139,47 @@ function handleEditClick(event) {
     const infoValueElement = accountRow.querySelector('.info-value-text');
     const fieldId = accountRow.id; // user-email, user-phone_number, etc.
     const fieldLabel = button.dataset.label;
-    const inputType = button.dataset.inputType;
+    const inputType = button.dataset.inputType; 
 
     // Giá trị hiện tại (đã làm sạch 'Not set')
     const currentValue = infoValueElement.textContent === 'Not set' ? '' : infoValueElement.textContent;
 
     // 1. Thay thế văn bản bằng input field
     const inputField = document.createElement('input');
-    inputField.type = 'text'; // Luôn dùng text input để kiểm soát format ngày tháng
+    
+    // Đặt kiểu input dựa trên inputType đã gán
+    if (inputType === 'date_text') {
+        inputField.type = 'text'; // Giữ lại text input để kiểm soát format DD/MM/YYYY
+    } else {
+        inputField.type = inputType; // Sử dụng 'email', 'tel', hoặc 'text'
+    }
+    
     inputField.value = currentValue;
     inputField.className = 'edit-input-field'; 
-    inputField.placeholder = fieldLabel;
+    
+    // --- GÁN PLACEHOLDER RIÊNG BIỆT ---
+    let specificPlaceholder = '';
+    
+    switch (fieldId) {
+        case 'user-email':
+            specificPlaceholder = 'name@example.com';
+            break;
+        case 'user-phone_number':
+            specificPlaceholder = '(xxx) xxx-xxxx'; 
+            break;
+        case 'user-date_of_birth':
+            specificPlaceholder = 'DD/MM/YYYY';
+            break;
+        case 'user-address':
+            specificPlaceholder = 'Street, City';
+            break;
+        default:
+            specificPlaceholder = fieldLabel; // Mặc định sử dụng Label
+            break;
+    }
+
+    inputField.placeholder = specificPlaceholder;
+    // ------------------------------------
     
     // Thay thế div bằng input
     infoValueWrapper.replaceChild(inputField, infoValueElement);
@@ -111,14 +203,39 @@ function handleEditClick(event) {
     button.addEventListener('click', function handleSaveClick() {
         // Lấy giá trị mới
         let newValue = inputField.value.trim();
-        
-        // Xử lý định dạng ngày tháng nếu cần (DD/MM/YYYY)
-        if (fieldId === 'user-date_of_birth' && newValue !== '') {
-            // Thêm logic kiểm tra format ngày tháng nếu cần
+
+        if (fieldId === 'user-email' && newValue !== 'Not set') {
+            if (newValue!== '' && !validateEmail(newValue)) {
+                alert( 'Địa chỉ Email không hợp lệ. Vui lòng nhập đúng định dạng user@domain.com.');
+                inputField.value = '';
+                inputField.focus(); 
+                return;
+            }
         }
+
+        // Xử lý định dạng ngày tháng nếu cần (DD/MM/YYYY)
+        if (fieldId === 'user-date_of_birth' && newValue !== 'Not set') {
+            if (newValue!== '' && !validateDate(newValue)){
+                alert('Ngày sinh phải ở định dạng DD/MM/YYYY hợp lệ.');
+                inputField.value = '';
+                inputField.focus()
+                return;
+            }
+        }
+
+
         
         // Gán lại 'Not set' nếu giá trị trống
         newValue = newValue || 'Not set'; 
+
+        if (fieldId === 'user-phone_number' && newValue !== 'Not set') {
+            if (!validatePhoneNumber(newValue)) {
+                alert('Số điện thoại không hợp lệ. Vui lòng chỉ nhập số và dấu "+" (nếu cần).');
+                inputField.value = '';
+                inputField.focus()
+                return; // Ngừng gửi dữ liệu nếu validation thất bại
+            }
+        }
 
         // Gửi dữ liệu đi
         saveUserData(fieldId, newValue)
@@ -127,6 +244,8 @@ function handleEditClick(event) {
                 // 1. Khôi phục DOM
                 infoValueWrapper.replaceChild(infoValueElement, inputField);
                 infoValueElement.textContent = newValue; 
+
+                updateSummaryInfo(fieldId, newValue);
                 
                 // 2. Khôi phục nút
                 button.innerHTML = `<svg class="edit-icon-reusable" width="20" height="20">
@@ -145,7 +264,6 @@ function handleEditClick(event) {
     });
 }
 
-
 // --- PHẦN 3: XỬ LÝ AJAX ---
 
 /**
@@ -160,13 +278,9 @@ function saveUserData(fieldId, newValue) {
     // Chuẩn bị dữ liệu: { 'phone_number': '0901234567' }
     const data = {};
     const fieldName = fieldId.replace('user-', ''); 
+
+    data[fieldName] = newValue === 'Not set' ? '' : newValue;
     
-    // Nếu là ngày sinh, đảm bảo gửi định dạng DD/MM/YYYY
-    if (fieldId === 'user-date_of_birth') {
-        data[fieldName] = newValue === 'Not set' ? '' : newValue; 
-    } else {
-        data[fieldName] = newValue === 'Not set' ? '' : newValue; 
-    }
 
     return fetch("/account/", { // Dùng URL cứng nếu {% url %} không hoạt động trong file JS tĩnh
         method: 'POST',
@@ -187,8 +301,6 @@ function saveUserData(fieldId, newValue) {
         if (data.error) {
             alert(`Lỗi từ Server: ${data.error}`);
             location.reload(); 
-        } else {
-            alert('Cập nhật thành công!');
         }
     })
     .catch(error => {
@@ -236,12 +348,19 @@ function initializeAccountView() {
     // Get data and render rows
     const accountData = getAccountFieldsData();
     renderAccountRows(accountData, template, container);
+
+    accountData.forEach(field => {
+        // Chỉ cập nhật nếu trường có thể chỉnh sửa và không phải là 'Not set'
+        if (field.editable && field.value !== 'Not set') {
+            // Sử dụng hàm updateSummaryInfo để chèn/cập nhật thông tin vào khối About Me
+            updateSummaryInfo(field.id, field.value);
+        }
+    });
 }
 
 // Chờ cho toàn bộ DOM được tải xong trước khi chạy script
 document.addEventListener('DOMContentLoaded', initializeAccountView);
 
-// Giữ nguyên hàm submitAvatar nếu bạn dùng nó
 function submitAvatar() {
     // ... (Giữ nguyên hàm submitAvatar của bạn)
     const form = document.getElementById('avatar-form');
@@ -269,3 +388,66 @@ function submitAvatar() {
             });
     }
 }
+
+
+/**
+ * @function updateSummaryInfo
+ * Cập nhật thông tin chi tiết (icon + value) vào cột bên trái sau khi lưu thành công.
+ */
+function updateSummaryInfo(fieldId, newValue) {
+    const container = document.getElementById('summary-info-container');
+    const template = document.getElementById('summary-info-template');
+    
+    if (!container || !template) return;
+
+    // 1. Xác định ID icon
+    let iconId;
+    let iconClass = 'summary-icon-' + fieldId.replace('user-', ''); // Ví dụ: summary-icon-email
+    
+    switch (fieldId) {
+        case 'user-email':
+            iconId = 'icon-email';
+            break;
+        case 'user-phone_number':
+            iconId = 'icon-phone';
+            break;
+        case 'user-date_of_birth':
+            iconId = 'icon-calendar';
+            break;
+        case 'user-address':
+            iconId = 'icon-location';
+            break;
+        default:
+            return; 
+    }
+
+    // 2. Tìm kiếm hàng cũ (nếu có)
+    let existingRow = container.querySelector('.' + iconClass);
+
+    if (newValue === 'Not set' || newValue === '') {
+        // Nếu giá trị là Not set hoặc trống, ẩn hoặc xóa hàng cũ
+        if (existingRow) {
+            existingRow.remove();
+        }
+        return;
+    }
+
+    // 3. Tạo hoặc Cập nhật hàng
+    if (!existingRow) {
+        // Nếu chưa có, tạo mới từ template
+        const clone = document.importNode(template.content, true);
+        const newRow = clone.querySelector('.summary-info-row');
+        newRow.classList.add(iconClass); // Thêm class để dễ dàng tìm kiếm lần sau
+
+        const svgElement = newRow.querySelector('.summary-icon');
+        svgElement.innerHTML = `<use href="#${iconId}" xlink:href="#${iconId}"></use>`;
+        
+        newRow.querySelector('.summary-value-text').textContent = newValue;
+        container.appendChild(newRow);
+    } else {
+        // Nếu đã có, chỉ cập nhật giá trị
+        existingRow.querySelector('.summary-value-text').textContent = newValue;
+    }
+}
+
+

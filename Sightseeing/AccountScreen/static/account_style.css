@@ -243,7 +243,7 @@
 /* Định kiểu cho "Member Since" */
 .member-since {
     text-align: center;
-    font-size: 14px;
+    font-size: 24px;
     color: #555;
     line-height: 1.4;
 }
@@ -271,7 +271,7 @@
 
 /* Tiêu đề "About me" */
 .Profile_details_about h3 {
-    font-size: 18px;
+    font-size: 26px;
     font-weight: 700;
     margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
 }
@@ -289,4 +289,32 @@
 .info-row i {
     font-size: 18px; /* Đảm bảo icon lớn hơn một chút */
     color: #333; /* Màu sắc icon */
+}
+
+/* Input field */
+.edit-input-field {
+    /* Đảm bảo nó chiếm đủ không gian */
+    width: 100%; 
+    padding: 8px 10px; 
+    margin: 5px 0;
+    
+    /* Kiểu dáng border */
+    border: 1px solid #ccc; 
+    border-radius: 4px; /* Bo góc nhẹ */
+    
+    /* Font và màu chữ */
+    font-size: 24px;
+    color: #051721;
+    font-family: Karla;
+    font-weight: 500;
+    
+    /* Hiệu ứng khi focus */
+    transition: border-color 0.3s ease;
+}
+
+/* Hiệu ứng khi người dùng click vào input */
+.edit-input-field:focus {
+    border-color: #007bff; /* Thay đổi màu border khi focus */
+    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Thêm box shadow nhẹ */
 }

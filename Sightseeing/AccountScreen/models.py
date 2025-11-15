@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 import os
 
 class Profile(models.Model):
@@ -11,6 +12,21 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+    
+
+    # Regex chỉ cho phép các chữ số 0-9 và dấu cộng (+)
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$', # Ví dụ: cho phép + và 9-15 chữ số
+        message="Số điện thoại phải ở định dạng: '+999999999'. Tối đa 15 chữ số."
+    )
+    
+    phone_number = models.CharField(
+        validators=[phone_regex], 
+        max_length=15, 
+        blank=True, 
+        null=True,
+        unique=True 
+    )
     
     # Ghi đè phương thức save()
     def save(self, *args, **kwargs):
