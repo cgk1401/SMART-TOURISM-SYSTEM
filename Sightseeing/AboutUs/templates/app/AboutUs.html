@@ -6,11 +6,158 @@
 {% block body_class %} {% endblock %}
 
 {% block extra_css %}
-    <link rel = "stylesheet" href = "{% static "AboutUs.css" %}">
+    <link rel = "stylesheet" href = "{% static 'AboutUs.css' %}">
 {% endblock %}
 
 {% block content %}
-    <h1> About Us Page - Viet Noi Dung vo phan Block Content nha </h1>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-image">
+        <!-- <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80"> -->
+    </div>
+    <h1 class="hero-title">About GOST</h1>
+</section>
+
+<!-- About Section -->
+<section class="about-container">
+    <div class="about-content">
+        <p class="about-title">About GOST</p>
+
+        <div class="about-paragraphs">
+            <p>Since 2025, GOST has been focused on bringing our customers the best in esteem and quality travel game plans...</p>
+
+            <p>We're a worker-owned travel organization secured by our values...</p>
+
+            <p>Since 2025, our strong organizational culture and passion for our profession...</p>
+        </div>
+    </div>
+
+    <div class="about-image">
+        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80">
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="why-choose-us">
+    <div class="section-title-wrapper">
+        <p class="section-title">Why choose us?</p>
+        <p class="section-subtitle">These destinations have a lot to offer</p>
+    </div>
+
+    <div class="why-us-cards">
+
+        <div class="why-card">
+            <div class="why-icon">
+                <!-- ICON -->
+            </div>
+            <p class="why-text">Provide trips suit your preferences.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon">
+                <!-- ICON -->
+            </div>
+            <p class="why-text">Easy to use and customizable.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon">
+                <!-- ICON -->
+            </div>
+            <p class="why-text">Offer both popular & local places.</p>
+        </div>
+
+        <div class="why-card">
+            <div class="why-icon-large">
+                <!-- ICON -->
+            </div>
+            <p class="why-text">Customer Service 24/7</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Teams -->
+<section class="teams-section">
+    <div class="section-title-wrapper">
+        <p class="section-title">Meet our teams</p>
+        <p class="section-subtitle">Meet the people who keep GOST running</p>
+    </div>
+
+    <div class="team-cards">
+
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+        <div class="team-member">
+            <div class="team-photo">
+                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+            </div>
+            <div class="team-info">
+                <p class="team-name">Cường Đỗ</p>
+                <p class="team-role">Team Leader</p>
+            </div>
+        </div>
+
+        <!-- Repeat for all members -->
+    </div>
+</section>
+
+
+        
+
 {% endblock %}
 
 {% block extra_js %}
