@@ -12,7 +12,10 @@ __pycache__/
 Thumbs.db
 
 .env
+.vs/
+.vscode/
 
+Sightseeing/media/
 
 *.sqlite3
 *.db

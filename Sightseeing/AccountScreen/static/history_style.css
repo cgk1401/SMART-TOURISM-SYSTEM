@@ -1,0 +1,292 @@
+/* --- 1. KIỂU DÁNG CHUNG CHO CÁC MỤC (nav-tab) --- */
+.nav-tab {
+    /* Đặt lại kiểu mặc định của thẻ <a> */
+    text-decoration: none; 
+    
+    /* Thiết lập bố cục (từ flex-direction: column và gap: 20px) */
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    
+    /* Đặt kích thước (từ width: 164px) */
+    width: 164px;
+}
+
+/* 2. KIỂU DÁNG VĂN BẢN (tab-text) */
+.tab-text {
+    /* Kiểu dáng chung (từ font-size, font-family, font-weight) */
+    font-size: 25px;
+    font-family: 'Karla', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.10px;
+    
+    /* Màu mặc định (cho các tab KHÔNG active, như tab History) */
+    color: #37454D; 
+}
+
+
+/* --- 3. KIỂU DÁNG CHO TRẠNG THÁI ACTIVE (active-tab) --- */
+
+/* Màu chữ cho tab đang active */
+.active-tab .tab-text {
+    color: #276968; /* Màu xanh của bạn */
+}
+
+/* Hiệu ứng đường gạch chân (thay cho div có outline) */
+.active-tab {
+    /* Đặt lại thuộc tính position để có thể dùng pseudo-element */
+    position: relative; 
+}
+
+.active-tab::after {
+    content: ""; /* Bắt buộc phải có content cho pseudo-element */
+    position: absolute;
+    bottom: -2px; /* Điều chỉnh vị trí gạch chân */
+    left: 0;
+    
+    /* Tái tạo lại kiểu dáng đường gạch dưới: height: 0px; outline: 4px #276968 solid; */
+    height: 4px; 
+    width: 100%; 
+    background-color: #276968;
+}
+
+/* --- 4. HIỆU ỨNG KHI DI CHUỘT (Tùy chọn) --- */
+.nav-tab:hover .tab-text {
+    color: #276968; /* Đổi màu chữ khi hover */
+}
+
+
+/* Định nghĩa màu sắc mặc định cho đường viền icon */
+.location-heart-icon {
+    stroke: #276968; /* Màu xanh của bạn */
+    fill: none; /* Đảm bảo không có màu nền nếu bạn chỉ muốn đường viền */
+    width: 20px;
+    height: 20px;
+    transition: stroke 0.2s ease; /* Thêm hiệu ứng chuyển đổi */
+}
+
+/* Ví dụ: Đổi màu đường viền khi di chuột qua icon */
+.location-heart-icon:hover {
+    stroke: #051721; /* Đổi thành màu tối hơn khi hover */
+}
+
+/* --- Khối bao quanh một mục lịch sử chuyến đi (.trip-card) --- */
+.trip-card {
+    width: 1352px; /* Có thể điều chỉnh hoặc dùng max-width: 100% */
+    padding: 32px 40px 0; /* padding-top 32px, left/right 40px */
+    background: #FAFBFC;
+    box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* Khoảng cách giữa header và footer */
+    margin-bottom: 24px; /* Khoảng cách giữa các trip-card */
+}
+
+/* --- Phần header của một chuyến đi (.trip-header) --- */
+.trip-header {
+    align-self: stretch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 81.60px; /* Chiều cao cố định */
+}
+
+/* --- Khối chứa các địa điểm (.trip-places-wrapper) --- */
+.trip-places-wrapper {
+    flex: 1; /* Để chiếm không gian còn lại */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px; /* Khoảng cách giữa các địa điểm */
+}
+
+/* --- Một địa điểm cụ thể (e.g., "Quan 3 HCMC") --- */
+.place-tag-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    padding:16px 16px;
+    background: white;
+    border-radius: 12px;
+    border: 0.80px solid #D7E2EE;
+    min-height: 50.60px; /* Chiều cao cố định */
+}
+
+.place-icon {
+    stroke: #276968; /* Màu đường viền icon */
+    fill: none;
+    width: 20px;
+    height: 20px;
+}
+
+.place-name-location {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* height: 48px; */
+}
+
+.place-name {
+    color: #051721;
+    font-size: 18px;
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-weight: 600;
+    line-height: 27px;
+}
+
+.place-location {
+    color: #37454D;
+    font-size: 14px;
+    font-family: 'Karla', sans-serif;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+/* --- Dấu phân cách giữa các địa điểm (->) --- */
+.place-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.separator-icon {
+    stroke: #A9C3C3; /* Màu của mũi tên phân cách */
+    fill: none;
+    width: 24px;
+    height: 24px;
+}
+
+/* --- Nút xem chi tiết ở cuối hàng (.view-details-button) --- */
+.view-details-button {
+    width: 45.60px;
+    height: 45.60px;
+    padding: 12.80px;
+    background: white;
+    border-radius: 4px;
+    border: 0.80px solid #276968;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0; /* Ngăn nút bị co lại */
+}
+
+.view-details-icon {
+    stroke: #276968; /* Màu của mũi tên xem chi tiết */
+    fill: none;
+    width: 20px;
+    height: 20px;
+}
+
+/* --- Phần footer của một chuyến đi (.trip-footer) --- */
+.trip-footer {
+    align-self: stretch;
+    height: 45.80px;
+    border-top: 0.80px solid #D7E2EE;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 32px; /* Khoảng cách giữa các thông tin */
+    padding-top: 8px; /* Khoảng cách từ đường kẻ lên */
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng chiều cao */
+}
+
+/* --- Một mục thông tin trong footer (Ngày, Tổng địa điểm, Thời lượng) --- */
+.trip-info-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    height: 21px;
+}
+
+.info-icon {
+    stroke: #276968; /* Màu của icon thông tin (lịch, đồng hồ) */
+    fill: none; /* Đảm bảo không có màu nền nếu chỉ muốn đường viền */
+    width: 18px;
+    height: 18px;
+}
+
+.info-text-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.info-label {
+    color: #37454D;
+    font-size: 14px;
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    line-height: 21px;
+    opacity: 0.60;
+}
+
+.info-value {
+    color: #051721;
+    font-size: 14px;
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    line-height: 21px;
+    margin-left: 4px; /* Khoảng cách nhỏ giữa label và value */
+}
+
+
+        /* PROFILE HEADER */
+        .profile-header {
+            width: 100%;
+            height: 240px;
+            background: url("images/Image Container.jpg") center/cover no-repeat;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 16px;
+            color: white;
+            text-align: center;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid white;
+            object-fit: cover;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .edit-avatar-btn {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            background: #e91e63;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .user-name {
+            font-size: 22px;
+            font-weight: 600;
+            font-family: 'Montserrat Alternates', sans-serif;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
