@@ -130,6 +130,9 @@
     color: inherit;
     transition: transform .15s ease, box-shadow .15s ease;
     cursor: pointer;
+
+    opacity: 0; /* Ẩn card đi ban đầu */
+    will-change: opacity, transform;
 }
 
 .card:hover{
@@ -213,6 +216,9 @@
     gap: 20px;
     padding: 18px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    opacity: 0; /* Ẩn card đi ban đầu */
+    will-change: opacity, transform; /* Tối ưu hiệu năng */
 }
 
 .route-card:hover {
