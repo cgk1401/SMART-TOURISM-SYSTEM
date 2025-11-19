@@ -7,6 +7,8 @@
 
 {% block extra_css %}
     <link rel = "stylesheet" href = "{% static 'discover.css' %}">
+    <!-- <link rel = "stylesheet" href="{% static 'leaflet.css' %}" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +19,7 @@
         <h1 >Discover</h1>
     </div>
     </header>
-
+    
     <div class="container">
         <div class="description">
             <div class="content" id="content1">
@@ -56,14 +58,50 @@
                 </p>
                 <img src="{% static 'images/Central_Post_Office.jpg' %}" alt="Buu Dien Trung Tam">
             </div>
+            <div class="content" id="content5">
+                <h2>Saigon Zoo and Botanical Gardens</h2>
+                <p>
+                    The Saigon Zoo and Botanical Gardens, or known locally as The Zoo, is Vietnam's largest zoo and botanical garden. The Saigon Zoo and Botanical Gardens was commissioned by Admiral Pierre-Paul de La Grandière in 1864, and was opened to the public in 1869, making it one of the world's oldest continuously operating zoos. 
+                </p>
+                <img src="{% static 'images/Saigon_Zoo.jpg' %}" style="width: 50%; height: 50%;" alt="Thao Cam Vien">
+            </div>
+            <div class="content" id="content6">
+                <h2>Jade Emperor Pagoda</h2>
+                <p>
+                    Jade Emperor Pagoda is a must-visit spot in Ho Chi Minh City. With its ancient Chinese architecture and sacred atmosphere, the temple offers a glimpse into the spiritual and cultural life of the local Chinese-Vietnamese community.
+                </p>
+                <img src="{% static 'images/Jade_Emperor_Pagoda.jpg' %}" style="width: 50%; height: 50%;" alt="Chua Ngoc Hoang">
+            </div>
+            <div class="content" id="content7">
+                <h2>Cu Chi Tunnel</h2>
+                <p>
+                    About 70km from Ho Chi Minh City, the Cu Chi Tunnels form a vast underground network stretching 250km. Built during the Seconde Anti-French War of Resistance and the Anti-American War of Resistance, they served as a strategic base for Vietnamese soldiers. This remarkable site reflects the resilience and ingenuity of wartime tactics.
+                </p>
+                <img src="{% static 'images/Cu_Chi_Tunnel.jpg' %}" style="width: 50%; height: 50%;" alt="Dia dao Cu Chi">
+            </div>
+            <div class="content" id="content8">
+                <h2>Can Gio Mangrove Forest and Beach</h2>
+                <p>
+                    The outskirts of Ho Chi Minh City are home to the lush Can Gio Mangrove Forest, an exotic escape where nature meets adventure. With intertwining waterways, diverse wildlife, and a vibrant ecosystem, it beckons travelers seeking both tranquility and excitement. Find out what you can uncover during your escape from the metropolis side of Ho Chi Minh City to Can Gio Mangrove Forest.
+                </p>
+                <img src="{% static 'images/Can_Gio_Mangrove_Forest.jpg' %}" style="width: 50%; height: 50%;" alt="Khu du tru sinh quyen Can Gio">
+            </div>
+            <div class="content" id="content9">
+                <h2>Binh Quoi Tourist Village</h2>
+                <p>
+                    Set by the Saigon River, Binh Quoi Tourist Village encompasses grassy lawns, tree-shaded walking paths, and indoor/outdoor fishing ponds. Land-based restaurants offer seating in open-air thatched cottages, while a huge floating restaurant has set menus and buffets. Bamboo bridges overlook giant lily pads and water wheels in tranquil lakes. Shows featuring traditional music and dance entertain visitors in the evening. 
+                </p>
+                <img src="{% static 'images/Binh_Quoi_Village.png' %}" style="width: 50%; height: 50%;" alt="Lang du lich Binh Quoi">
+            </div>
         </div>
 
         <div class="right-column">
-            <div class="map">
+            <div class="map" id="map">
                 <h3>Choose your place</h3>
                 <img src="{% static 'images/tmp_map.jpg' %}" alt="map saigon">
             </div>
-            <h2>Others</h2>
+
+            <div style="font-size: 1cm; font-weight: bold;">Others</div>
             <!-- <div class="slideshow">
                 <h2>Others</h2>
                 <div class="places" id="place1">
@@ -97,31 +135,59 @@
 
             <!-- Full-width images with number and caption text -->
             <div class="mySlides fade">
-                <div class="numbertext">1 / 3</div>
+                <div class="numbertext"></div>
                 <div class="places" id="place1">
                     <h3>Independence Palace</h3>
                     <img src="{% static 'images/independencepalace.jpg' %}" alt="dinh doc lap" onclick="showDes(1)">
                     <p>Ben Thanh ward, Ho Chi Minh city</p>
                 </div>
-                <div class="text"></div>
-            </div>
-
-            <div class="mySlides fade">
-                <div class="numbertext">2 / 3</div>
                 <div class="places" id="place2">
                     <h3>War Remnants Museum</h3>
                     <img src="{% static 'images/warremnantsmuseum.jpg' %}" alt="bao tang" onclick="showDes(2)">
                     <p>Xuan Hoa ward, Ho Chi Minh city</p>
                 </div>
-                <div class="text"></div>
-            </div>
-
-            <div class="mySlides fade">
-                <div class="numbertext">3 / 3</div>
                 <div class="places" id="place3">
                     <h3>Ben Thanh Market</h3>
                     <img src="{% static 'images/benthanhmarket.jpg' %}" alt="cho ben thanh" onclick="showDes(3)">
                     <p>Ben Thanh ward, Ho Chi Minh city</p>
+                </div>
+                <div class="text"></div>
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext"></div>
+                <div class="places" id="place4">
+                    <h3>Notre Dame Cathedral and Central Post Office</h3>
+                    <img src="{% static 'images/notredamepostoffice.jpg' %}" alt="nha tho va buu dien" onclick="showDes(4)">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place5">
+                    <h3>Saigon Zoo and Botanical Gardens</h3>
+                    <img src="{% static 'images/sgzoo.jpg' %}" alt="thao cam vien" onclick="showDes(5)">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place6" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Jade Emperor Pagoda</h3>
+                    <img src="{% static 'images/jepagoda.jpg' %}" alt="chua ngoc hoang" onclick="showDes(6)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="text"></div>
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext"></div>
+                <div class="places" id="place7" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Cu Chi Tunnel</h3>
+                    <img src="{% static 'images/cuchitunnel.jpg' %}" alt="dia dao cu chi" onclick="showDes(7)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>An Nhon Tay commune, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place8" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Can Gio Mangrove Forest and Beach</h3>
+                    <img src="{% static 'images/cangio.jpg' %}" alt="bien can gio" onclick="showDes(8)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Can Gio commune, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place9" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Binh Quoi Tourist Village</h3>
+                    <img src="{% static 'images/binhquoi.jpg' %}" alt="lang du lich binh quoi" onclick="showDes(9)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Binh Quoi ward, Ho Chi Minh city</p>
                 </div>
                 <div class="text"></div>
             </div>
@@ -147,4 +213,6 @@
 
 {% block extra_js %}
             <script src = "{% static 'discover.js' %}" > </script>
+            <!-- <script src = "{% static 'leaflet.js' %}" > </script> -->
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n6qqBY+92h+Pm1CluH8m/JRBKlyaV4RvAJ4KgL+id=" crossorigin=""></script>
 {% endblock %}

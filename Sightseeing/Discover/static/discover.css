@@ -58,6 +58,21 @@
 #content4 {
     display: none;
 }
+#content5 {
+    display:none;
+}
+#content6 {
+    display:none;
+}
+#content7 {
+    display:none;
+}
+#content8 {
+    display:none;
+}
+#content9 {
+    display:none;
+}
 
 .right-column {
     width: 33%;
@@ -68,11 +83,11 @@
     margin-left: 10px;
     margin-top: 10px;
     margin-bottom: 50px;
-    width: 400px;
+    width: 500px;
     padding-left: 10px;
     padding-right: 50px;
     padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 10px;
 }
 .map img {
     width: 100%;
@@ -131,6 +146,46 @@
     padding-left: 10px;
 }
 #place5 img {
+    object-fit: contain;
+    width: 80%;
+    height: 80%;
+}
+#place6 {
+    margin-left: 15%;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place6 img {
+    object-fit: contain;
+    width: 80%;
+    height: 80%;
+}
+#place7 {
+    margin-left: 15%;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place7 img {
+    object-fit: contain;
+    width: 80%;
+    height: 80%;
+}
+#place8 {
+    margin-left: 15%;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place8 img {
+    object-fit: contain;
+    width: 80%;
+    height: 80%;
+}
+#place9 {
+    margin-left: 15%;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+#place9 img {
     object-fit: contain;
     width: 80%;
     height: 80%;
