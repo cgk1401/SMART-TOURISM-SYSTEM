@@ -14,6 +14,7 @@ section {
     overflow: hidden;
     background: rgba(39,105,104,0.31);
     margin-bottom: 120px;
+    padding: 0;
 }
 
 .hero-image img {
@@ -38,6 +39,12 @@ section {
     justify-content: space-between;
     align-items: flex-start;
     gap: 50px;
+    flex-wrap: wrap; /* allow wrapping on small screens */
+}
+
+.about-content {
+    flex: 1 1 500px; /* allow growth/shrink */
+    min-width: 0;    /* critical for line-clamp inside flex */
 }
 
 .about-title {
@@ -45,14 +52,45 @@ section {
     font-size: 32px;
     font-weight: 700;
     color: #051721;
+    margin-bottom: 20px;
 }
 
 .about-paragraphs {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: block; /* change from flex to block */
     color: #37454d;
     font-size: 16px;
+    gap: 20px; /* optional spacing can be handled with margin */
+}
+
+.about-paragraphs p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* default 3 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 20px; /* spacing between paragraphs */
+    word-break: break-word;
+}
+
+/* Medium screens */
+@media (max-width: 1024px) {
+    .about-paragraphs p {
+        -webkit-line-clamp: 3;
+    }
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+    .about-paragraphs p {
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .about-paragraphs p {
+        -webkit-line-clamp: 1;
+    }
 }
 
 .about-image {
@@ -115,8 +153,9 @@ section {
 
 .team-cards {
     display: flex;
-    flex-wrap: wrap;
-    gap: 35px;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
 }
 
 .team-member {
@@ -139,4 +178,18 @@ section {
 .team-role {
     color: #37454d;
     font-size: 14px;
+}
+
+.why-icon, .why-icon-large {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.why-icon svg,
+.why-icon-large svg {
+    width: 100%;
+    height: 100%;
 }
