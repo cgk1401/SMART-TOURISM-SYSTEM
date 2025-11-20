@@ -120,3 +120,44 @@ function updateIndexes() {
         if (indexDiv) indexDiv.textContent = idx + 1;
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const carousel = document.getElementById("placesCarousel");
+    const scrollRightbtn = document.getElementById("scrollRightBtn");
+    const scrollLeftbtn = document.getElementById("scrollLeftBtn");
+    const scrollAmount = 250;
+
+    if (!carousel){
+        return;
+    }
+
+    const updateArrowVisibility = () => {
+        if (carousel.scrollLeft > 0){
+            scrollLeftbtn.style.display = 'flex';
+        }else{
+            scrollLeftbtn.style.display = 'none';
+        }
+
+        const isAtEnd = carousel.scrollWidth - carousel.scrollLeft <= carousel.clientWidth + 1;
+        if (isAtEnd) {
+            scrollRightBtn.style.display = 'none';
+        } else {
+            scrollRightBtn.style.display = 'flex';
+        }
+    }
+
+    if (scrollRightbtn){
+        scrollRightbtn.addEventListener('click', () => {
+            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        })
+    }
+
+    if (scrollLeftbtn){
+        scrollLeftbtn.addEventListener('click', () => {
+            carousel.scrollBy({left: -scrollAmount, behavior: 'smooth'})
+        })
+    }
+
+    carousel.addEventListener('scroll', updateArrowVisibility);
+    updateArrowVisibility();
+})
