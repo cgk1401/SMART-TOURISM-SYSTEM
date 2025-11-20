@@ -22,8 +22,9 @@
                 </div>
             </div>
 
-            <section class="trip-section">
-                <h2> Destination </h2>
+            <section class="trip-section" id = "destination-route">
+            {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
+            <h2> Destination </h2>
                 <div class="flight-card">
                     <div class="flight-route">
                         <h3> Test → Test</h3>
@@ -33,7 +34,7 @@
                 </div>
             </section>
 
-            <section class = "trip-section">
+            <section class = "trip-section" id = "recommended-destination">
                 <div class = "search-location-container">
                     <i class="fa-solid fa-location-dot"></i>
                     <input type = "text" placeholder = "Add a location">
@@ -57,32 +58,7 @@
                         </button>
 
                         <div class = "places-carousel" id = "placesCarousel">
-                            {% comment %} Put place card {% endcomment %}
-                            <div class = "place-card">
-                                <img src = "{% static "images/Cho_Ben_Thanh.jpg" %}" alt = "test">
-                                <span class = "place-name"> Destination1 </span>
-                                <button class = "add-place-btn"> + </button>
-                            </div>
-                            <div class = "place-card">
-                                <img src = "" alt = "test">
-                                <span class = "place-name"> Destination2 </span>
-                                <button class = "add-place-btn"> + </button>
-                            </div>
-                            <div class = "place-card">
-                                <img src = "" alt = "test">
-                                <span class = "place-name"> Destination3 </span>
-                                <button class = "add-place-btn"> + </button>
-                            </div>
-                            <div class = "place-card">
-                                <img src = "" alt = "test">
-                                <span class = "place-name"> Destination2 </span>
-                                <button class = "add-place-btn"> + </button>
-                            </div>
-                            <div class = "place-card">
-                                <img src = "" alt = "test">
-                                <span class = "place-name"> Destination2 </span>
-                                <button class = "add-place-btn"> + </button>
-                            </div>
+                            
                         </div>
                         <button class = "scroll-arrow" id = "scrollRightBtn">
                             <i class="fa-solid fa-chevron-right"></i>
