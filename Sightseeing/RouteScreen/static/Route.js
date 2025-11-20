@@ -102,9 +102,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${mediaHTML}
                 <span class = "place-name"> ${p.namePlace} </span>
                 <button class = "add-place-btn"> + </button>
-            `
+            `;
+            const addedButton = newdiv.querySelector(".add-place-btn");
+            addedButton.addEventListener("click", () => {
+                const rec = Recommended_Place[idx];
+                const newId = PLACES.length ? Math.max(...PLACES.map(pl => pl.id)) + 1 : 1;
+                PLACES.push({
+                    id: newId,
+                    namePlace: rec.namePlace,
+                    lat: rec.lat || 0,
+                    lon: rec.lon || 0,
+                    img: rec.img || "/static/images/Nha_Tho_Duc_Ba.jpg",
+                    des: rec.des || ""
+                });
+
+                const itineraryList = renderItinerary(PLACES);
+                if (itineraryList){
+                    initDragAndDrop(itineraryList);
+                }
+            });
             Add_placesCarousel.appendChild(newdiv);
         })
+        return Add_placesCarousel;
     }
 
     function initCarouseControls(){
@@ -160,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const newitineraryItem = document.createElement("div");
                 newitineraryItem.className = "itinerary-item";
                 newitineraryItem.setAttribute("draggable", true);
+                newitineraryItem.dataset.id = p.id;
                 newitineraryItem.innerHTML = `
                     <div class = "itinerary-index"> ${idx + 1} </div>
                     <div class = "itinerary-info">
@@ -172,8 +192,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                     <img src = "${p.img}" alt = ${p.namePlace}>
-                `
+
+                    <button class = "delete-btn">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
                 newdiv.appendChild(newitineraryItem);
+
+                const deletedButton = newitineraryItem.querySelector(".delete-btn");
+                deletedButton.addEventListener("click", () => {
+                    const iddeleted = parseInt(newitineraryItem.dataset.id);
+
+                    PLACES = PLACES.filter(p => p.id != iddeleted);
+                    const itineraryList = renderItinerary(PLACES);
+                    if (itineraryList){
+                        initDragAndDrop(itineraryList);
+                    }
+                })
             })
         container.appendChild(newdiv);
         return newdiv;
@@ -196,6 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.classList.remove("dragging");
                 draggedItem = null;
                 updateIndexes(container); // cập nhật
+                syncArrayWithDOM(container);
             }
         });
 
@@ -231,6 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 const indexDiv = item.querySelector(".itinerary-index");
                 if (indexDiv) indexDiv.textContent = idx + 1;
             });
+        }
+
+        function syncArrayWithDOM(container){
+            const orderedIds = [...container.querySelectorAll(".itinerary-item")].map(item => parseInt(item.dataset.id));
+            const sortPlaces = orderedIds.map(id => {
+                return PLACES.find(p => p.id == id);
+            })
+            PLACES = sortPlaces;
+            // console.clear();
+            console.table(PLACES);
         }
     }
 
