@@ -37,7 +37,7 @@
             <section class = "trip-section" id = "recommended-destination">
                 <div class = "search-location-container">
                     <i class="fa-solid fa-location-dot"></i>
-                    <input type = "text" placeholder = "Add a location">
+                    <input type = "text" placeholder = "Add a location" id ="Search-location">
                     <div class = "action-buttons">
                         <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
                         <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
@@ -53,13 +53,15 @@
 
                     <div class = "places-carousel-wrapper">
 
+                        {% comment %} Scroll Left {% endcomment %}
                         <button class = "scroll-arrow" id = "scrollLeftBtn">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
 
                         <div class = "places-carousel" id = "placesCarousel">
-                            
+                            {% comment %} Region Recommended Destination {% endcomment %}
                         </div>
+                        {% comment %} Scroll Right {% endcomment %}
                         <button class = "scroll-arrow" id = "scrollRightBtn">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>

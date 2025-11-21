@@ -54,11 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTripTitleFromURL();
         renderRecommendation(Recommended_Place);
         initCarouseControls();
+        searchLocation()
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
             initDragAndDrop(itineraryList);
         }
+
     }
 
     function initMap(){
@@ -278,6 +280,54 @@ document.addEventListener("DOMContentLoaded", () => {
             // console.clear();
             console.table(PLACES);
         }
+    }
+    
+    function searchLocation(){
+        const searchInput = document.getElementById("Search-location");
+        searchInput.addEventListener("keydown", async function(event) {
+            if (event.key === "Enter"){
+                const query = searchInput.value.trim();
+
+                if (query == ""){
+                    return;
+                }
+                try{
+                    const ans = await axios.get("getLocation/", {
+                        params:{
+                            q: query
+                        }
+                    })
+                    lat = parseFloat(ans.data.lat);
+                    lon = parseFloat(ans.data.lon);
+                    console.log(lat)
+                    console.log(lon)
+                    console.log(ans.data.display_name)
+
+                    try{
+                        const weather = await axios.get("getWeather/",{
+                            params:{
+                                lat: lat,
+                                lon: lon
+                            }
+                        })
+
+                        dataWeather = weather.data;
+
+                        tempurature = dataWeather["main"]["temp"]
+                        humidity = dataWeather["main"]["humidity"]
+                        win_speed = dataWeather["wind"]["speed"]
+                        console.log(tempurature)
+                        console.log(humidity)
+                        console.log(win_speed)
+                    }catch(err){
+                        console.error("Loi lay du lieu thoi tiet:", err)
+                    }
+
+                }catch(err){
+                    console.error("Loi lay du lieu vi tri:",err)
+                }
+            }
+        })
     }
 
     initApp();

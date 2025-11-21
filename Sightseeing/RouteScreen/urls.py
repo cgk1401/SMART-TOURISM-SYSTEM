@@ -4,4 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.function_Route),
+    path('getLocation/', views.geocode),
+    path("getWeather/", views.get_weather),
 ]
