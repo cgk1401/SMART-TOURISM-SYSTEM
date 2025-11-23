@@ -12,23 +12,24 @@ def function_preference(request):
 @login_required
 def save_preference(request):
     if request.method == "POST":
-        interests = request.POST.getlist("interest")
-        group_types = request.POST.getlist("group_type")
-        activity_levels = request.POST.getlist("activity_level")
+        interests = request.POST.getlist("interest")  # multiple
+        eating = request.POST.getlist("eating_habit")
 
-        pref = UserPref(
-            user=request.user,
-            interests=interests,
-            group_types=group_types,
-            activity_levels=activity_levels
-        )
+        group_type = request.POST.get("group_type")
+        budget = request.POST.get("budget")
+        activity = request.POST.get("activity_level")
+
+        pref, _ = UserPref.objects.get_or_create(user=request.user)
+        pref.interests = interests
+        pref.group_types = [group_type] if group_type else []
+        pref.budgets = [budget] if budget else []
+        pref.activity_levels = [activity] if activity else []
+        pref.eating_habits = eating
         pref.save()
 
         return redirect('/PreferenceScreen/')
 
-    prefs = UserPref.objects.filter(user=request.user)
-
-    return render(request, 'preference.html')
+    return redirect('/PreferenceScreen/')
 
 
 @login_required

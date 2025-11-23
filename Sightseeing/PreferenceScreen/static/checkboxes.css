@@ -1,0 +1,92 @@
+.checkboxes {
+    font-family: "Karla", sans-serif;
+
+    width: 311px;
+    height: auto;
+    position: relative;
+    overflow: auto;
+    margin-left: 34px;
+    padding: 51px 34px;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #f9fAf6;
+}
+
+.checkboxes .toggle {
+    display: none;
+}
+
+.checkboxes .section_label {
+    font-weight: 700;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkboxes .section_label .arrow {
+    margin-left: 8px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #333;
+    display: inline-block;
+    transition: transform 0.2s;
+
+    position: relative;
+    bottom: 3px;
+}
+
+.options {
+    display: none;
+    margin-top: 8px;
+}
+
+.toggle:checked + .section_label + .options {
+    display: block;
+}
+
+.toggle:checked + .section_label .arrow {
+    transform: rotate(180deg);
+}
+
+.checkboxes .options label {
+    font-weight: 400;
+}
+
+.checkboxes .options input[type="checkbox"] {
+    accent-color: #051721
+}
+
+.checkboxes .options input[type="radio"] {
+    accent-color: #051721
+}
+
+.checkboxes .options label + label {
+    display: block;
+    margin-top: 4px;
+}
+
+.checkboxes > div {
+    margin-bottom: 16px;
+}
+.checkboxes > div:last-child {
+    margin-bottom: 0;
+}
+
+.checkboxes button {
+    width: 94px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #276968;
+    color: white;
+
+    align-self: flex-end;
+
+    font-family: "Karla", sans-serif;
+    font-weight: 400;
+}
