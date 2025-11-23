@@ -1,0 +1,79 @@
+{% load static %}
+{% block extra_css %}
+    <link rel = "stylesheet" href = "{% static 'checkboxes.css' %}">
+{% endblock %}
+
+<form method="POST" action="{% url 'save_preference' %}">
+    {% csrf_token %}
+
+    <div class="checkboxes">
+        <div class="interest">
+            <input type="checkbox" id="toggle-interest" class="toggle">
+            <label for="toggle-interest" class="section_label">
+                Interests <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <label><input type="checkbox" name="interest" value="sightseeing"> Sightseeing</label>
+                <label><input type="checkbox" name="interest" value="history"> History</label>
+                <label><input type="checkbox" name="interest" value="entertainment"> Entertainment</label>
+                <label><input type="checkbox" name="interest" value="shopping"> Shopping</label>
+                <label><input type="checkbox" name="interest" value="culture"> Culture</label>
+                <label><input type="checkbox" name="interest" value="nature"> Nature</label>
+            </div>
+        </div>
+
+        <div class="group_type">
+            <input type="checkbox" id="toggle-group" class="toggle">
+            <label for="toggle-group" class="section_label">
+                Group Type <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <label><input type="radio" name="group_type" value="solo"> Solo</label>
+                <label><input type="radio" name="group_type" value="group"> Group</label>
+            </div>
+        </div>
+
+        <div class="budget">
+            <input type="checkbox" id="toggle-budget" class="toggle">
+            <label for="toggle-budget" class="section_label">
+                Budget <span class="arrow"></span>
+            </label>
+
+
+            <div class="options">
+                <label><input type="radio" name="budget" value="budget"> Budget</label>
+                <label><input type="radio" name="budget" value="moderation"> Moderation</label>
+                <label><input type="radio" name="budget" value="luxury"> Luxury</label>
+            </div>
+        </div>
+
+        <div class="activity_level">
+            <input type="checkbox" id="toggle-activity" class="toggle">
+            <label for="toggle-activity" class="section_label">
+                Activity Level <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <label><input type="radio" name="activity_level" value="relaxed"> Relaxed</label>
+                <label><input type="radio" name="activity_level" value="moderated"> Moderated</label>
+                <label><input type="radio" name="activity_level" value="active"> Active</label>
+            </div>
+        </div>
+
+        <div class="eating_habit">
+            <input type="checkbox" id="toggle-eating" class="toggle">
+            <label for="toggle-eating" class="section_label">
+                Eating habit <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <label><input type="checkbox" name="eating_habit" value="local"> Local</label>
+                <label><input type="checkbox" name="eating_habit" value="international"> International</label>
+            </div>
+        </div>
+
+        <button type="submit"> Save Preference </button>
+    </div>
+</form>
