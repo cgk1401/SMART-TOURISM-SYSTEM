@@ -32,7 +32,7 @@ urlpatterns = [
     path('Discover/', include('Discover.urls')),
     path('account/', include('AccountScreen.urls')),
     path('MainScreen/RouteScreen/', include('RouteScreen.urls')),
-    path('AboutUs/', include('AboutUs.urls'))
+    path('about/', include('AboutUs.urls'))
 ]
 
 if settings.DEBUG:
