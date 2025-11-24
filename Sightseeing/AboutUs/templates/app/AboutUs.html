@@ -78,7 +78,7 @@
                         <rect fill="white" height="116" width="116"/>
                     </clipPath>
                 </defs>
-            </nav></svg>
+            </svg>
         </div>
         <p class="why-text">Offer both popular & local places.</p>
     </div>
@@ -105,80 +105,174 @@
 
     <div class="team-cards">
 
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
+    <!-- 1. Cuong -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-cuong" class="team-photo"
+                src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
+
+            <input type="file"
+                id="input-cuong"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-cuong')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-cuong').click()">
+                ✎
             </div>
         </div>
 
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
+        <div class="team-info">
+            <p class="team-name">Cường Đỗ</p>
+            <p class="team-role">Team Leader</p>
         </div>
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
-        </div>
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
-        </div>
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
-        </div>
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
-        </div>
-        <div class="team-member">
-            <div class="team-photo">
-                <img src="https://img.freepik.com/free-photo/emotions-people-concept-headshot-serious-looking-handsome-man-with-beard-looking-confident-determined_1258-26730.jpg">
-            </div>
-            <div class="team-info">
-                <p class="team-name">Cường Đỗ</p>
-                <p class="team-role">Team Leader</p>
-            </div>
-        </div>
-
-        <!-- Repeat for all members -->
     </div>
+
+    <!-- 2. Kien Nguyen -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-kien" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/32.jpg">
+
+            <input type="file"
+                id="input-kien"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-kien')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-kien').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Kiên Nguyễn</p>
+            <p class="team-role">Backend Developer</p>
+        </div>
+    </div>
+
+    <!-- 3. Khoa -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-khoa" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/45.jpg">
+
+            <input type="file"
+                id="input-khoa"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-khoa')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-khoa').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Khoa Nguyễn</p>
+            <p class="team-role">Data Engineer</p>
+        </div>
+    </div>
+
+    <!-- 4. Trung -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-trung" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/62.jpg">
+
+            <input type="file"
+                id="input-trung"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-trung')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-trung').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Trung Lê</p>
+            <p class="team-role">Backend Developer</p>
+        </div>
+    </div>
+
+    <!-- 5. Triet -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-triet" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/71.jpg">
+
+            <input type="file"
+                id="input-triet"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-triet')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-triet').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Triết Nguyễn</p>
+            <p class="team-role">Designer</p>
+        </div>
+    </div>
+
+    <!-- 6. Duy -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-duy" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/28.jpg">
+
+            <input type="file"
+                id="input-duy"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-duy')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-duy').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Duy Phạm</p>
+            <p class="team-role">Frontend Developer</p>
+        </div>
+    </div>
+
+    <!-- 7. Huu -->
+    <div class="team-member">
+        <div class="team-photo-wrapper">
+            <img id="photo-huu" class="team-photo"
+                src="https://randomuser.me/api/portraits/men/90.jpg">
+
+            <input type="file"
+                id="input-huu"
+                accept="image/*"
+                onchange="updateMemberPhoto(event, 'photo-huu')"
+                style="display: none;">
+
+            <div class="edit-icon" onclick="document.getElementById('input-huu').click()">
+                ✎
+            </div>
+        </div>
+
+        <div class="team-info">
+            <p class="team-name">Hữu Nguyễn</p>
+            <p class="team-role">Frontend Developer</p>
+        </div>
+    </div>
+
+</div>
+
 </section>
-
-
-        
 
 {% endblock %}
 
 {% block extra_js %}
-
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+        <script src = "{% static 'AboutUs.js' %}" > </script>
 {% endblock %}
