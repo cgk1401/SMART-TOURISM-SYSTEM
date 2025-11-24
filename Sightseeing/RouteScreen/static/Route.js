@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let map;
 
     function initApp(){
+        // console.log.table(Recommended_Place);
         initMap();
         updateTripTitleFromURL();
         renderRecommendation(Recommended_Place);
@@ -361,6 +362,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     weather: tmp
                 });
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
+                Recommended_Place.push({
+                    namePlace: chosen.display_name.split(",")[0],
+                    lat: lat,
+                    lon: lon, 
+                    img: "",
+                    des: chosen.display_name,
+                });
+
+                refreshRecommendationUI();
             }catch(err){
                 console.error("Lỗi lấy thời tiết:", err);
             }
@@ -416,7 +426,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                     
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
-
+                Recommended_Place.push({
+                    namePlace: ans.data.display_name.split(",")[0],
+                    lat: lat,
+                    lon: lon, 
+                    img: "",
+                    des: ans.data.display_name,
+                });
+                refreshRecommendationUI();
+                
                 }catch(err){
                     console.error("Loi lay du lieu thoi tiet:", err)
                 }
@@ -448,6 +466,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         input.addEventListener("keydown", (event) =>{
+            if (event.key === "Enter"){
+                console.log("Kick Enter");
+                event.preventDefault();
+
+                if (!sugBox.classList.contains("hidden") && activeIndex >= 0){
+                    pickSuggestionFromDB(currentSuggestions[activeIndex]);
+                }
+                else{
+                    pickSuggestFromInput();
+                }
+                return;
+            }
             if (sugBox.classList.contains("hidden")) return;
             const items = [...sugBox.querySelectorAll(".suggestion-item")];
             
@@ -460,16 +490,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 activeIndex = (activeIndex - 1 + items.length) % items.length;
             } 
 
-            else if (event.key === "Enter"){
-                console.log("Kick enter");
-                event.preventDefault();
-                if (activeIndex >= 0){
-                    pickSuggestionFromDB(currentSuggestions[activeIndex]);
-                }else{
-                    pickSuggestFromInput();
-                }
-                return;
-            } 
+            // else if (event.key === "Enter"){
+            //     console.log("Kick enter");
+            //     event.preventDefault();
+            //     if (activeIndex >= 0){
+            //         pickSuggestionFromDB(currentSuggestions[activeIndex]);
+            //     }else{
+            //         pickSuggestFromInput();
+            //     }
+            //     return;
+            // } 
 
             else if (event.key === "Escape"){
                 sugBox.classList.add("hidden");
@@ -503,6 +533,11 @@ document.addEventListener("DOMContentLoaded", () => {
         panel.classList.remove("hidden");
     }
 
+    function refreshRecommendationUI(){
+        const wrapper = document.getElementById("placesCarousel");
+        wrapper.innerHTML = ""; 
+        renderRecommendation(Recommended_Place);
+    }
     initApp();
 });
 

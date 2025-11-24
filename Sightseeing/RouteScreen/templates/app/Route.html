@@ -72,39 +72,40 @@
                 </div>
             </section>
         </aside> 
-
-        <div id="map"></div>
-        <div id = "map-info-panel" class = "info-panel hidden">
-            <div class = "info-header">
-                <div>
-                    <h3 id = "info-name"> --- </h3>
-                    <p id = "info-address" class = "muted"> --- </p>
+        <div class = "map-wrapper">
+            <div id="map"></div>
+            <div id = "map-info-panel" class = "info-panel hidden">
+                <div class = "info-header">
+                    <div>
+                        <h3 id = "info-name"> --- </h3>
+                        <p id = "info-address" class = "muted"> --- </p>
+                    </div>
+                    <button id = "info-close" class = "info-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-                <button id = "info-close" class = "info-close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class = "info-body">
-                <div class = "info-row">
-                    <span class="label">Tọa độ</span>
-                    <span id="info-coord">---</span>
-                </div>
-                <div class = "info-weather">
-                    <div class = "weather-item">
-                        <div class="weather-label">Nhiệt độ</div>
-                        <div class="weather-value"><span id="info-temp">--</span>°C</div>
+                <div class = "info-body">
+                    <div class = "info-row">
+                        <span class="label">Tọa độ</span>
+                        <span id="info-coord">---</span>
                     </div>
-                     <div class="weather-item">
-                        <div class="weather-label">Độ ẩm</div>
-                        <div class="weather-value"><span id="info-humidity">--</span>%</div>
-                    </div>
-                    <div class="weather-item">
-                        <div class="weather-label">Gió</div>
-                        <div class="weather-value"><span id="info-wind">--</span> m/s</div>
-                    </div>
-                    <div class="weather-item">
-                        <div class="weather-label">Mô tả</div>
-                        <div class="weather-value" id="info-desc">--</div>
+                    <div class = "info-weather">
+                        <div class = "weather-item">
+                            <div class="weather-label">Nhiệt độ</div>
+                            <div class="weather-value"><span id="info-temp">--</span>°C</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Độ ẩm</div>
+                            <div class="weather-value"><span id="info-humidity">--</span>%</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Gió</div>
+                            <div class="weather-value"><span id="info-wind">--</span> m/s</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Mô tả</div>
+                            <div class="weather-value" id="info-desc">--</div>
+                        </div>
                     </div>
                 </div>
             </div>
