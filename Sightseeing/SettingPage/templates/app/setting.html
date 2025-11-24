@@ -1,0 +1,63 @@
+﻿{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.session.language|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Settings" %}</title>
+    <link rel="stylesheet" href="{% static 'setting.css' %}">
+</head>
+<body>
+    <div class="settings-container">
+        <h1>{% trans "Settings" %}</h1>
+
+        <!-- NAVBAR TRANSPARENCY -->
+        <div class="setting-item">
+            <label>{% trans "Navbar Transparency" %}</label>
+            <input type="range" id="opacity-slider" min="0" max="100" value="90">
+            <span id="opacity-value">90%</span>
+        </div>
+
+        <!-- LANGUAGE SWITCH -->
+        <div class="setting-item">
+            <label>{% trans "Language" %}</label>
+            <div class="language-buttons">
+                <button onclick="changeLanguage('en')" class="lang-btn {% if request.session.language|default:'en' != 'vi' %}active{% endif %}">English</button>
+                <button onclick="changeLanguage('vi')" class="lang-btn {% if request.session.language == 'vi' %}active{% endif %}">Tiếng Việt</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('opacity-slider');
+        const valueDisplay = document.getElementById('opacity-value');
+
+        slider.addEventListener('input', () => {
+            const opacity = slider.value / 100;
+            valueDisplay.textContent = slider.value + '%';
+            document.querySelector('.navbar').style.background = `rgba(255,255,255,${opacity})`;
+            saveSettings(opacity, '{{ request.session.language|default:"en" }}');
+        });
+
+        function changeLanguage(lang) {
+            saveSettings(slider.value / 100, lang);
+            setTimeout(() => location.reload(), 300);
+        }
+
+        function saveSettings(opacity, language) {
+            fetch('/update-settings/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({ opacity, language })
+            });
+        }
+
+        // Apply saved opacity on load
+        window.addEventListener('load', () => {
+            const saved = {{ request.session.navbar_opacity|default:0.9|float:0|safe }};
+            document.querySelector('.navbar').style.background = `rgba(255,255,255,${saved})`;
+            slider.value = saved * 100;
+            valueDisplay.textContent = Math.round(saved * 100) + '%';
+        });
+    </script>
+</body>
+</html>
