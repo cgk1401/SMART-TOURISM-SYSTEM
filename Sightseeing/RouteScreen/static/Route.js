@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "",
         }
     ];
+    let currentMarker;
+    let map;
 
     function initApp(){
         initMap();
@@ -64,13 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initMap(){
-        const map = L.map('map').setView([10.7757116,106.6979296], 12);
+        map = L.map('map').setView([10.7757116,106.6979296], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             { attribution:'&copy; OpenStreetMap' }
         ).addTo(map);
 
-        L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('đây là trung tâm').openPopup();
+        currentMarker = L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('đây là trung tâm').openPopup();
+        document.getElementById("info-close").addEventListener("click", () => {
+            document.getElementById("map-info-panel").classList.add("hidden");
+        });
     }
 
     function updateTripTitleFromURL(){
@@ -330,16 +335,31 @@ document.addEventListener("DOMContentLoaded", () => {
             input.value = chosen.display_name;
             sugBox.classList.add("hidden");
 
-            lat = parseFloat(chosen.lat);
-            lon = parseFloat(chosen.lon);
+            let lat = parseFloat(chosen.lat);
+            let lon = parseFloat(chosen.lon);
 
             console.log("Picked:", lat, lon, chosen.display_name);
+            if (currentMarker) map.removeLayer(currentMarker);
+            currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(chosen.display_name);
+            map.setView([lat, lon], 15);
 
             try{
                 const weather = await axios.get("getWeather/", { 
                     params:{ lat, lon }
                 });
                 const w = weather.data;
+                const tmp = {
+                    temp: w.main?.temp,
+                    humidity: w.main?.humidity,
+                    wind: w.wind?.speed,
+                    desc: w.weather?.[0]?.description
+                }
+                showInfoPanel({
+                    name: chosen.display_name.split(",")[0],
+                    address: chosen.display_name,
+                    lat, lon,
+                    weather: tmp
+                });
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
             }catch(err){
                 console.error("Lỗi lấy thời tiết:", err);
@@ -361,22 +381,40 @@ document.addEventListener("DOMContentLoaded", () => {
                         q: query
                     }
                 })
-                lat = parseFloat(ans.data.lat);
-                lon = parseFloat(ans.data.lon);
+                let lat = parseFloat(ans.data.lat);
+                let lon = parseFloat(ans.data.lon);
+
+                if (currentMarker){
+                    map.removeLayer(currentMarker);
+                }
+                currentMarker = L.marker([lat,lon]).addTo(map).bindPopup(ans.data.display_name)
+                map.setView([lat, lon], 15);
+
                 console.log(lat)
                 console.log(lon)
                 console.log(ans.data.display_name)
 
                 try{
-                    const weather = await axios.get("getWeather/",{
-                        params:{
-                            lat: lat,
-                            lon: lon
-                        }
-                    })
+                const weather = await axios.get("getWeather/",{
+                    params:{
+                        lat: lat,
+                        lon: lon
+                    }
+                })
 
-                    const w = weather.data;
-
+                const w = weather.data;
+                showInfoPanel({
+                    name: ans.data.display_name.split(",")[0],
+                    address: ans.data.display_name,
+                    lat, lon,
+                    weather: {
+                        temp: w.main?.temp,
+                        humidity: w.main?.humidity,
+                        wind: w.wind?.speed,
+                        desc: w.weather?.[0]?.description
+                    }
+                });
+                    
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
 
                 }catch(err){
@@ -384,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
             }catch(err){
-                console.error("Loi lay du lieu vi tri:",err)
+                console.error("Loi lay du lieu vi tri:",err);
             }
         }
 
@@ -447,6 +485,22 @@ document.addEventListener("DOMContentLoaded", () => {
             sugBox.classList.add("hidden");
             }
         });
+    }
+
+    function showInfoPanel({name, address, lat, lon, weather}){
+        const panel = document.getElementById("map-info-panel");
+        document.getElementById("info-name").textContent = name || "---";
+        document.getElementById("info-address").textContent = address || "";
+        document.getElementById("info-coord").textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+        if (weather){
+            document.getElementById("info-temp").textContent = weather.temp ?? "--";
+            document.getElementById("info-humidity").textContent = weather.humidity ?? "--";
+            document.getElementById("info-wind").textContent = weather.wind ?? "--";
+            document.getElementById("info-desc").textContent = weather.desc ?? "--";
+        }
+
+        panel.classList.remove("hidden");
     }
 
     initApp();
