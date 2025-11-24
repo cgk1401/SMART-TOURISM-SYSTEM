@@ -6,4 +6,5 @@ urlpatterns = [
     path('', views.function_Route),
     path('getLocation/', views.geocode),
     path("getWeather/", views.get_weather),
+    path("autocomplete/", views.autocomplete_places),
 ]

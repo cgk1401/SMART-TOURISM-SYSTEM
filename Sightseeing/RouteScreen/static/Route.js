@@ -283,51 +283,170 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function searchLocation(){
-        const searchInput = document.getElementById("Search-location");
-        searchInput.addEventListener("keydown", async function(event) {
-            if (event.key === "Enter"){
-                const query = searchInput.value.trim();
+        const input = document.getElementById("Search-location");
+        const sugBox = document.getElementById("search-suggestions");
+        const MIN_CHARS = 2;
+        const DEBOUNCE_MS = 120;
 
-                if (query == ""){
-                    return;
-                }
+        let debounceTimer = null;
+        let activeIndex = -1;
+        let currentSuggestions = [];
+
+        async function fetchSuggestions(query){
+            const res = await axios.get("autocomplete/", {
+                params: { q: query }
+            });
+            return res.data || [];
+        }
+
+        function renderSuggestions(list){
+            currentSuggestions = list;
+            activeIndex = -1;
+
+            if (!list.length){
+                sugBox.classList.add("hidden");
+                sugBox.innerHTML = "";
+                return;
+            }
+
+            sugBox.innerHTML = list.map((item, idx) => `
+                <div class="suggestion-item" data-idx="${idx}">
+                    ${item.display_name}
+                </div>
+            `).join("");
+
+            sugBox.classList.remove("hidden");
+
+            sugBox.querySelectorAll(".suggestion-item").forEach(el => {
+                el.addEventListener("click", () => {
+                    const chosen = currentSuggestions[+el.dataset.idx];
+                    pickSuggestionFromDB(chosen);
+                });
+            });
+        }
+
+        async function pickSuggestionFromDB(chosen){
+            console.log("From DB");
+            input.value = chosen.display_name;
+            sugBox.classList.add("hidden");
+
+            lat = parseFloat(chosen.lat);
+            lon = parseFloat(chosen.lon);
+
+            console.log("Picked:", lat, lon, chosen.display_name);
+
+            try{
+                const weather = await axios.get("getWeather/", { 
+                    params:{ lat, lon }
+                });
+                const w = weather.data;
+                console.log(w.main.temp, w.main.humidity, w.wind.speed);
+            }catch(err){
+                console.error("Lỗi lấy thời tiết:", err);
+            }
+        }
+
+        async function pickSuggestFromInput(){
+            console.log("From Input");
+            const query = input.value.trim();
+
+            if (query == ""){
+                console.log("Thieu input")
+                return;
+            }
+
+            try{
+                const ans = await axios.get("getLocation/", {
+                    params:{
+                        q: query
+                    }
+                })
+                lat = parseFloat(ans.data.lat);
+                lon = parseFloat(ans.data.lon);
+                console.log(lat)
+                console.log(lon)
+                console.log(ans.data.display_name)
+
                 try{
-                    const ans = await axios.get("getLocation/", {
+                    const weather = await axios.get("getWeather/",{
                         params:{
-                            q: query
+                            lat: lat,
+                            lon: lon
                         }
                     })
-                    lat = parseFloat(ans.data.lat);
-                    lon = parseFloat(ans.data.lon);
-                    console.log(lat)
-                    console.log(lon)
-                    console.log(ans.data.display_name)
 
-                    try{
-                        const weather = await axios.get("getWeather/",{
-                            params:{
-                                lat: lat,
-                                lon: lon
-                            }
-                        })
+                    const w = weather.data;
 
-                        dataWeather = weather.data;
-
-                        tempurature = dataWeather["main"]["temp"]
-                        humidity = dataWeather["main"]["humidity"]
-                        win_speed = dataWeather["wind"]["speed"]
-                        console.log(tempurature)
-                        console.log(humidity)
-                        console.log(win_speed)
-                    }catch(err){
-                        console.error("Loi lay du lieu thoi tiet:", err)
-                    }
+                console.log(w.main.temp, w.main.humidity, w.wind.speed);
 
                 }catch(err){
-                    console.error("Loi lay du lieu vi tri:",err)
+                    console.error("Loi lay du lieu thoi tiet:", err)
                 }
+
+            }catch(err){
+                console.error("Loi lay du lieu vi tri:",err)
             }
-        })
+        }
+
+        input.addEventListener("input", () =>{
+            const query = input.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < MIN_CHARS){
+                sugBox.classList.add("hidden");
+                sugBox.innerHTML = "";
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                try{
+                    const list = await fetchSuggestions(query);
+                    renderSuggestions(list);
+                }catch(e){
+                    console.error("Autocomplete error:", e);
+                    sugBox.classList.add("hidden");
+                    }
+            }, DEBOUNCE_MS);
+        });
+
+        input.addEventListener("keydown", (event) =>{
+            if (sugBox.classList.contains("hidden")) return;
+            const items = [...sugBox.querySelectorAll(".suggestion-item")];
+            
+            if (event.key === "ArrowDown"){
+                event.preventDefault();
+                activeIndex = (activeIndex + 1) % items.length;
+            } 
+            else if (event.key === "ArrowUp"){
+                event.preventDefault();
+                activeIndex = (activeIndex - 1 + items.length) % items.length;
+            } 
+
+            else if (event.key === "Enter"){
+                console.log("Kick enter");
+                event.preventDefault();
+                if (activeIndex >= 0){
+                    pickSuggestionFromDB(currentSuggestions[activeIndex]);
+                }else{
+                    pickSuggestFromInput();
+                }
+                return;
+            } 
+
+            else if (event.key === "Escape"){
+                sugBox.classList.add("hidden");
+                return;
+            }
+
+            items.forEach(i => i.classList.remove("active"));
+            if (activeIndex >= 0) items[activeIndex].classList.add("active");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!sugBox.contains(e.target) && e.target !== input){
+            sugBox.classList.add("hidden");
+            }
+        });
     }
 
     initApp();

@@ -37,7 +37,10 @@
             <section class = "trip-section" id = "recommended-destination">
                 <div class = "search-location-container">
                     <i class="fa-solid fa-location-dot"></i>
-                    <input type = "text" placeholder = "Add a location" id ="Search-location">
+                    <input type = "text" placeholder = "Add a location" id ="Search-location" autocomplete="off">
+
+                    <div id="search-suggestions" class="suggestions hidden"></div>
+
                     <div class = "action-buttons">
                         <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
                         <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>

@@ -3,6 +3,7 @@ import time, requests
 from django.http import JsonResponse
 from django.contrib.auth import logout
 import os
+from MapScreen.models import location
 
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
@@ -67,3 +68,21 @@ def get_weather(request):
     
     return JsonResponse(data, safe=False)
 
+def autocomplete_places(request):
+    q = request.GET.get("q", "")
+    if not q:
+        return JsonResponse([], safe=False)
+    
+    db_results = location.objects.filter(name__icontains=q)\
+        .values("pk", "name", "latitude", "longtitude")[:5]
+    
+    formatted_results = []
+    for item in db_results:
+        formatted_results.append({
+            "display_name": item["name"],  
+            "lat": item["latitude"],
+            "lon": item["longtitude"], 
+            "id": item["pk"]
+        })
+    
+    return JsonResponse(formatted_results, safe=False)
