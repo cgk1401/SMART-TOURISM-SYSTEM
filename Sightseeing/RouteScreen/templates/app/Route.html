@@ -8,6 +8,7 @@
 {% block extra_css %}
     <link rel = "stylesheet" href = "{% static 'Route.css' %}" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -21,13 +22,49 @@
                 </div>
             </div>
 
-            <section class="trip-section">
-                <h2> Destination </h2>
+            <section class="trip-section" id = "destination-route">
+            {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
+            <h2> Destination </h2>
                 <div class="flight-card">
                     <div class="flight-route">
                         <h3> Test → Test</h3>
                         <p> Time </p>
                         <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
+                    </div>
+                </div>
+            </section>
+
+            <section class = "trip-section" id = "recommended-destination">
+                <div class = "search-location-container">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input type = "text" placeholder = "Add a location" id ="Search-location">
+                    <div class = "action-buttons">
+                        <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
+                        <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
+                    </div>
+                </div>
+
+                    {% comment %} suggest destination {% endcomment %}
+                <div class = "recommendations-container">
+                    <div class = "recommendations-header">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <h2> Recommended places </h2>
+                    </div>
+
+                    <div class = "places-carousel-wrapper">
+
+                        {% comment %} Scroll Left {% endcomment %}
+                        <button class = "scroll-arrow" id = "scrollLeftBtn">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+                        <div class = "places-carousel" id = "placesCarousel">
+                            {% comment %} Region Recommended Destination {% endcomment %}
+                        </div>
+                        {% comment %} Scroll Right {% endcomment %}
+                        <button class = "scroll-arrow" id = "scrollRightBtn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
             </section>
