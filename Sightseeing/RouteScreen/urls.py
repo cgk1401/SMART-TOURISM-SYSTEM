@@ -7,4 +7,5 @@ urlpatterns = [
     path('getLocation/', views.geocode),
     path("getWeather/", views.get_weather),
     path("autocomplete/", views.autocomplete_places),
+    path("get_similar_location/", views.get_similar_locations)
 ]

@@ -27,26 +27,26 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     var Recommended_Place = [
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "",
-        }
+        // {
+        //     namePlace: "Destination1",
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        // },
+        // {
+        //     namePlace: "Destination1",
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        // },
+        // {
+        //     namePlace: "Destination1",
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        // },
+        // {
+        //     namePlace: "Destination1",
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        // },
+        // {
+        //     namePlace: "Destination1",
+        //     img: "",
+        // }
     ];
     let currentMarker;
     let map;
@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderRecommendation(Recommended_Place);
         initCarouseControls();
         searchLocation()
+
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("info-close").addEventListener("click", () => {
             document.getElementById("map-info-panel").classList.add("hidden");
         });
+
     }
 
     function updateTripTitleFromURL(){
@@ -86,6 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const triptitle = document.querySelector(".trip-title h1");
         triptitle.textContent = "";
         triptitle.textContent = namerepalce;
+        
+        getRecommended_Place(namerepalce)
     }
 
     function renderRecommendation(places){
@@ -538,6 +542,29 @@ document.addEventListener("DOMContentLoaded", () => {
         wrapper.innerHTML = ""; 
         renderRecommendation(Recommended_Place);
     }
+
+    async function getRecommended_Place(name){
+        const res = await axios.get("get_similar_location/", {
+            params:{
+                "base_location": name,
+                "limit": 7,
+            }
+        })
+        const dataList = res.data;
+        console.table(dataList);
+
+        Recommended_Place = dataList.map(item => ({
+            namePlace: item.namePlace,
+            lat: parseFloat(item.latitude),
+            lon: parseFloat(item.longtitude),
+            img: item.image || "",
+            des: `Rating: ${item.rating}`
+        }));
+        
+        refreshRecommendationUI();
+        
+    }
+
     initApp();
 });
 

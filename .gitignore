@@ -20,3 +20,5 @@ Sightseeing/media/
 *.sqlite3
 *.db
 Sightseeing/db.sqlite3
+
+*/fixtures/

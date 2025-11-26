@@ -68,16 +68,67 @@ def get_weather(request):
     
     return JsonResponse(data, safe=False)
 
+def match_tags(base_tags, other_tags):
+    scores = 0
+    
+    if isinstance(base_tags, list) and isinstance(other_tags, list):
+        base_interest = set(base_tags)
+        loc_interest = set(other_tags)
+        common_interests = base_interest.intersection(loc_interest)
+        scores += len(common_interests)
+    else:
+        scores += (base_tags == other_tags)
+    
+    return scores
+
+def get_similar_locations(request):
+    base_name = request.GET.get("base_location")
+
+    base_location = location.objects.get(name = base_name)
+    limit = int(request.GET.get("limit"))
+    
+    base_tags = base_location.tags 
+    all_location = location.objects.exclude(pk = base_location.pk)
+    
+    results = []
+    
+    for loc in all_location:
+        loc_tags = loc.tags
+        scores = 0
+        
+        for key, base_value_tags in base_tags.items():
+            other_value_tags = loc_tags.get(key)
+            if other_value_tags is not None:
+                scores += match_tags(base_value_tags, other_value_tags)
+        if scores > 0:    
+            results.append({
+                "score": scores,
+                "namePlace": loc.name,
+                "latitude": loc.latitude,
+                "longtitude": loc.longtitude,
+                "rating": loc.rating,
+                "image": ""
+            })
+                
+
+    results.sort(key = lambda x : x["score"], reverse = True)
+    
+    return JsonResponse(results[:limit], safe = False) 
+   
+      
+
 def autocomplete_places(request):
     q = request.GET.get("q", "")
     if not q:
         return JsonResponse([], safe=False)
     
     db_results = location.objects.filter(name__icontains=q)\
-        .values("pk", "name", "latitude", "longtitude")[:5]
+        .order_by('-rating')\
+        .values("pk", "name", "latitude", "longtitude", "rating")[:5]
     
     formatted_results = []
     for item in db_results:
+        print(item["rating"])
         formatted_results.append({
             "display_name": item["name"],  
             "lat": item["latitude"],
