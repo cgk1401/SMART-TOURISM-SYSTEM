@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.function_AboutUs),
+    path('upload_team_photo/', views.upload_team_photo, name='upload_team_photo'),
 ]
 
