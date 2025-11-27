@@ -1,55 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
     var PLACES = [
-        { 
-            id:1, 
-            namePlace:"Chợ Bến Thành", 
-            lat: 10.7725168, 
-            lon: 106.6980208, 
-            img:"/static/images/Cho_Ben_Thanh.jpg",
-            des: "Tesstttttttt"
-        },
-        { 
-            id:2, 
-            namePlace:"Nhà Thờ Đức Bà", 
-            lat: 10.7797855, 
-            lon: 106.6990189, 
-            img:"/static/images/Nha_Tho_Duc_Ba.jpg",
-            des: "Testttttt"
-        },
-        { 
-            id:3, 
-            namePlace:"Dinh Độc Lập", 
-            lat: 10.7769942, 
-            lon: 106.6953021, 
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-            des: "testssssss"
-        },
+        // { 
+        //     id:1, 
+        //     namePlace:"Chợ Bến Thành", 
+        //     lat: 10.7725168, 
+        //     lon: 106.6980208, 
+        //     img:"/static/images/Cho_Ben_Thanh.jpg",
+        //     des: "Tesstttttttt"
+        // },
+        // { 
+        //     id:2, 
+        //     namePlace:"Nhà Thờ Đức Bà", 
+        //     lat: 10.7797855, 
+        //     lon: 106.6990189, 
+        //     img:"/static/images/Nha_Tho_Duc_Ba.jpg",
+        //     des: "Testttttt"
+        // },
+        // { 
+        //     id:3, 
+        //     namePlace:"Dinh Độc Lập", 
+        //     lat: 10.7769942, 
+        //     lon: 106.6953021, 
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        //     des: "testssssss"
+        // },
     ];
 
-    var Recommended_Place = [
-        // {
-        //     namePlace: "Destination1",
-        //     img: "/static/images/Dinh_Doc_Lap.jpg",
-        // },
-        // {
-        //     namePlace: "Destination1",
-        //     img: "/static/images/Dinh_Doc_Lap.jpg",
-        // },
-        // {
-        //     namePlace: "Destination1",
-        //     img: "/static/images/Dinh_Doc_Lap.jpg",
-        // },
-        // {
-        //     namePlace: "Destination1",
-        //     img: "/static/images/Dinh_Doc_Lap.jpg",
-        // },
-        // {
-        //     namePlace: "Destination1",
-        //     img: "",
-        // }
-    ];
+    var Recommended_Place = [];
     let currentMarker;
     let map;
+    let routeLayer;
+    let routeMarkersGroup = L.layerGroup();
+    
 
     function initApp(){
         // console.log.table(Recommended_Place);
@@ -57,8 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTripTitleFromURL();
         renderRecommendation(Recommended_Place);
         initCarouseControls();
-        searchLocation()
-
+        searchLocation();
+        renderRoute();
+        clearMap();
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -74,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             { attribution:'&copy; OpenStreetMap' }
         ).addTo(map);
 
-        currentMarker = L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('đây là trung tâm').openPopup();
+        currentMarker = L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('Trung Tâm Thành Phố').openPopup();
         document.getElementById("info-close").addEventListener("click", () => {
             document.getElementById("map-info-panel").classList.add("hidden");
         });
@@ -493,18 +476,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.preventDefault();
                 activeIndex = (activeIndex - 1 + items.length) % items.length;
             } 
-
-            // else if (event.key === "Enter"){
-            //     console.log("Kick enter");
-            //     event.preventDefault();
-            //     if (activeIndex >= 0){
-            //         pickSuggestionFromDB(currentSuggestions[activeIndex]);
-            //     }else{
-            //         pickSuggestFromInput();
-            //     }
-            //     return;
-            // } 
-
             else if (event.key === "Escape"){
                 sugBox.classList.add("hidden");
                 return;
@@ -563,6 +534,79 @@ document.addEventListener("DOMContentLoaded", () => {
         
         refreshRecommendationUI();
         
+    }
+
+    function renderRoute(){
+        const buttonDrawRoute = document.getElementById("btn-draw-route");
+
+        if (!buttonDrawRoute) return;
+
+        routeMarkersGroup.addTo(map);
+
+        buttonDrawRoute.addEventListener('click', async() => {
+            if (PLACES.length < 2){
+                return;
+            }
+
+            const coordsToSend = PLACES.map(p => [p.lat, p.lon]);
+
+            if (routeLayer){
+                map.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+            if (currentMarker){
+                map.removeLayer(currentMarker);
+            }
+            routeMarkersGroup.clearLayers();
+            PLACES.forEach(p => {
+                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.namePlace}</b>`);
+                routeMarkersGroup.addLayer(marker);
+            });
+
+            const res = await axios.post('getRoute/', {
+                coordinates: coordsToSend
+            })
+
+            const encoded = res.data.routes[0].geometry;
+            
+            const tmp = polyline.decode(encoded);
+            const latlngs = tmp.map(c => [c[0], c[1]]);
+            
+            routeLayer = L.polyline(latlngs, {
+                    color: 'blue',
+                    weight: 6,
+                    opacity: 0.8,
+                }).addTo(map);
+
+            map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+
+        })
+    }
+
+    function clearMap(){
+        const buttonClearMap = document.getElementById("btn-clear-map");
+
+        if (!buttonClearMap){
+            return;
+        }
+
+        buttonClearMap.addEventListener('click', () => {
+            if (routeLayer){
+            map.removeLayer(routeLayer);
+            routeLayer = null;
+        }
+            if (currentMarker){
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+
+            routeMarkersGroup.clearLayers();
+
+            map.setView([10.7757116,106.6979296], 12);
+            document.getElementById("map-info-panel").classList.add("hidden");
+                
+            console.log("Map cleared!");
+        }) 
     }
 
     initApp();

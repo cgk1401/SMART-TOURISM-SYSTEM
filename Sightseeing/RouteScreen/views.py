@@ -1,9 +1,10 @@
 from django.shortcuts import render
 import time, requests
 from django.http import JsonResponse
-from django.contrib.auth import logout
 import os
 from MapScreen.models import location
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
@@ -118,7 +119,7 @@ def get_similar_locations(request):
       
 
 def autocomplete_places(request):
-    q = request.GET.get("q", "")
+    q = request.GET.get("", "")
     if not q:
         return JsonResponse([], safe=False)
     
@@ -137,3 +138,23 @@ def autocomplete_places(request):
         })
     
     return JsonResponse(formatted_results, safe=False)
+
+API_KEY_MAP = os.getenv("API_KEY_MAP") 
+@csrf_exempt
+def get_route(request):
+    url = "https://api.openrouteservice.org/v2/directions/driving-car"
+    
+    data = json.loads(request.body)
+    coords = []
+    for lat, lon in data["coordinates"]:
+        coords.append([lon, lat])
+    
+    headers = {
+        "Authorization": API_KEY_MAP,
+        "Content-Type": "application/json"
+    }
+    body = {"coordinates": coords}
+    
+    response = requests.post(url, json = body, headers = headers)
+    
+    return JsonResponse(response.json())
