@@ -1,5 +1,109 @@
 /* CSS */
 
+
+/*Template account-row-template*/
+.edit-icon-reusable{
+     width:"20";
+      height:"20"
+}
+
+/*Template summary-info-template*/
+.summary-info-row{
+    display: flex;
+    align-items: center; 
+    gap: 15px; 
+    margin-bottom: 15px;
+}
+
+.summary-icon{
+    font-size: 24px; 
+    color: #051721; 
+    width: 24px; 
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-value-text{
+    color: #051721; 
+    font-size: 20px;
+}
+
+
+/*Template main-container*/
+#main-container{
+    width: 100%; 
+    height: 100%; 
+    flex-direction: column; 
+    align-items: center; 
+    display: inline-flex; 
+    gap: 40px
+}
+
+.nav-container{
+    width: 100%; 
+    height: 74px; 
+    position: relative; 
+    background: #FAFBFC; 
+    overflow: hidden; 
+    border-top: 1px #FAFBFC solid; 
+    border-bottom: 1px #FAFBFC solid; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.nav-bar{
+    width: 50%; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: inline-flex
+}
+
+#content-container{
+    width: 100%; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center; 
+    gap: 33px; 
+    display: flex
+}
+
+.Name-Account{
+    width: 153px; 
+    text-align: center; 
+    color: #051721; 
+    font-size: 32px; 
+    font-family: Montserrat Alternates; 
+    font-weight: 700; 
+    line-height: 40px; 
+    letter-spacing: 0.16px; 
+    word-wrap: break-word
+}
+
+.profile-summary-box-father{
+    width: 80%; 
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 33px; 
+    display: flex
+}
+
+.profile-summary-box{
+    width: 40%; 
+    padding: 54px 5%; 
+    background: #FAFBFC; 
+    box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05); 
+    overflow: hidden; 
+    border-radius: 30px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: flex
+}
+
 /* --- 1. KIỂU DÁNG CHUNG CHO CÁC MỤC (nav-tab) --- */
 .nav-tab {
     /* Đặt lại kiểu mặc định của thẻ <a> */
@@ -165,60 +269,60 @@
 }
 
 
-        /* PROFILE HEADER */
-        .profile-header {
-            width: 100%;
-            height: 240px;
-            background: url( "images/Image Container.jpg") center/cover no-repeat;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 16px;
-            color: white;
-            text-align: center;
-        }
+/* PROFILE HEADER */
+.profile-header {
+    width: 100%;
+    height: 240px;
+    background: url( "images/Image Container.jpg") center/cover no-repeat;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 16px;
+    color: white;
+    text-align: center;
+}
 
-        .avatar-wrapper {
-            position: relative;
-            margin-bottom: 8px;
-        }
+.avatar-wrapper {
+    position: relative;
+    margin-bottom: 8px;
+}
 
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 4px solid white;
-            object-fit: cover;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 
-        .edit-avatar-btn {
-            position: absolute;
-            bottom: -4px;
-            right: -4px;
-            background: #e91e63;
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
+.edit-avatar-btn {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background: #e91e63;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
 
-        .user-name {
-            font-size: 22px;
-            font-weight: 600;
-            font-family: 'Montserrat Alternates', sans-serif;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-        }
+.user-name {
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Montserrat Alternates', sans-serif;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
 
 /* Định kiểu cho Profile chi tiết */
 .Profile_details{
@@ -267,6 +371,42 @@
     gap: 15px; /* Khoảng cách giữa các hàng thông tin */
     
     padding-top: 10px; /* Khoảng cách từ đường kẻ */
+}
+
+.About-me{
+    text-align: center; 
+    color: #051721; 
+    font-size: 22px; 
+    font-family: Montserrat Alternates; 
+    font-weight: 700; 
+    line-height: 40px; 
+    letter-spacing: 0.16px; 
+    word-wrap: break-word
+}
+
+#summary-info-container{
+    margin-top: 20px;
+}
+
+.account-info-box{
+    width: 40%; 
+    padding: 54px 5%; 
+    background: #FAFBFC; 
+    box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05); 
+    overflow: hidden; 
+    border-radius: 30px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: flex
+}
+
+.account-info-list{
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    gap: 41px; 
+    display: flex;
 }
 
 /* Tiêu đề "About me" */

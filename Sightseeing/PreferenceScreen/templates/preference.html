@@ -12,7 +12,10 @@
 {% block content %}
     <h2> Generate trip based on your preferences </h2>
 
-    {% include "checkboxes.html" %}
+    <div class = "form-container">
+        {% include "checkboxes.html" %}
+    </div>
+    
 {% endblock %}
 
 {% block extra_js %}

@@ -406,16 +406,16 @@ function updateSummaryInfo(fieldId, newValue) {
     
     switch (fieldId) {
         case 'user-email':
-            iconId = 'icon-email';
+            iconId = 'fa-envelope';
             break;
         case 'user-phone_number':
-            iconId = 'icon-phone';
+            iconId = 'fa-phone';
             break;
         case 'user-date_of_birth':
-            iconId = 'icon-calendar';
+            iconId = 'fa-calendar';
             break;
         case 'user-address':
-            iconId = 'icon-location';
+            iconId = 'fa-location-dot';
             break;
         default:
             return; 
@@ -439,8 +439,8 @@ function updateSummaryInfo(fieldId, newValue) {
         const newRow = clone.querySelector('.summary-info-row');
         newRow.classList.add(iconClass); // Thêm class để dễ dàng tìm kiếm lần sau
 
-        const svgElement = newRow.querySelector('.summary-icon');
-        svgElement.innerHTML = `<use href="#${iconId}" xlink:href="#${iconId}"></use>`;
+        const iconElement = newRow.querySelector('.summary-icon');
+        iconElement.classList.add('fa-solid', iconId);
         
         newRow.querySelector('.summary-value-text').textContent = newValue;
         container.appendChild(newRow);
