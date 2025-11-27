@@ -21,4 +21,5 @@ Sightseeing/media/
 *.db
 Sightseeing/db.sqlite3
 
-*/fixtures/
+Sightseeing/MapScreen/fixtures/
+
