@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
         def add_record(pk, name, lat, lon, amenity, tags):
             data.append({
-                "model": "MapScreen.location",
+                "model": "MapScreen.Location",
                 "pk": pk,
                 "fields": {
                     "name": name,

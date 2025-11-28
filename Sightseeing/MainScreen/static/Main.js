@@ -1,82 +1,76 @@
-document.addEventListener("DOMContentLoaded", function(){
-    const customizeButton = document.querySelector(".customize-btn");
-    const imageButton = document.querySelectorAll(".card");
-    const recommendButton = document.querySelectorAll(".route-card");
+document.addEventListener('DOMContentLoaded', function() {
+    loadTrips();
+    loadCustomize();
+
+
+    document.querySelector('.hero__btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#discover').scrollIntoView({ behavior: 'smooth' });
+        }
+    );
+});
+
+function loadCustomize(){
+    const customizeButton = document.querySelector(".btn-primary");
 
     if (customizeButton){
             customizeButton.addEventListener("click", () => {
             window.location.href = "/PreferenceScreen/";
         })
     }
+}
 
-    imageButton.forEach(c => {
-        c.addEventListener("click", () => {
-            const id = Number((c.dataset.id || "").trim());
-            if (!id) return;
-            window.location.href = `/MainScreen/MapScreen/?near_id=${encodeURIComponent(id)}`;
-        })
-    });
+function loadTrips() {
+    const container = document.getElementById('trip-list-container');
+    
+    axios.get('api/trips/')
+        .then(function (response) {
+            const trips = response.data;
+            
+            container.innerHTML = '';
 
-    recommendButton.forEach(r => {
-        r.addEventListener("click", () => {
-            const name = r.dataset.name;
-            window.location.href = `/MainScreen/RouteScreen/?name=${encodeURIComponent(name)}`;
-        })
-    });
-
-    const observerOptions = {
-        root: null,      // null nghĩa là viewport (màn hình hiển thị)
-        rootMargin: '0px',
-        threshold: 0.2   // Kích hoạt khi 20% của phần tử xuất hiện trên màn hình
-    };
-
-    // --- Hàm xử lý Animation (xuất hiện + biến mất khi rời khung hình) ---
-    const animateOnScroll = (entries, observer) => {
-        entries.forEach(entry => {
-            const cards = entry.target.querySelectorAll('.card, .route-card');
-
-            // Khi phần tử xuất hiện trong khung hình -> chạy animation xuất hiện
-            if (entry.isIntersecting) {
-                if (!entry.target.classList.contains('in-view')) {
-                    entry.target.classList.add('in-view');
-
-                    anime({
-                        targets: cards,
-                        opacity: [0, 1],
-                        translateY: [50, 0],
-                        easing: 'easeOutExpo',
-                        duration: 1200,
-                        delay: anime.stagger(150)
-                    });
-                }
-            } else {
-                // Khi phần tử rời khỏi khung hình -> chạy animation biến mất (nguợc lại)
-                if (entry.target.classList.contains('in-view')) {
-                    anime({
-                        targets: cards,
-                        opacity: [1, 0],
-                        translateY: [0, 50],
-                        easing: 'easeInExpo',
-                        duration: 800,
-                        // Thứ tự biến mất đảo ngược để tạo cảm giác hợp lý
-                        delay: anime.stagger(100, { direction: 'reverse' })
-                    });
-
-                    entry.target.classList.remove('in-view');
-                }
+            if (trips.length === 0) {
+                container.innerHTML = '<p>No trips found.</p>';
+                return;
             }
+
+            let htmlContent = '';
+            
+            trips.forEach(trip => {
+                htmlContent += `
+                <div class="trip-card">
+                    <div class="trip-card__image">
+                        <img src="${trip.image_url}" alt="${trip.title}">
+                        <span class="trip-tag">1 Day</span>
+                    </div>
+                    
+                    <div class="trip-card__content">
+                        <div class="trip-meta">
+                            <span class="rating">
+                                <i class="fa-solid fa-star"></i> ${trip.avg_rating.toFixed(1)}
+                            </span>
+                            <span class="reviews">(${trip.rating_count} reviews)</span>
+                        </div>
+                        
+                        <h3 class="trip-title">${trip.title}</h3>
+                        <p class="trip-desc">
+                            ${trip.description ? trip.description.substring(0, 80) + '...' : ''}
+                        </p>
+                        
+                        <div class="trip-footer">
+                            <div class="trip-info">
+                                <i class="fa-solid fa-location-dot"></i> ${trip.stop_count} Stops
+                            </div>
+                            <a href="detailsRoute/${trip.id}/" class="btn-text">View Details <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = htmlContent;
+        })
+        .catch(function (error) {
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            container.innerHTML = '<p style="color:red">Failed to load trips.</p>';
         });
-    };
-
-    // --- Khởi tạo Observer ---
-    const observer = new IntersectionObserver(animateOnScroll, observerOptions);
-
-    // --- Chọn các vùng chứa (Container) để theo dõi ---
-    // Thay vì theo dõi từng card lẻ tẻ, ta theo dõi cái khung bao quanh nó
-    // để kích hoạt cả nhóm card cùng lúc cho đẹp.
-    const sectionsToWatch = document.querySelectorAll('.destinations__grid, .recommended__list');
-
-    sectionsToWatch.forEach(section => {
-        observer.observe(section);
-    });
-})
+}

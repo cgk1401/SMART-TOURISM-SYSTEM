@@ -1,60 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
     var PLACES = [
-        { 
-            id:1, 
-            namePlace:"Chợ Bến Thành", 
-            lat: 10.7725168, 
-            lon: 106.6980208, 
-            img:"/static/images/Cho_Ben_Thanh.jpg",
-            des: "Tesstttttttt"
-        },
-        { 
-            id:2, 
-            namePlace:"Nhà Thờ Đức Bà", 
-            lat: 10.7797855, 
-            lon: 106.6990189, 
-            img:"/static/images/Nha_Tho_Duc_Ba.jpg",
-            des: "Testttttt"
-        },
-        { 
-            id:3, 
-            namePlace:"Dinh Độc Lập", 
-            lat: 10.7769942, 
-            lon: 106.6953021, 
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-            des: "testssssss"
-        },
+        // { 
+        //     id:1, 
+        //     namePlace:"Chợ Bến Thành", 
+        //     lat: 10.7725168, 
+        //     lon: 106.6980208, 
+        //     img:"/static/images/Cho_Ben_Thanh.jpg",
+        //     des: "Tesstttttttt"
+        // },
+        // { 
+        //     id:2, 
+        //     namePlace:"Nhà Thờ Đức Bà", 
+        //     lat: 10.7797855, 
+        //     lon: 106.6990189, 
+        //     img:"/static/images/Nha_Tho_Duc_Ba.jpg",
+        //     des: "Testttttt"
+        // },
+        // { 
+        //     id:3, 
+        //     namePlace:"Dinh Độc Lập", 
+        //     lat: 10.7769942, 
+        //     lon: 106.6953021, 
+        //     img: "/static/images/Dinh_Doc_Lap.jpg",
+        //     des: "testssssss"
+        // },
     ];
 
-    var Recommended_Place = [
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "/static/images/Dinh_Doc_Lap.jpg",
-        },
-        {
-            namePlace: "Destination1",
-            img: "",
-        }
-    ];
+    var Recommended_Place = [];
+    let currentMarker;
+    let map;
+    let routeLayer;
+    let routeMarkersGroup = L.layerGroup();
+    
 
     function initApp(){
+        // console.log.table(Recommended_Place);
         initMap();
         updateTripTitleFromURL();
         renderRecommendation(Recommended_Place);
         initCarouseControls();
-        searchLocation()
+        searchLocation();
+        renderRoute();
+        clearMap();
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -64,13 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initMap(){
-        const map = L.map('map').setView([10.7757116,106.6979296], 12);
+        map = L.map('map').setView([10.7757116,106.6979296], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             { attribution:'&copy; OpenStreetMap' }
         ).addTo(map);
 
-        L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('đây là trung tâm').openPopup();
+        currentMarker = L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('Trung Tâm Thành Phố').openPopup();
+        document.getElementById("info-close").addEventListener("click", () => {
+            document.getElementById("map-info-panel").classList.add("hidden");
+        });
+
     }
 
     function updateTripTitleFromURL(){
@@ -80,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const triptitle = document.querySelector(".trip-title h1");
         triptitle.textContent = "";
         triptitle.textContent = namerepalce;
+        
+        getRecommended_Place(namerepalce)
     }
 
     function renderRecommendation(places){
@@ -283,51 +276,339 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function searchLocation(){
-        const searchInput = document.getElementById("Search-location");
-        searchInput.addEventListener("keydown", async function(event) {
-            if (event.key === "Enter"){
-                const query = searchInput.value.trim();
+        const input = document.getElementById("Search-location");
+        const sugBox = document.getElementById("search-suggestions");
+        const MIN_CHARS = 2;
+        const DEBOUNCE_MS = 120;
 
-                if (query == ""){
-                    return;
+        let debounceTimer = null;
+        let activeIndex = -1;
+        let currentSuggestions = [];
+
+        async function fetchSuggestions(query){
+            const res = await axios.get("autocomplete/", {
+                params: { q: query }
+            });
+            return res.data || [];
+        }
+
+        function renderSuggestions(list){
+            currentSuggestions = list;
+            activeIndex = -1;
+
+            if (!list.length){
+                sugBox.classList.add("hidden");
+                sugBox.innerHTML = "";
+                return;
+            }
+
+            sugBox.innerHTML = list.map((item, idx) => `
+                <div class="suggestion-item" data-idx="${idx}">
+                    ${item.display_name}
+                </div>
+            `).join("");
+
+            sugBox.classList.remove("hidden");
+
+            sugBox.querySelectorAll(".suggestion-item").forEach(el => {
+                el.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const chosen = currentSuggestions[+el.dataset.idx];
+                    pickSuggestionFromDB(chosen);
+                });
+            });
+        }
+
+        async function pickSuggestionFromDB(chosen){
+            console.log("From DB");
+            input.value = chosen.display_name;
+            sugBox.classList.add("hidden");
+
+            let lat = parseFloat(chosen.lat);
+            let lon = parseFloat(chosen.lon);
+
+            console.log("Picked:", lat, lon, chosen.display_name);
+            if (currentMarker) map.removeLayer(currentMarker);
+            currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(chosen.display_name);
+            map.setView([lat, lon], 15);
+
+            try{
+                const weather = await axios.get("getWeather/", { 
+                    params:{ lat, lon }
+                });
+                const w = weather.data;
+                const tmp = {
+                    temp: w.main?.temp,
+                    humidity: w.main?.humidity,
+                    wind: w.wind?.speed,
+                    desc: w.weather?.[0]?.description
                 }
-                try{
-                    const ans = await axios.get("getLocation/", {
-                        params:{
-                            q: query
-                        }
-                    })
-                    lat = parseFloat(ans.data.lat);
-                    lon = parseFloat(ans.data.lon);
-                    console.log(lat)
-                    console.log(lon)
-                    console.log(ans.data.display_name)
+                showInfoPanel({
+                    name: chosen.display_name.split(",")[0],
+                    address: chosen.display_name,
+                    lat, lon,
+                    weather: tmp
+                });
+                console.log(w.main.temp, w.main.humidity, w.wind.speed);
+                Recommended_Place.push({
+                    namePlace: chosen.display_name.split(",")[0],
+                    lat: lat,
+                    lon: lon, 
+                    img: "",
+                    des: chosen.display_name,
+                });
 
-                    try{
-                        const weather = await axios.get("getWeather/",{
-                            params:{
-                                lat: lat,
-                                lon: lon
-                            }
-                        })
+                refreshRecommendationUI();
+            }catch(err){
+                console.error("Lỗi lấy thời tiết:", err);
+            }
+        }
 
-                        dataWeather = weather.data;
+        async function pickSuggestFromInput(){
+            console.log("From Input");
+            const query = input.value.trim();
 
-                        tempurature = dataWeather["main"]["temp"]
-                        humidity = dataWeather["main"]["humidity"]
-                        win_speed = dataWeather["wind"]["speed"]
-                        console.log(tempurature)
-                        console.log(humidity)
-                        console.log(win_speed)
-                    }catch(err){
-                        console.error("Loi lay du lieu thoi tiet:", err)
+            if (query == ""){
+                console.log("Thieu input")
+                return;
+            }
+
+            try{
+                const ans = await axios.get("getLocation/", {
+                    params:{
+                        q: query
                     }
+                })
+                let lat = parseFloat(ans.data.lat);
+                let lon = parseFloat(ans.data.lon);
 
-                }catch(err){
-                    console.error("Loi lay du lieu vi tri:",err)
+                if (currentMarker){
+                    map.removeLayer(currentMarker);
                 }
+                currentMarker = L.marker([lat,lon]).addTo(map).bindPopup(ans.data.display_name)
+                map.setView([lat, lon], 15);
+
+                console.log(lat)
+                console.log(lon)
+                console.log(ans.data.display_name)
+
+                try{
+                const weather = await axios.get("getWeather/",{
+                    params:{
+                        lat: lat,
+                        lon: lon
+                    }
+                })
+
+                const w = weather.data;
+                showInfoPanel({
+                    name: ans.data.display_name.split(",")[0],
+                    address: ans.data.display_name,
+                    lat, lon,
+                    weather: {
+                        temp: w.main?.temp,
+                        humidity: w.main?.humidity,
+                        wind: w.wind?.speed,
+                        desc: w.weather?.[0]?.description
+                    }
+                });
+                    
+                console.log(w.main.temp, w.main.humidity, w.wind.speed);
+                Recommended_Place.push({
+                    namePlace: ans.data.display_name.split(",")[0],
+                    lat: lat,
+                    lon: lon, 
+                    img: "",
+                    des: ans.data.display_name,
+                });
+                refreshRecommendationUI();
+                
+                }catch(err){
+                    console.error("Loi lay du lieu thoi tiet:", err)
+                }
+
+            }catch(err){
+                console.error("Loi lay du lieu vi tri:",err);
+            }
+        }
+
+        input.addEventListener("input", () =>{
+            const query = input.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < MIN_CHARS){
+                sugBox.classList.add("hidden");
+                sugBox.innerHTML = "";
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                try{
+                    const list = await fetchSuggestions(query);
+                    renderSuggestions(list);
+                }catch(e){
+                    console.error("Autocomplete error:", e);
+                    sugBox.classList.add("hidden");
+                    }
+            }, DEBOUNCE_MS);
+        });
+
+        input.addEventListener("keydown", (event) =>{
+            if (event.key === "Enter"){
+                console.log("Kick Enter");
+                event.preventDefault();
+
+                if (!sugBox.classList.contains("hidden") && activeIndex >= 0){
+                    pickSuggestionFromDB(currentSuggestions[activeIndex]);
+                }
+                else{
+                    pickSuggestFromInput();
+                }
+                return;
+            }
+            if (sugBox.classList.contains("hidden")) return;
+            const items = [...sugBox.querySelectorAll(".suggestion-item")];
+            
+            if (event.key === "ArrowDown"){
+                event.preventDefault();
+                activeIndex = (activeIndex + 1) % items.length;
+            } 
+            else if (event.key === "ArrowUp"){
+                event.preventDefault();
+                activeIndex = (activeIndex - 1 + items.length) % items.length;
+            } 
+            else if (event.key === "Escape"){
+                sugBox.classList.add("hidden");
+                return;
+            }
+
+            items.forEach(i => i.classList.remove("active"));
+            if (activeIndex >= 0) items[activeIndex].classList.add("active");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!sugBox.contains(e.target) && e.target !== input){
+            sugBox.classList.add("hidden");
+            }
+        });
+    }
+
+    function showInfoPanel({name, address, lat, lon, weather}){
+        const panel = document.getElementById("map-info-panel");
+        document.getElementById("info-name").textContent = name || "---";
+        document.getElementById("info-address").textContent = address || "";
+        document.getElementById("info-coord").textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+        if (weather){
+            document.getElementById("info-temp").textContent = weather.temp ?? "--";
+            document.getElementById("info-humidity").textContent = weather.humidity ?? "--";
+            document.getElementById("info-wind").textContent = weather.wind ?? "--";
+            document.getElementById("info-desc").textContent = weather.desc ?? "--";
+        }
+
+        panel.classList.remove("hidden");
+    }
+
+    function refreshRecommendationUI(){
+        const wrapper = document.getElementById("placesCarousel");
+        wrapper.innerHTML = ""; 
+        renderRecommendation(Recommended_Place);
+    }
+
+    async function getRecommended_Place(name){
+        const res = await axios.get("get_similar_location/", {
+            params:{
+                "base_location": name,
+                "limit": 7,
             }
         })
+        const dataList = res.data;
+        console.table(dataList);
+
+        Recommended_Place = dataList.map(item => ({
+            namePlace: item.namePlace,
+            lat: parseFloat(item.latitude),
+            lon: parseFloat(item.longtitude),
+            img: item.image || "",
+            des: `Rating: ${item.rating}`
+        }));
+        
+        refreshRecommendationUI();
+        
+    }
+
+    function renderRoute(){
+        const buttonDrawRoute = document.getElementById("btn-draw-route");
+
+        if (!buttonDrawRoute) return;
+
+        routeMarkersGroup.addTo(map);
+
+        buttonDrawRoute.addEventListener('click', async() => {
+            if (PLACES.length < 2){
+                return;
+            }
+
+            const coordsToSend = PLACES.map(p => [p.lat, p.lon]);
+
+            if (routeLayer){
+                map.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+            if (currentMarker){
+                map.removeLayer(currentMarker);
+            }
+            routeMarkersGroup.clearLayers();
+            PLACES.forEach(p => {
+                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.namePlace}</b>`);
+                routeMarkersGroup.addLayer(marker);
+            });
+
+            const res = await axios.post('getRoute/', {
+                coordinates: coordsToSend
+            })
+
+            const encoded = res.data.routes[0].geometry;
+            
+            const tmp = polyline.decode(encoded);
+            const latlngs = tmp.map(c => [c[0], c[1]]);
+            
+            routeLayer = L.polyline(latlngs, {
+                    color: 'blue',
+                    weight: 6,
+                    opacity: 0.8,
+                }).addTo(map);
+
+            map.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+
+        })
+    }
+
+    function clearMap(){
+        const buttonClearMap = document.getElementById("btn-clear-map");
+
+        if (!buttonClearMap){
+            return;
+        }
+
+        buttonClearMap.addEventListener('click', () => {
+            if (routeLayer){
+            map.removeLayer(routeLayer);
+            routeLayer = null;
+        }
+            if (currentMarker){
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+
+            routeMarkersGroup.clearLayers();
+
+            map.setView([10.7757116,106.6979296], 12);
+            document.getElementById("map-info-panel").classList.add("hidden");
+                
+            console.log("Map cleared!");
+        }) 
     }
 
     initApp();
