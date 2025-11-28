@@ -248,9 +248,7 @@ function handleEditClick(event) {
                 updateSummaryInfo(fieldId, newValue);
                 
                 // 2. Khôi phục nút
-                button.innerHTML = `<svg class="edit-icon-reusable" width="20" height="20">
-                                        <use href="#icon-edit-pencil" xlink:href="#icon-edit-pencil"></use>
-                                    </svg>
+                button.innerHTML = `<i class="fa-notdog fa-solid fa-pencil"></i>
                                     <span class="edit-text-style">Edit</span>`;
                 button.classList.remove('save-button');
                 
