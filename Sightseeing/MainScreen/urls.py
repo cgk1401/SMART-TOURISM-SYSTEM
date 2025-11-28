@@ -5,5 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.function_Main),
-    path('logout/', views.logout_user, name='logout') # could be put in sightseeing/url
+    path('logout/', views.logout_user, name='logout'), # could be put in sightseeing/url
+    path('api/trips/', views.trip_list_api),
+    path('detailsRoute/<int:trip_id>/', views.detailsRoute)
 ]

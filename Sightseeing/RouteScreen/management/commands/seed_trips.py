@@ -46,6 +46,7 @@ class Command(BaseCommand):
                 trip.avg_rating = trip_data.get("avg_rating", trip.avg_rating)
                 trip.rating_count = trip_data.get("rating_count", trip.rating_count)
                 trip.save()
+                trip.stops.all().delete()
             
             for stop in trip_data["stops"]:
                 loc_id = stop.get("pk")
