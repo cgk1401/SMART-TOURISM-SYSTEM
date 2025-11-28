@@ -38,7 +38,7 @@
     </section>
     
     <section class="customize-section">
-        <div class="customize-banner">
+        <div class="customize-banner" style="background-image: url('{% static 'images/Banner.jpg' %}');">
             <div class="customize-content">
                 <h2>Still not satisfied?</h2>
                 <p>Design your own unique journey tailored to your preferences.</p>
@@ -48,6 +48,42 @@
             </div>
         </div>
     </section>
+
+    <!-- Trip Details Model -->
+    <div id = "trip-modal" class = "modal-overlay">
+        <div class = "modal-container">
+            <button class = "modal-close" id = "close-modal"><i class="fa-solid fa-xmark"></i> </button>
+
+            <div class = "modal-header">
+                <div class = "modal-header-content">
+                    <div class = "modal-badges">
+                        <span class="badge-day">1 Day</span>
+                        <span class="badge-rating"><i class="fa-solid fa-star"></i> <span id="modal-rating">0.0</span></span>
+                    </div>
+                    <h2 id="modal-title">Trip Title</h2>
+                    <p id="modal-desc">Description goes here...</p>
+                </div>
+            </div>
+
+            <div class = "modal-body">
+                <h3 class="timeline-title">Your Itinerary</h3>
+                <div class = "route-timeline" id = "modal-stops">
+                
+                </div>
+            </div>
+
+            <div class = "modal-footer">
+                <div class = "footer-infor">
+                    <span><i class="fa-solid fa-location-dot"></i> <span id="modal-stop-count">0</span> Stops</span>
+                </div>
+                <button id="btn-use-trip" class="btn-use-trip">
+                    Use This Trip <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
 
