@@ -24,14 +24,13 @@
     {% include "common/footer.html" %}
     {% block extra_js %}{% endblock %}
 
-    <!-- SETTINGS MODAL – ĐỔI MÀU NAVBAR + FOOTER + BACKGROUND -->
+    <!-- SETTINGS MODAL – ĐỔI MÀU NAVBAR + FOOTER + BACKGROUND (GIỮ NGUYÊN GIAO DIỆN ĐẸP) -->
     <div id="settings-modal" class="settings-modal">
         <div class="settings-content">
             <div class="settings-header">
                 <h3>Settings</h3>
                 <span class="close-modal">×</span>
             </div>
-
             <div class="setting-item">
                 <label>Navbar Color</label>
                 <div class="color-picker-box">
@@ -39,7 +38,6 @@
                     <span id="navbar-hex">#ffffff</span>
                 </div>
             </div>
-
             <div class="setting-item">
                 <label>Footer Color</label>
                 <div class="color-picker-box">
@@ -47,7 +45,6 @@
                     <span id="footer-hex">#1a1a1a</span>
                 </div>
             </div>
-
             <div class="setting-item">
                 <label>Background Color</label>
                 <div class="color-picker-box">
@@ -157,55 +154,90 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('settings-modal');
-            const openBtn = document.getElementById('open-settings-modal');
+            const modal    = document.getElementById('settings-modal');
+            const openBtn  = document.getElementById('open-settings-modal');
             const closeBtn = document.querySelector('.close-modal');
 
-            // Load saved colors
-            const navColor = localStorage.getItem('navbarColor') || '#ffffff';
-            const footColor = localStorage.getItem('footerColor') || '#1a1a1a';
-            const bgColor = localStorage.getItem('bgColor') || '#f6f7f2';
+            const navbar   = document.querySelector('.navbar');
+            const footer   = document.getElementById('site-footer');
+            const body     = document.body;
 
-            // Áp dụng màu
-            document.querySelector('.navbar').style.backgroundColor = navColor;
-            document.getElementById('site-footer').style.backgroundColor = footColor;
-            document.body.style.backgroundColor = bgColor;
+            // LẤY USER ID TỪ DJANGO — QUAN TRỌNG NHẤT!
+            const userId   = "{{ request.user.id|default:'guest' }}";
+            const storageKey = `gost_theme_v2_${userId}`;
 
-            // Cập nhật picker + HEX
-            document.getElementById('navbar-picker').value = navColor;
-            document.getElementById('footer-picker').value = footColor;
-            document.getElementById('bg-picker').value = bgColor;
-            document.getElementById('navbar-hex').textContent = navColor;
-            document.getElementById('footer-hex').textContent = footColor;
-            document.getElementById('bg-hex').textContent = bgColor;
+            // Lấy màu gốc từ CSS (chuẩn 100%)
+            const getOriginal = el => getComputedStyle(el).backgroundColor;
+
+            const originalColors = {
+                navbar: getOriginal(navbar),
+                footer: getOriginal(footer),
+                background: getOriginal(body)
+            };
+
+            // Lấy theme đã lưu của user này (nếu có)
+            let theme = originalColors;
+            if (userId !== 'guest') {
+                const saved = localStorage.getItem(storageKey);
+                if (saved) theme = JSON.parse(saved);
+            }
+
+            // Hàm chuyển RGB → HEX
+            const rgbToHex = rgb => {
+                if (rgb.startsWith('#')) return rgb.toUpperCase();
+                const nums = rgb.match(/\d+/g);
+                if (!nums) return '#FFFFFF';
+                const [r, g, b] = nums.map(Number);
+                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            };
+
+            // Áp dụng theme
+            navbar.style.backgroundColor = theme.navbar;
+            footer.style.backgroundColor = theme.footer;
+            body.style.backgroundColor   = theme.background;
+
+            // Cập nhật picker + hiển thị HEX
+            document.getElementById('navbar-picker').value = rgbToHex(theme.navbar);
+            document.getElementById('footer-picker').value = rgbToHex(theme.footer);
+            document.getElementById('bg-picker').value     = rgbToHex(theme.background);
+
+            document.getElementById('navbar-hex').textContent = document.getElementById('navbar-picker').value;
+            document.getElementById('footer-hex').textContent = document.getElementById('footer-picker').value;
+            document.getElementById('bg-hex').textContent     = document.getElementById('bg-picker').value;
+
+            // Lưu theme khi thay đổi
+            const saveTheme = () => {
+                if (userId !== 'guest') {
+                    localStorage.setItem(storageKey, JSON.stringify({
+                        navbar: navbar.style.backgroundColor,
+                        footer: footer.style.backgroundColor,
+                        background: body.style.backgroundColor
+                    }));
+                }
+            };
 
             // Mở/đóng modal
             openBtn?.addEventListener('click', e => { e.preventDefault(); modal.style.display = 'flex'; });
             closeBtn?.addEventListener('click', () => modal.style.display = 'none');
             window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
 
-            // Navbar
+            // Thay đổi màu realtime + lưu
             document.getElementById('navbar-picker').addEventListener('input', e => {
-                const c = e.target.value;
-                document.querySelector('.navbar').style.backgroundColor = c;
-                document.getElementById('navbar-hex').textContent = c;
-                localStorage.setItem('navbarColor', c);
+                navbar.style.backgroundColor = e.target.value;
+                document.getElementById('navbar-hex').textContent = e.target.value;
+                saveTheme();
             });
 
-            // Footer
             document.getElementById('footer-picker').addEventListener('input', e => {
-                const c = e.target.value;
-                document.getElementById('site-footer').style.backgroundColor = c;
-                document.getElementById('footer-hex').textContent = c;
-                localStorage.setItem('footerColor', c);
+                footer.style.backgroundColor = e.target.value;
+                document.getElementById('footer-hex').textContent = e.target.value;
+                saveTheme();
             });
 
-            // Background
             document.getElementById('bg-picker').addEventListener('input', e => {
-                const c = e.target.value;
-                document.body.style.backgroundColor = c;
-                document.getElementById('bg-hex').textContent = c;
-                localStorage.setItem('bgColor', c);
+                body.style.backgroundColor = e.target.value;
+                document.getElementById('bg-hex').textContent = e.target.value;
+                saveTheme();
             });
         });
     </script>
