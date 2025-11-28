@@ -5,6 +5,9 @@ import os
 from MapScreen.models import Location
 from django.views.decorators.csrf import csrf_exempt
 import json
+from RouteScreen.models import Trip
+from django.shortcuts import get_object_or_404
+
 
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
@@ -156,5 +159,44 @@ def get_route(request):
     body = {"coordinates": coords}
     
     response = requests.post(url, json = body, headers = headers)
+    get_trip_detail(1)
     
     return JsonResponse(response.json())
+
+
+    
+def get_trip_detail(trip_id):
+    trip = get_object_or_404(
+        Trip.objects.prefetch_related("stops__location"),
+        pk=trip_id
+    )
+
+    stops_data = []
+    for st in trip.stops.all():
+        stops_data.append({
+            "order": st.order_index,
+            "day": st.day_index,
+            "stay": st.stay_minutes,
+            "location": {
+                "name": st.location.name,
+                "lat": st.location.latitude,
+                "lon": st.location.longtitude,
+                "address": st.location.address,
+                "rating": st.location.rating,
+                "tags": st.location.tags,
+            }
+        })
+
+    data = {
+        "id": trip.id,
+        "title": trip.title,
+        "description": trip.description,
+        "owner": trip.owner.username,
+        "avg_rating": trip.avg_rating,
+        "rating_count": trip.rating_count,
+        "stops": stops_data,
+    }
+    
+    print(data)
+    
+    

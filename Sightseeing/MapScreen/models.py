@@ -11,4 +11,4 @@ class Location(models.Model):
     website = models.CharField(max_length=255, blank=True, default="")
     opening_hours = models.CharField(max_length=255, blank=True, default="")
     rating = models.FloatField(default=4.0)
-    
+    address = models.CharField(max_length=255, blank=True, default="")
