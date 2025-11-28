@@ -311,7 +311,9 @@ document.addEventListener("DOMContentLoaded", () => {
             sugBox.classList.remove("hidden");
 
             sugBox.querySelectorAll(".suggestion-item").forEach(el => {
-                el.addEventListener("click", () => {
+                el.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const chosen = currentSuggestions[+el.dataset.idx];
                     pickSuggestionFromDB(chosen);
                 });

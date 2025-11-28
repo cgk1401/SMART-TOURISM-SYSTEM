@@ -326,7 +326,11 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
-.suggestion-item:hover { background-color: #f3f4f6; }
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background: #f2f6ff;
+}
 
 .places-carousel-wrapper {
     position: relative;

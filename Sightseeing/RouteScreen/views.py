@@ -2,7 +2,7 @@ from django.shortcuts import render
 import time, requests
 from django.http import JsonResponse
 import os
-from MapScreen.models import location
+from MapScreen.models import Location
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -85,11 +85,11 @@ def match_tags(base_tags, other_tags):
 def get_similar_locations(request):
     base_name = request.GET.get("base_location")
 
-    base_location = location.objects.get(name = base_name)
+    base_location = Location.objects.get(name = base_name)
     limit = int(request.GET.get("limit"))
     
     base_tags = base_location.tags 
-    all_location = location.objects.exclude(pk = base_location.pk)
+    all_location = Location.objects.exclude(pk = base_location.pk)
     
     results = []
     
@@ -119,11 +119,11 @@ def get_similar_locations(request):
       
 
 def autocomplete_places(request):
-    q = request.GET.get("", "")
+    q = request.GET.get("q", "")
     if not q:
         return JsonResponse([], safe=False)
     
-    db_results = location.objects.filter(name__icontains=q)\
+    db_results = Location.objects.filter(name__icontains=q)\
         .order_by('-rating')\
         .values("pk", "name", "latitude", "longtitude", "rating")[:5]
     
