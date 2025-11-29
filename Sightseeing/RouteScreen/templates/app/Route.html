@@ -5,6 +5,9 @@
 
 {% block body_class %} route {% endblock %}
 
+{% block navbar %} {% endblock %}
+{% block footer %} {% endblock %}
+
 {% block extra_css %}
     <link rel = "stylesheet" href = "{% static 'Route.css' %}" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -13,6 +16,32 @@
 
 {% block content %}
     <div class = "route-container">
+
+        <nav class="sidebar">
+            <!-- Logo hoặc nút Home -->
+            <a href="/MainScreen/" class="nav-logo" title="Trang chủ">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </a>
+
+            <!-- Các công cụ chính -->
+            <div class="nav-tools">
+                <button class = "nav-item" id = "btn-draw-route" title = "Vẽ lộ trình">
+                    <i class = "fa-solid fa-pen-nib"></i>
+                    <span> Draw </span>
+                </button>
+                
+                <button class = "nav-item" id = "btn-save-trip" title = "Lưu chuyến đi">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                    <span> Save </span>
+                </button>
+
+                <button class = "nav-item" id = "btn-clear-map" title = "Clear map">
+                    <i class = "fa-solid fa-eraser"> </i>
+                    <span> Clear Map </span>
+                </button>
+            </div>
+        </nav>
+
         <aside class = "trip-panel">
             <div class = "trip-header">
                 <img src = "{% static 'images/Cho_Ben_Thanh.jpg' %}" alt = "Trip-banner">
@@ -22,55 +51,99 @@
                 </div>
             </div>
 
-            <section class="trip-section" id = "destination-route">
-            {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
-            <h2> Destination </h2>
-                <div class="flight-card">
-                    <div class="flight-route">
-                        <h3> Test → Test</h3>
-                        <p> Time </p>
-                        <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
-                    </div>
-                </div>
-            </section>
+            <div class="trip-body-content">
 
-            <section class = "trip-section" id = "recommended-destination">
-                <div class = "search-location-container">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <input type = "text" placeholder = "Add a location" id ="Search-location">
-                    <div class = "action-buttons">
-                        <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
-                        <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
-                    </div>
-                </div>
-
-                    {% comment %} suggest destination {% endcomment %}
-                <div class = "recommendations-container">
-                    <div class = "recommendations-header">
-                        <i class="fa-solid fa-chevron-down"></i>
-                        <h2> Recommended places </h2>
-                    </div>
-
-                    <div class = "places-carousel-wrapper">
-
-                        {% comment %} Scroll Left {% endcomment %}
-                        <button class = "scroll-arrow" id = "scrollLeftBtn">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-
-                        <div class = "places-carousel" id = "placesCarousel">
-                            {% comment %} Region Recommended Destination {% endcomment %}
+                <section class="trip-section" id = "destination-route">
+                {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
+                <h2> Destination </h2>
+                    <div class="flight-card">
+                        <div class="flight-route">
+                            <h3> Test → Test</h3>
+                            <p> Time </p>
+                            <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
                         </div>
-                        {% comment %} Scroll Right {% endcomment %}
-                        <button class = "scroll-arrow" id = "scrollRightBtn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                    </div>
+                </section>
+
+                <section class = "trip-section" id = "recommended-destination">
+                    <div class = "search-location-container">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type = "text" placeholder = "Add a location" id ="Search-location" autocomplete="off">
+
+                        <div id="search-suggestions" class="suggestions hidden"></div>
+
+                        <div class = "action-buttons">
+                            <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
+                            <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
+                        </div>
+                    </div>
+
+                        {% comment %} suggest destination {% endcomment %}
+                    <div class = "recommendations-container">
+                        <div class = "recommendations-header">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            <h2> Recommended places </h2>
+                        </div>
+
+                        <div class = "places-carousel-wrapper">
+
+                            {% comment %} Scroll Left {% endcomment %}
+                            <button class = "scroll-arrow" id = "scrollLeftBtn">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <div class = "places-carousel" id = "placesCarousel">
+                                {% comment %} Region Recommended Destination {% endcomment %}
+                            </div>
+                            {% comment %} Scroll Right {% endcomment %}
+                            <button class = "scroll-arrow" id = "scrollRightBtn">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </aside> 
+        <div class = "map-wrapper">
+            <div id="map"></div>
+            <div id = "map-info-panel" class = "info-panel hidden">
+                <div class = "info-header">
+                    <div>
+                        <h3 id = "info-name"> --- </h3>
+                        <p id = "info-address" class = "muted"> --- </p>
+                    </div>
+                    <button id = "info-close" class = "info-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class = "info-body">
+                    <div class = "info-row">
+                        <span class="label">Tọa độ</span>
+                        <span id="info-coord">---</span>
+                    </div>
+                    <div class = "info-weather">
+                        <div class = "weather-item">
+                            <div class="weather-label">Nhiệt độ</div>
+                            <div class="weather-value"><span id="info-temp">--</span>°C</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Độ ẩm</div>
+                            <div class="weather-value"><span id="info-humidity">--</span>%</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Gió</div>
+                            <div class="weather-value"><span id="info-wind">--</span> m/s</div>
+                        </div>
+                        <div class="weather-item">
+                            <div class="weather-label">Mô tả</div>
+                            <div class="weather-value" id="info-desc">--</div>
+                        </div>
                     </div>
                 </div>
-            </section>
-        </aside> 
+            </div>
+        </div>
 
-        <div id="map"></div>
     </div>
 
 {% endblock %}

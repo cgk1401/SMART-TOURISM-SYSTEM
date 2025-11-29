@@ -1,0 +1,38 @@
+{% extends "common/base.html" %}
+{% load static %} 
+
+{% block title %} GOST - Discover Vietnam {% endblock %}
+
+{% block navbar %} {% endblock %}
+{% block footer %} {% endblock %}
+
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'DetailsRoute.css' %}" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+    <nav class="sidebar">
+        <!-- Logo hoặc nút Home -->
+        <a href="/MainScreen/" class="nav-logo" title="Trang chủ">
+            <i class="fa-solid fa-map-location-dot"></i>
+        </a>
+
+        <!-- Các công cụ chính -->
+        <div class="nav-tools">
+            <button class = "nav-item" id = "btn-save-trip" title = "Lưu chuyến đi">
+                <i class = "fa-regular fa-heart"></i>
+                <span> Use Trip </span>
+            </button>
+
+            <button class = "nav-item" id = "btn-clear-map" title = "Clear map">
+                <i class = "fa-solid fa-broom"> </i>
+                <span> Refresh </span>
+            </button>
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}
