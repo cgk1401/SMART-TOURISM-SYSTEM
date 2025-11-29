@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadTrips();
     loadCustomize();
-
+    setupModalEvents();
 
     document.querySelector('.hero__btn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     );
 });
+
+let currentTripId = null;
 
 function loadCustomize(){
     const customizeButton = document.querySelector(".btn-primary");
@@ -61,7 +63,9 @@ function loadTrips() {
                             <div class="trip-info">
                                 <i class="fa-solid fa-location-dot"></i> ${trip.stop_count} Stops
                             </div>
-                            <a href="detailsRoute/${trip.id}/" class="btn-text">View Details <i class="fa-solid fa-arrow-right"></i></a>
+                            <button class="btn-text" onclick="openTripDetails('${trip.id}')">
+                                View Details <i class="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -72,5 +76,83 @@ function loadTrips() {
         .catch(function (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);
             container.innerHTML = '<p style="color:red">Failed to load trips.</p>';
+<<<<<<< HEAD
         });
 }
+=======
+        }
+    );
+}
+
+function openTripDetails(tripId){
+    currentTripId = tripId;
+
+    const modal = document.getElementById('trip-modal');
+    const stopsContainer = document.getElementById('modal-stops');
+
+    stopsContainer.innerHTML = `
+        <div style="text-align:center; padding:20px;">Loading itinerary...</div>
+    `;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    axios.get(`detailsRoute/${tripId}/`).then(function (response){
+        const data = response.data;
+
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-desc').innerText = data.description;
+            document.getElementById('modal-rating').innerText = data.avg_rating;
+            document.getElementById('modal-stop-count').innerText = data.stops.length;
+
+            let stopsHtml = '';
+            // sap theo thu tu neu stops chua sap xep
+            const sortedStops = data.stops.sort((a, b) => a.order - b.order);
+            sortedStops.forEach(stop => {
+                stopsHtml += `
+                <div class="timeline-item" data-order="${stop.order}">
+                    <div class="stop-name">${stop.location.name}</div>
+                    <div class="stop-address"><i class="fa-solid fa-map-pin"></i> ${stop.location.address}</div>
+                    <div class="stop-meta">
+                        <i class="fa-regular fa-clock"></i> Stay: ${stop.stay} mins
+                    </div>
+                </div>
+                `;
+            });
+
+            stopsContainer.innerHTML = stopsHtml;
+
+        }
+    ).catch(function (error) {
+            console.error('Error loading details:', error);
+            stopsContainer.innerHTML = '<p style="color:red">Failed to load trip details.</p>';
+        }
+    );
+}
+
+function setupModalEvents(){
+    const modal = document.getElementById('trip-modal');
+    const closeBtn = document.getElementById('close-modal');
+    const useTripBtn = document.getElementById('btn-use-trip');
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Mở lại cuộn trang
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    useTripBtn.addEventListener('click', function() {
+        if (currentTripId) {
+            //  Chuyển sang trang RouteScreen
+            //window.location.href = `/RouteScreen/${currentTripId}/`; 
+            window.location.href = `/MainScreen/`;
+        }
+    });
+}
+>>>>>>> Kien

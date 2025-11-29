@@ -4,6 +4,7 @@ from RouteScreen.models import Trip
 from django.db.models import Count
 from django.contrib.auth import logout
 import random
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -60,4 +61,31 @@ def trip_list_api(request):
 
 
 def detailsRoute(request, trip_id):
-    return render(request, 'app/DetailsRoute.html',{"trip_id": trip_id})
+    trip = get_object_or_404(Trip, id=trip_id)
+    
+    stops = trip.stops.all()
+    
+    data = {
+        "id": trip.id,
+        "title": trip.title,
+        "description": trip.description,
+        "avg_rating": trip.avg_rating,
+        "rating_count": trip.rating_count,
+        "stops": [
+            {
+                "order": st.order_index,
+                "day": st.day_index,
+                "stay": st.stay_minutes,
+                "location": {
+                    "name": st.location.name,
+                    "lat": st.location.latitude,
+                    "lon": st.location.longtitude,
+                    "address": st.location.address or st.location.name, # check trường hợp lấy db mà không có address
+                    "rating": st.location.rating,
+                    "tags": st.location.tags,
+                }
+            } for st in stops
+        ]
+    }
+    return JsonResponse(data)
+    
