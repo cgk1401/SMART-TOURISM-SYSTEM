@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('#discover').scrollIntoView({ behavior: 'smooth' });
         }
     );
+
+    document.querySelector('.hero__btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#discover').scrollIntoView({ behavior: 'smooth' });
+        }
+    );
 });
 
 let currentTripId = null;
@@ -150,8 +156,9 @@ function setupModalEvents(){
     useTripBtn.addEventListener('click', function() {
         if (currentTripId) {
             //  Chuyển sang trang RouteScreen
-            //window.location.href = `/RouteScreen/${currentTripId}/`; 
-            window.location.href = `/MainScreen/`;
+            //window.location.href = `/MainScreen/RouteScreen/${currentTripId}/`; 
+            window.location.href = `/MainScreen/RouteScreen/?trip_id=${encodeURIComponent(currentTripId)}`;
+            
         }
     });
 }

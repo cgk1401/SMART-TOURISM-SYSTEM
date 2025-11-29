@@ -55,22 +55,45 @@ class Command(BaseCommand):
                     print("Thieu ID de luu route")
                     continue
                 
-                loc, loc_created = Location.objects.update_or_create(
-                    pk = loc_id,
-                    defaults = {
-                        "name": stop["name"],
-                        "latitude": stop["lat"],
-                        "longtitude": stop["lon"],
-                        "address": stop.get("address", ""),
-                        
-                        # Hiện tại chưa crawl được rating, nên sẽ gán mặc định
-                        "rating": stop.get("rating", 4.0),
-                        # Hiện tại cũng chưa crawl được tag nên sẽ để trống
-                        "tags": stop.get("tags", {}),
-                        
-                        # đã có hàm tự gắn rating và tags trong logic (tự xử lý)
-                    }
-                )
+                # location nào chưa có thì tạo, location nào đã có rồi thì update những trường dữ liệu chưa có(rỗng hoặc null)
+                try:   
+                    loc = Location.objects.get(pk = loc_id)
+                    # update những trường chưa có dữ liệu
+                    # check hết những trường của location trong db
+                    updated = False
+                    if not loc.name:
+                        loc.name = stop["name"]
+                        updated = True
+                    if not loc.latitude:
+                        loc.latitude = stop["lat"]
+                        updated = True
+                    if not loc.longtitude:
+                        loc.longtitude = stop["lon"]
+                        updated = True
+                    if not loc.address:
+                        loc.address = stop.get("address", "")
+                        updated = True
+                    if not loc.rating:
+                        loc.rating = stop.get("rating", 4.0)
+                        updated = True
+                    if not loc.tags:
+                        loc.tags = stop.get("tags", {})
+                        updated = True
+                    if updated:
+                        loc.save()
+                    
+                except Location.DoesNotExist:
+                    # chưa có location thì tạo
+                    loc = Location.objects.create(
+                        pk=loc_id,
+                        name=stop["name"],
+                        latitude=stop["lat"],
+                        longtitude=stop["lon"],
+                        address=stop.get("address", ""),
+                        rating=stop.get("rating", 4.0),
+                        tags=stop.get("tags", {})
+                    )
+                    
                 
                 TripStop.objects.create(
                     trip = trip,

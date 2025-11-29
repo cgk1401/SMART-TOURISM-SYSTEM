@@ -94,6 +94,16 @@ def get_similar_locations(request):
     base_tags = base_location.tags 
     all_location = Location.objects.exclude(pk = base_location.pk)
     
+    if not base_tags:
+        # nếu địa điểm truyền vào không có tags thì sẽ lấy các tags mặc đinh sau đây
+        # tags này của Thảo cầm viên sài gòn
+        base_tags = {
+            "interest": ["nature"], 
+            "budget": "budget", 
+            "activity_level": "relaxed", 
+            "group_type": "all"
+            }
+        
     results = []
     
     for loc in all_location:
@@ -106,12 +116,13 @@ def get_similar_locations(request):
                 scores += match_tags(base_value_tags, other_value_tags)
         if scores > 0:    
             results.append({
+                # trả về thông tin của các location theo một form
                 "score": scores,
-                "namePlace": loc.name,
-                "latitude": loc.latitude,
-                "longtitude": loc.longtitude,
+                "name": loc.name,
+                "lat": loc.latitude,
+                "lon": loc.longtitude,
                 "rating": loc.rating,
-                "image": ""
+                "address": loc.address,
             })
                 
 
@@ -128,16 +139,19 @@ def autocomplete_places(request):
     
     db_results = Location.objects.filter(name__icontains=q)\
         .order_by('-rating')\
-        .values("pk", "name", "latitude", "longtitude", "rating")[:5]
+        .values("pk", "name", "latitude", "longtitude", "rating", "address")[:5]
     
     formatted_results = []
     for item in db_results:
         print(item["rating"])
         formatted_results.append({
-            "display_name": item["name"],  
+            # trả về một vài thông tin trong db
+            "name": item["name"],  
             "lat": item["latitude"],
             "lon": item["longtitude"], 
-            "id": item["pk"]
+            "id": item["pk"],
+            "address": item["address"],
+            # không cần trả tags
         })
     
     return JsonResponse(formatted_results, safe=False)
@@ -159,44 +173,38 @@ def get_route(request):
     body = {"coordinates": coords}
     
     response = requests.post(url, json = body, headers = headers)
-    get_trip_detail(1)
     
     return JsonResponse(response.json())
 
 
     
-def get_trip_detail(trip_id):
-    trip = get_object_or_404(
-        Trip.objects.prefetch_related("stops__location"),
-        pk=trip_id
-    )
-
-    stops_data = []
-    for st in trip.stops.all():
-        stops_data.append({
-            "order": st.order_index,
-            "day": st.day_index,
-            "stay": st.stay_minutes,
-            "location": {
-                "name": st.location.name,
-                "lat": st.location.latitude,
-                "lon": st.location.longtitude,
-                "address": st.location.address,
-                "rating": st.location.rating,
-                "tags": st.location.tags,
-            }
-        })
-
+def detailsRoute(request, trip_id):
+    trip = get_object_or_404(Trip, id=trip_id)
+    
+    stops = trip.stops.all()
+    
     data = {
         "id": trip.id,
         "title": trip.title,
         "description": trip.description,
-        "owner": trip.owner.username,
         "avg_rating": trip.avg_rating,
         "rating_count": trip.rating_count,
-        "stops": stops_data,
+        "stops": [
+            {
+                "order": st.order_index,
+                "day": st.day_index,
+                "stay": st.stay_minutes,
+                "location": {
+                    "name": st.location.name,
+                    "lat": st.location.latitude,
+                    "lon": st.location.longtitude,
+                    "address": st.location.address or st.location.name, # check trường hợp lấy db mà không có address
+                    "rating": st.location.rating,
+                    "tags": st.location.tags,
+                }
+            } for st in stops
+        ]
     }
-    
-    print(data)
+    return JsonResponse(data)
     
     
