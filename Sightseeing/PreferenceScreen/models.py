@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 class UserPref(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    interests = models.JSONField(default=list)
-    group_types = models.JSONField(default=list)
-    budgets = models.JSONField(default=list)
-    activity_levels = models.JSONField(default=list)
-    eating_habits = models.JSONField(default=list)
+    interests = models.JSONField(default=list, blank=True)
+    eating_habits = models.JSONField(default=list, blank=True)
+
+    group_type = models.CharField(max_length=50, blank=True)
+    budget = models.CharField(max_length=50, blank=True)
+    activity_level = models.CharField(max_length=50, blank=True)
+    visit_duration = models.CharField(max_length=50, blank=True)
