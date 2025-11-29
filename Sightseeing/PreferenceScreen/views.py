@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import UserPref
 from MapScreen.models import location
-from math import radians, sin, cos, sqrt, atan2
 
 
 def function_preference(request):
@@ -32,7 +31,7 @@ def save_preference(request):
 
         options = ranking_loc(pref)
         main_loc = choose_main_loc(pref, options)
-        itineraries_list = build_list(pref, options, main_loc)
+        itineraries = build_list(pref, options, main_loc)
         return redirect('/PreferenceScreen/')
 
     return redirect('/PreferenceScreen/')
@@ -144,6 +143,7 @@ def choose_main_loc(pref, options):
 
 
 def distance_km(lat1, lon1, lat2, lon2):
+    from math import radians, sin, cos, sqrt, atan2
     R = 6371
     dlat = radians(lat2 - lat1)
     dlon = radians(lon2 - lon1)
@@ -168,6 +168,60 @@ def distance_score(dis, activity_level):
 
     # quadratic decay
     return max_score - (max_score - min_score) * (d ** 2)
+
+
+def get_duration(loc, user_pref):
+    amenity = loc.tags.get("amenity")
+    interests = loc.tags.get("interest", [])
+
+    # base
+    amenity_duration = {
+        "museum": 90,
+        "exhibition_centre": 90,
+        "theatre": 120,
+        "cinema": 120,
+        "park": 60,
+        "events_venue": 120,
+        "marketplace": 60,
+        "bar": 45,
+        "pub": 45,
+        "nightclub": 45,
+        "place_of_worship": 45,
+        "post_office": 50,
+    }
+
+    interest_duration = {
+        "history": 75,
+        "culture": 75,
+        "sightseeing": 60,
+        "shopping": 60,
+        "entertainment": 90,
+        "nature": 60,
+    }
+
+    # 1. amenity first
+    if amenity in amenity_duration:
+        duration = amenity_duration[amenity]
+    # 2. if not then interest
+    elif interests:
+        # take max
+        duration = max(
+            interest_duration.get(i, 60) for i in interests
+        )
+    # 3. default
+    else:
+        duration = 60
+
+    # adjust for user preference
+    if user_pref == "brief":
+        duration *= 0.55
+    elif user_pref == "full_exp":
+        duration *= 1.45
+
+    # 5. Clamp range (avoid extremes)
+    duration = max(20, min(duration, 150))
+
+    return int(duration)
 
 
 def build_list(pref, options, main_loc):
@@ -196,7 +250,7 @@ def build_list(pref, options, main_loc):
                 buckets[i].append(opt)
 
     # build the actual lists
-    N = 3
+    N = 1  # too lazy to change
     LOC_PER = 6
 
     # init with main_loc
@@ -206,11 +260,9 @@ def build_list(pref, options, main_loc):
     for b in buckets.values():
         b[:] = [opt for opt in b if opt['location'].pk != main_loc.pk]
 
-    idx = 0  # itineraries id
-
     while any(len(it) < LOC_PER for it in itineraries):
 
-        # interest-cycle pass ----------
+        # interest-cycle pass
         for interest in pref.interests:
 
             bucket = buckets.get(interest, [])
@@ -219,21 +271,23 @@ def build_list(pref, options, main_loc):
 
             for i in range(N):
                 if len(itineraries[i]) < LOC_PER and bucket:
-                    # Find the first location in bucket that's not already in the itinerary
+                    # find the first location in bucket that's not already in the itinerary
                     location_ids_in_itinerary = {loc.pk for loc in itineraries[i]}
 
                     for j in range(len(bucket)):
                         opt_dict = bucket[j]
                         if opt_dict['location'].pk not in location_ids_in_itinerary:
-                            # Found a unique location, add it and remove from bucket
-                            itineraries[i].append(opt_dict['location'])
+                            # found a unique location
+                            loc = opt_dict['location']
+                            loc.tags["duration"] = get_duration(loc, pref.visit_duration)
+                            itineraries[i].append(loc)
                             bucket.pop(j)
                             break
 
             if all(len(it) == LOC_PER for it in itineraries):
                 break
 
-        # free-slot pass ---------------
+        # free-slot pass
         remaining = [loc for bl in buckets.values() for loc in bl]
         if not remaining:
             break
@@ -256,20 +310,19 @@ def build_list(pref, options, main_loc):
                     if selected_opt in b:
                         b.remove(selected_opt)
                         break
+                loc = selected_opt['location']
+                loc.tags["duration"] = get_duration(loc, pref.visit_duration)
+                itineraries[i].append(loc)
 
-                itineraries[i].append(selected_opt['location'])
-
-    return itineraries
+    return itineraries[0]
 
 
 def print_itineraries(itineraries):
     import json
     from django.forms.models import model_to_dict
 
-    for it in itineraries:
-        for loc in it:
-            print(json.dumps(model_to_dict(loc), indent=4))
-        print("--------------------------------------")
+    for loc in itineraries:
+        print(json.dumps(model_to_dict(loc), indent=4))
 
 
 @login_required
