@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import UserPref
-from MapScreen.models import location
+from MapScreen.models import Location
 
 
 def function_preference(request):
@@ -44,7 +44,7 @@ def ranking_loc(pref):
         pref.interests = ['sightseeing', 'history', 'entertainment', 'shopping', 'culture', 'nature']
         # for the scoring easier
 
-    locations = location.objects.all()
+    locations = Location.objects.all()
     options = []
 
     WEIGHTS = {
