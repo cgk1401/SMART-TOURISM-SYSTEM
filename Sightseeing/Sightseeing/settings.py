@@ -38,13 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'AccountScreen',
     'LoginScreen',
     'MainScreen',
     'MapScreen',
     'PreferenceScreen',
     'ChatBoxAI',
     'Discover',
-    'AccountScreen',
+    'RouteScreen',
+    'AboutUs'
 ]
 
 MIDDLEWARE = [

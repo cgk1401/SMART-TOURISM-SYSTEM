@@ -19,6 +19,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('LoginScreen.urls')),
@@ -28,6 +31,8 @@ urlpatterns = [
     path('chat/', include('ChatBoxAI.urls')),
     path('Discover/', include('Discover.urls')),
     path('account/', include('AccountScreen.urls')),
+    path('MainScreen/RouteScreen/', include('RouteScreen.urls')),
+    path('AboutUs/', include('AboutUs.urls'))
 ]
 
 if settings.DEBUG:

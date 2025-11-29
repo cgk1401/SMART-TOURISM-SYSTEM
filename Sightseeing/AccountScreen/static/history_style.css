@@ -17,9 +17,9 @@
 /* 2. KIỂU DÁNG VĂN BẢN (tab-text) */
 .tab-text {
     /* Kiểu dáng chung (từ font-size, font-family, font-weight) */
-    font-size: 20px;
+    font-size: 25px;
     font-family: 'Karla', sans-serif;
-    font-weight: 500;
+    font-weight: bold;
     letter-spacing: 0.10px;
     
     /* Màu mặc định (cho các tab KHÔNG active, như tab History) */
