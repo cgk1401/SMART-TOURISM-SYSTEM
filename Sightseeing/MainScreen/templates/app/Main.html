@@ -90,11 +90,4 @@
 {% block extra_js %}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="{% static 'Main.js' %}"></script>
-    <script>
-        // Smooth scroll for the "Start Exploring" button
-        document.querySelector('.hero__btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector('#discover').scrollIntoView({ behavior: 'smooth' });
-        });
-    </script>
 {% endblock %}

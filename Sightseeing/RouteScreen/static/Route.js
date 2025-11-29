@@ -1,32 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     var PLACES = [
-        // { 
-        //     id:1, 
-        //     namePlace:"Chợ Bến Thành", 
-        //     lat: 10.7725168, 
-        //     lon: 106.6980208, 
-        //     img:"/static/images/Cho_Ben_Thanh.jpg",
-        //     des: "Tesstttttttt"
-        // },
-        // { 
-        //     id:2, 
-        //     namePlace:"Nhà Thờ Đức Bà", 
-        //     lat: 10.7797855, 
-        //     lon: 106.6990189, 
-        //     img:"/static/images/Nha_Tho_Duc_Ba.jpg",
-        //     des: "Testttttt"
-        // },
-        // { 
-        //     id:3, 
-        //     namePlace:"Dinh Độc Lập", 
-        //     lat: 10.7769942, 
-        //     lon: 106.6953021, 
-        //     img: "/static/images/Dinh_Doc_Lap.jpg",
-        //     des: "testssssss"
-        // },
+        // id(để kéo di chuyển các place) name, lat, lon, address không có thì để tên, stay
     ];
 
-    var Recommended_Place = [];
+    var Recommended_Place = [
+        // name, lat(float), lon(float), rating, address
+    ];
     let currentMarker;
     let map;
     let routeLayer;
@@ -36,7 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function initApp(){
         // console.log.table(Recommended_Place);
         initMap();
-        updateTripTitleFromURL();
+        getTripFromUrl();
+        // updateTripTitleFromURL();
         renderRecommendation(Recommended_Place);
         initCarouseControls();
         searchLocation();
@@ -64,51 +44,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    function updateTripTitleFromURL(){
-        const params = new URLSearchParams(window.location.search);
-        const namerepalce = params.get("name");
+    // function updateTripTitleFromURL(){
+    //     const params = new URLSearchParams(window.location.search);
+    //     const namerepalce = params.get("name");
 
-        const triptitle = document.querySelector(".trip-title h1");
-        triptitle.textContent = "";
-        triptitle.textContent = namerepalce;
+    //     const triptitle = document.querySelector(".trip-title h1");
+    //     triptitle.textContent = "";
+    //     triptitle.textContent = namerepalce;
         
-        getRecommended_Place(namerepalce)
-    }
+    //     getRecommended_Place(namerepalce)
+    // }
 
     function renderRecommendation(places){
         const Add_placesCarousel = document.getElementById("placesCarousel")
+        Add_placesCarousel.innerHTML = "";
+
+        if(!places || places.length === 0) {
+            Add_placesCarousel.innerHTML = '<div class="empty-state">No recommendations available</div>';
+            return;
+        }
+
         places.forEach((p, idx) => {
-            let mediaHTML;
-            if (p.img == ""){
-                mediaHTML = `
-                    <span class="place-placeholder-icon">
-                        <i class="fa-solid fa-compass"></i> 
-                    </span>
-                `;
-            }else{
-                mediaHTML = `
-                    <img src = "${p.img}" alt = ${p.namePlace}>
-                `
-            }
+            const rating = p.rating ? p.rating : (Math.random() * (5.0 - 3.5) + 3.5).toFixed(1);
 
             const newdiv = document.createElement("div");
             newdiv.className = "place-card";
+
             newdiv.innerHTML = `
-                ${mediaHTML}
-                <span class = "place-name"> ${p.namePlace} </span>
-                <button class = "add-place-btn"> + </button>
+                <div class="card-image-wrapper">
+                    <button class="add-place-btn" title="Add to Itinerary">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="card-content">
+                    <h4 class="place-name" title="${p.name}"> ${p.name} </h4>
+                    <div class="place-meta">
+                        <span class="rating"><i class="fa-solid fa-star"></i> ${rating}</span>
+                        <span class="category">Tourist Attraction</span>
+                    </div>
+                    <p class="place-desc-short" title="${p.address || ''}">${p.address || 'Địa điểm tham quan nổi bật'}</p>
+                </div>
             `;
             const addedButton = newdiv.querySelector(".add-place-btn");
-            addedButton.addEventListener("click", () => {
+            addedButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                
+                // Hiệu ứng click visual
+                addedButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+                addedButton.classList.add("added");
+                setTimeout(() => {
+                    addedButton.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    addedButton.classList.remove("added");
+                }, 1500);
+
                 const rec = Recommended_Place[idx];
                 const newId = PLACES.length ? Math.max(...PLACES.map(pl => pl.id)) + 1 : 1;
                 PLACES.push({
                     id: newId,
-                    namePlace: rec.namePlace,
-                    lat: rec.lat || 0,
-                    lon: rec.lon || 0,
-                    img: rec.img || "/static/images/Nha_Tho_Duc_Ba.jpg",
-                    des: rec.des || ""
+                    name: rec.name,
+                    lat: rec.lat,
+                    lon: rec.lon,
+                    address: rec.address || rec.name,
+                    stay: rec.stay || "",
                 });
 
                 const itineraryList = renderItinerary(PLACES);
@@ -175,22 +172,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 newitineraryItem.className = "itinerary-item";
                 newitineraryItem.setAttribute("draggable", true);
                 newitineraryItem.dataset.id = p.id;
+
                 newitineraryItem.innerHTML = `
                     <div class = "itinerary-index"> ${idx + 1} </div>
-                    <div class = "itinerary-info">
-                        <h3> ${p.namePlace} </h3>
-                        <p> ${p.des} </p>
-                        <div class = "itinerary-meta">
-                            <span> 32 min</span>
-                            <span>· 16 min </span>
-                            <a href="#">Directions</a>
-                        </div>
+
+                    <div class="itinerary-icon-placeholder">
+                        <i class="fa-solid fa-landmark"></i>
                     </div>
-                    <img src = "${p.img}" alt = ${p.namePlace}>
+
+                    <div class = "itinerary-info">
+                        <h3> ${p.name} </h3>
+                        <p> ${p.address || p.name} </p>
+
+                        <div class="itinerary-meta">
+                            <span><i class="fa-regular fa-clock"></i> ${(p.stay || 30) + " mins"}</span>
+                        </div>
+
+                    </div>
 
                     <button class = "delete-btn">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
+
                 `;
                 newdiv.appendChild(newitineraryItem);
 
@@ -304,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             sugBox.innerHTML = list.map((item, idx) => `
                 <div class="suggestion-item" data-idx="${idx}">
-                    ${item.display_name}
+                    ${item.name}
                 </div>
             `).join("");
 
@@ -322,15 +325,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         async function pickSuggestionFromDB(chosen){
             console.log("From DB");
-            input.value = chosen.display_name;
+            input.value = chosen.name;
             sugBox.classList.add("hidden");
 
             let lat = parseFloat(chosen.lat);
             let lon = parseFloat(chosen.lon);
 
-            console.log("Picked:", lat, lon, chosen.display_name);
+            console.log("Picked:", lat, lon, chosen.name);
             if (currentMarker) map.removeLayer(currentMarker);
-            currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(chosen.display_name);
+            currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(chosen.name);
             map.setView([lat, lon], 15);
 
             try{
@@ -345,18 +348,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     desc: w.weather?.[0]?.description
                 }
                 showInfoPanel({
-                    name: chosen.display_name.split(",")[0],
-                    address: chosen.display_name,
+                    name: chosen.name.split(",")[0],
+                    address: chosen.address || chosen.name,
                     lat, lon,
                     weather: tmp
                 });
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
                 Recommended_Place.push({
-                    namePlace: chosen.display_name.split(",")[0],
+                    name: chosen.name.split(",")[0],
                     lat: lat,
-                    lon: lon, 
-                    img: "",
-                    des: chosen.display_name,
+                    lon: lon,
+                    rating: chosen.rating || "",
+                    address: chosen.address || chosen.name
                 });
 
                 refreshRecommendationUI();
@@ -416,11 +419,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
                 Recommended_Place.push({
-                    namePlace: ans.data.display_name.split(",")[0],
+                    name: ans.data.display_name.split(",")[0],
                     lat: lat,
                     lon: lon, 
-                    img: "",
-                    des: ans.data.display_name,
+                    rating: "", //search data không có rating
+                    address: ans.data.display_name,
                 });
                 refreshRecommendationUI();
                 
@@ -527,11 +530,11 @@ document.addEventListener("DOMContentLoaded", () => {
         console.table(dataList);
 
         Recommended_Place = dataList.map(item => ({
-            namePlace: item.namePlace,
-            lat: parseFloat(item.latitude),
-            lon: parseFloat(item.longtitude),
-            img: item.image || "",
-            des: `Rating: ${item.rating}`
+            name: item.name,
+            lat: parseFloat(item.lat),
+            lon: parseFloat(item.lon),
+            rating: item.rating,
+            address: item.address || "",
         }));
         
         refreshRecommendationUI();
@@ -561,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             routeMarkersGroup.clearLayers();
             PLACES.forEach(p => {
-                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.namePlace}</b>`);
+                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.name}</b>`);
                 routeMarkersGroup.addLayer(marker);
             });
 
@@ -609,6 +612,54 @@ document.addEventListener("DOMContentLoaded", () => {
                 
             console.log("Map cleared!");
         }) 
+    }
+
+    function getTripFromUrl(){
+        const params = new URLSearchParams(window.location.search);
+        const trip_id = params.get("trip_id");
+        
+        console.log("trip_id = ", trip_id);
+        if (!trip_id) return;
+
+        axios.get(`getdetailsRoute/${trip_id}/`).then(res => {
+            console.log("Route details:", res.data);
+            const nameRoute = res.data.title;
+            const triptitle = document.querySelector(".trip-title h1");
+            triptitle.textContent = "";
+            triptitle.textContent = nameRoute;
+
+            console.log(res.data.stops[0].location.name);
+
+            res.data.stops.forEach(p => {
+                PLACES.push(
+                    {
+                        id : CreateIdFromRouteTrip(),
+                        name: p.location.name,
+                        lat: p.location.lat,
+                        lon: p.location.lon,
+                        address: p.location.address || p.location.name,
+                        stay: p.stay,
+
+                    }
+                )
+            })
+            renderItinerary(PLACES);
+            getRecommended_Place(res.data.stops[0].location.name);
+
+            const itineraryList = renderItinerary(PLACES);
+            if (itineraryList) {
+                initDragAndDrop(itineraryList);
+            }
+        }).catch(err => {
+            console.error("Lỗi lấy trip từ trip_id:", err);
+        })
+
+
+    }
+
+    function CreateIdFromRouteTrip(){
+        if(!PLACES.length) return 1;
+        return Math.max(...PLACES.map(p => p.id || 0)) + 1; 
     }
 
     initApp();

@@ -8,5 +8,6 @@ urlpatterns = [
     path("getWeather/", views.get_weather),
     path("autocomplete/", views.autocomplete_places),
     path("get_similar_location/", views.get_similar_locations),
-    path("getRoute/", views.get_route)
+    path("getRoute/", views.get_route),
+    path('getdetailsRoute/<int:trip_id>/', views.detailsRoute),
 ]
