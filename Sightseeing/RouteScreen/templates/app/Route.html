@@ -146,6 +146,38 @@
 
     </div>
 
+    {% comment %} thông pop up khi save thành công {% endcomment %}
+
+    <div id="save-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon-wrapper">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            
+            <h2 class="modal-title">Lưu thành công!</h2>
+            
+            <p class="modal-desc">
+                Chuyến đi của bạn đã được lưu vào hệ thống.
+            </p>
+            
+            <div class="modal-instruction">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>
+                    Vui lòng truy cập <strong>Account > My Trip</strong> để đặt tên cụ thể và viết đánh giá cho lộ trình này nhé!
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-modal-close" class="modal-btn btn-secondary">
+                    Tiếp tục thiết kế
+                </button>
+                <!-- Đường dẫn href bạn chỉnh lại cho đúng với URL project của bạn -->
+                <a href="myTrips/" class="modal-btn btn-primary">
+                    Đến My Trips <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}

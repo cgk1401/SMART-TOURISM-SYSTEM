@@ -10,4 +10,6 @@ urlpatterns = [
     path("get_similar_location/", views.get_similar_locations),
     path("getRoute/", views.get_route),
     path('getdetailsRoute/<int:trip_id>/', views.detailsRoute),
+    path('myTrips/', views.function_MyTrip),
+    path('SaveTrip/', views.Save_Trip),
 ]

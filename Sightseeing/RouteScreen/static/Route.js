@@ -1,15 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
     var PLACES = [
-        // id(để kéo di chuyển các place) name, lat, lon, address không có thì để tên, stay
+        // id(để kéo di chuyển các place) pk, name, lat, lon, address không có thì để tên, stay
     ];
 
     var Recommended_Place = [
-        // name, lat(float), lon(float), rating, address
+        // name, lat(float), lon(float), rating, address, stay, tags, pk
     ];
     let currentMarker;
     let map;
     let routeLayer;
     let routeMarkersGroup = L.layerGroup();
+    let TripName;
     
 
     function initApp(){
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         searchLocation();
         renderRoute();
         clearMap();
+        SaveTrip();
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -100,7 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const rec = Recommended_Place[idx];
                 const newId = PLACES.length ? Math.max(...PLACES.map(pl => pl.id)) + 1 : 1;
                 PLACES.push({
-                    id: newId,
+                    id: newId, // Id đùng để kéo thả chỉnh sửa thứ tự lộ trình,
+                    pk: rec.pk, // các pk đặc trưng riêng cho từng điểm lưu vào db
                     name: rec.name,
                     lat: rec.lat,
                     lon: rec.lon,
@@ -355,6 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
                 Recommended_Place.push({
+                    pk: chosen.pk,
                     name: chosen.name.split(",")[0],
                     lat: lat,
                     lon: lon,
@@ -395,6 +399,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log(lat)
                 console.log(lon)
                 console.log(ans.data.display_name)
+                // check pk của địa điểm (place_id)
+                console.log(ans)
 
                 try{
                 const weather = await axios.get("getWeather/",{
@@ -416,15 +422,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         desc: w.weather?.[0]?.description
                     }
                 });
-                    
+                
                 console.log(w.main.temp, w.main.humidity, w.wind.speed);
                 Recommended_Place.push({
+                    pk: ans.data.place_id,
                     name: ans.data.display_name.split(",")[0],
                     lat: lat,
                     lon: lon, 
                     rating: "", //search data không có rating
                     address: ans.data.display_name,
                 });
+                // console.log(Recommended_Place)
                 refreshRecommendationUI();
                 
                 }catch(err){
@@ -623,10 +631,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         axios.get(`getdetailsRoute/${trip_id}/`).then(res => {
             console.log("Route details:", res.data);
-            const nameRoute = res.data.title;
+            TripName = res.data.title;
             const triptitle = document.querySelector(".trip-title h1");
             triptitle.textContent = "";
-            triptitle.textContent = nameRoute;
+            triptitle.textContent = TripName;
 
             console.log(res.data.stops[0].location.name);
 
@@ -634,6 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 PLACES.push(
                     {
                         id : CreateIdFromRouteTrip(),
+                        pk: p.location.pk,
                         name: p.location.name,
                         lat: p.location.lat,
                         lon: p.location.lon,
@@ -660,6 +669,79 @@ document.addEventListener("DOMContentLoaded", () => {
     function CreateIdFromRouteTrip(){
         if(!PLACES.length) return 1;
         return Math.max(...PLACES.map(p => p.id || 0)) + 1; 
+    }
+
+    function SaveTrip(){
+        const btnSaveTrip = document.getElementById('btn-save-trip');
+        const modalOverlay = document.getElementById('save-modal');
+        const btnCloseModal = document.getElementById('btn-modal-close');
+
+        function showSaveModal() {
+            if(modalOverlay) {
+                modalOverlay.classList.remove('hidden');
+            }
+        }
+
+        function closeSaveModal() {
+            if(modalOverlay) {
+                modalOverlay.classList.add('hidden');
+            }
+        }
+        if (btnSaveTrip) {
+            btnSaveTrip.addEventListener('click', event => {
+                event.preventDefault();
+                showSaveModal();
+            });
+        }
+
+        if (btnCloseModal) {
+            btnCloseModal.addEventListener('click', event => {
+                event.preventDefault();
+                console.log("BẮT ĐẦU SAVE");
+                if (!PLACES || PLACES.length === 0){
+                    alert("Lội trình đang trống| Vui lòng thêm địa điểm trước khi Lưu");
+                }
+                //format lại dữ liệu trước khi lưu
+                const savedData = {
+                    // các thông tin title, description, avg_rating, rating_count qua trang mytrip người dùng nhập
+                    title:TripName,
+                    description: "Xíu nữa người dùng nhập nhé",
+                    avg_rating: 0,
+                    rating_count: 1,
+                    stops: PLACES.map((p, i) => ({
+                        pk: p.pk,
+                        name: p.name,
+                        lat: p.lat,
+                        lon: p.lon,
+                        address: p.address,
+                        rating: p.rating || 4.0,
+                        tags: p.tags || {},
+                        stay: p.stay || 30,
+                        order: i + 1,
+                    }))
+
+                }
+                axios.post("SaveTrip/", savedData, {
+                    headers:{
+                        "Content-Type": "application/json"
+                    }
+                }).then(res => {
+                    console.log("Saved!", res.data);
+                }).catch(err => {
+                    console.error("Save failed:", err);
+                })
+                closeSaveModal();
+            });
+        }
+
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', event => {
+                if (event.target === modalOverlay) {
+                    closeSaveModal();
+                }
+            });
+        }
+
     }
 
     initApp();

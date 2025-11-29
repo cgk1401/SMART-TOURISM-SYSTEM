@@ -43,8 +43,10 @@ class Command(BaseCommand):
             
             if not created:
                 # nếu trip bị trùng (người khác cùng tạo lộ trình như vậy hoặc sử dụng lại lộ trình đã có sẵn (check trùng tên lộ trình))
-                trip.avg_rating = trip_data.get("avg_rating", trip.avg_rating)
-                trip.rating_count = trip_data.get("rating_count", trip.rating_count)
+                defaults = {
+                    "description": trip_data.get("description", ""),
+                    "avg_rating": trip_data.get("avg_rating", 5.0),
+                }
                 trip.save()
                 trip.stops.all().delete()
             

@@ -657,3 +657,156 @@ body {
     color: #fff;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
+
+
+/* Pop up hiện thông báo khi Save */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Hộp thoại chính */
+.modal-box {
+    background: #ffffff;
+    width: 420px;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-overlay.hidden .modal-box {
+    transform: scale(0.8) translateY(20px);
+}
+
+/* Icon check xanh lá */
+.modal-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+.modal-icon-wrapper i {
+    font-size: 32px;
+    color: white;
+    animation: scaleUp 0.5s ease-out;
+}
+
+@keyframes scaleUp {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.modal-desc {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+/* Phần hướng dẫn Account -> My Trip */
+.modal-instruction {
+    background-color: #eff6ff;
+    border: 1px dashed #3b82f6;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+}
+
+.modal-instruction i {
+    color: #3b82f6;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.modal-instruction p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #1e3a8a;
+    line-height: 1.5;
+}
+
+.modal-instruction strong {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Buttons */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
+    color: white;
+}

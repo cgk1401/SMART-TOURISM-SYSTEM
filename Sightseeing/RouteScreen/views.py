@@ -7,6 +7,11 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from RouteScreen.models import Trip
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from RouteScreen.models import Trip, TripStop
+from MapScreen.models import Location
+
 
 
 
@@ -17,6 +22,9 @@ if API_WEATHER_KEY:
 
 def function_Route(request):
     return render(request, 'app/Route.html')
+
+def function_MyTrip(request):
+    return render(request, 'app/Mytrip.html')
 
 NOMINATIM = "https://nominatim.openstreetmap.org"
 UA = {"User-Agent": "OSM-Demo-Geocode/1.0 (contact: doomanhcuongg@gmail.com)"}
@@ -175,8 +183,6 @@ def get_route(request):
     response = requests.post(url, json = body, headers = headers)
     
     return JsonResponse(response.json())
-
-
     
 def detailsRoute(request, trip_id):
     trip = get_object_or_404(Trip, id=trip_id)
@@ -195,6 +201,7 @@ def detailsRoute(request, trip_id):
                 "day": st.day_index,
                 "stay": st.stay_minutes,
                 "location": {
+                    "pk": st.location.pk,
                     "name": st.location.name,
                     "lat": st.location.latitude,
                     "lon": st.location.longtitude,
@@ -206,5 +213,122 @@ def detailsRoute(request, trip_id):
         ]
     }
     return JsonResponse(data)
+
+User = get_user_model()
+@csrf_exempt
+def Save_Trip(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Use POST"}, status=400)
+    
+    # lấy json từ front end
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        
+    # Lấy user làm chủ trip
+    owner = User.objects.filter(is_superuser=True).first() or User.objects.first()
+    if not owner:
+        return JsonResponse({"error": "No user available"}, status=500)
+    
+    
+    # lấy title từ json
+    title = data.get("title") or f"Trip {Trip.objects.filter(owner=owner).count() + 1}"
+    # tạo hoặc update trip
+    trip, created = Trip.objects.get_or_create(
+        title = title,
+        owner = owner,
+        defaults={
+            "description": data.get("description", ""),
+            "avg_rating": data.get("avg_rating", 0),
+            "rating_count": data.get("rating_count", 1)
+        }
+    )
+    # Nếu trip đã tồn tại, xoá stops cũ
+    if not created:
+        trip.description = data.get("description", trip.description)
+        trip.avg_rating = data.get("avg_rating", trip.avg_rating)
+        trip.rating_count = data.get("rating_count", trip.rating_count)
+        trip.save()
+        trip.stops.all().delete()
+    
+    stops_data = data.get("stops", [])
+
+    # nếu không có stop thì returnn
+    if not stops_data:
+        return JsonResponse({
+            "status": "EMPTY_STOPS",
+            "trip_id": trip.id,
+            "message": "Trip được tạo nhưng chưa có điểm dừng nào."
+        })
+        
+    
+    # nếu location có rồi (pk đã có) thì cập nhật những trường còn thiếu, insert chứ không ghi đè, còn chưa có location(pk) thì tạo
+    for stop in stops_data:
+        loc_id = stop.get("pk")
+        loc = None
+        
+        if loc_id:
+            loc = Location.objects.filter(pk=loc_id).first()
+        
+        # xử lý trường hợp đầu vào khi rating rỗng (TH cập nhật địa điểm từ thanh search, OSM không trả về rating)
+        input_rating = stop.get("rating")
+        if input_rating == "" or input_rating is None:
+            input_rating = 4.0
+        else:
+            input_rating = float(input_rating)
+            
+        if not loc:
+        # trường hợp: Chưa có Location, Tạo mới hoàn toàn
+            create_kwargs = {
+                "name": stop["name"],
+                "latitude": stop["lat"],
+                "longtitude": stop["lon"],
+                "address": stop.get("address", ""),
+                "rating": input_rating,
+                "tags": stop.get("tags", {}),
+            }
+            # Chỉ set pk nếu có giá trị (từ OSM place_id)
+            if loc_id:
+                create_kwargs["pk"] = loc_id
+            
+            loc = Location.objects.create(**create_kwargs)
+        else:
+            # Trường hợp đã có thì update trường rỗng
+            updated = False
+            if not loc.address and stop.get("address"):
+                loc.address = stop.get("address")
+                updated = True
+            
+            # Kiểm tra Tags (Nếu DB chưa có tags hoặc tags rỗng)
+            if not loc.tags and stop.get("tags"):
+                loc.tags = stop.get("tags")
+                updated = True
+            
+            # Kiểm tra Rating (Ví dụ: nếu DB đang là 0 mà input có rating thì update)
+            if (loc.rating is None or loc.rating == 0) and input_rating > 0:
+                loc.rating = input_rating
+                updated = True
+
+            if updated:
+                loc.save()
+                
+        # 4. Tạo TripStop liên kết Trip và Location
+        TripStop.objects.create(
+            trip=trip,
+            location=loc,
+            day_index=1,
+            order_index=stop.get("order", 1),
+            stay_minutes=stop.get("stay", 30),
+        )
+        
+    return JsonResponse({
+        "status": "OK",
+        "trip_id": trip.id,
+        "message": "Trip saved successfully!"
+    })
+        
+            
+        
     
     
