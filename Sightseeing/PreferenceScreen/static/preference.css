@@ -7,9 +7,28 @@ h2 {
     text-align: center;
 }
 
+.trip-layout{
+    display: flex; 
+    gap: 20px;     
+    width: 90%;   
+    max-width: 1200px; 
+    margin: 20px auto; 
+    align-items: stretch; 
+
+}
+
 .form-container{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 30%;
+    align-self: stretch;
+}
+
+
+
+.detail-list-trip {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffffff; 
+    min-height: 500px;
 }

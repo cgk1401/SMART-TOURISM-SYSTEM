@@ -7,7 +7,14 @@ from MapScreen.models import Location
 
 def function_preference(request):
     prefs = UserPref.objects.filter(user=request.user)
-    return render(request, 'preference.html', {'prefs': prefs})
+    start_hours_list = [7,8,9,10,11,12,1,2,3]
+    end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+    context = {
+        'prefs': prefs,
+        'time_start_hours': start_hours_list,
+        'time_end_hours': end_hours_list,
+    }
+    return render(request, 'preference.html', context)
 
 @login_required
 def save_preference(request):
@@ -19,6 +26,13 @@ def save_preference(request):
         budget = request.POST.get("budget")
         activity = request.POST.get("activity_level")
         duration = request.POST.get("visit_duration")
+        start_hour = request.POST.get("time_start_hour", "")
+        start_minute = request.POST.get("time_start_minute", "")
+        end_hour = request.POST.get("time_end_hour", "")
+        end_minute = request.POST.get("time_end_minute", "")
+
+        start_time_str = f"{start_hour}:{start_minute}" if start_hour and start_minute else ""
+        end_time_str = f"{end_hour}:{end_minute}" if end_hour and end_minute else ""
 
         pref, _ = UserPref.objects.get_or_create(user=request.user)
         pref.interests = interests
@@ -27,6 +41,8 @@ def save_preference(request):
         pref.budget = budget or ""
         pref.activity_level = activity or ""
         pref.visit_duration = duration or ""
+        pref.start_time = start_time_str or ""
+        pref.end_time = end_time_str or ""
         pref.save()
 
         options = ranking_loc(pref)

@@ -82,10 +82,6 @@ function loadTrips() {
         .catch(function (error) {
             console.error('Lỗi khi lấy dữ liệu:', error);
             container.innerHTML = '<p style="color:red">Failed to load trips.</p>';
-<<<<<<< HEAD
-        });
-}
-=======
         }
     );
 }
@@ -162,4 +158,3 @@ function setupModalEvents(){
         }
     });
 }
->>>>>>> Kien
