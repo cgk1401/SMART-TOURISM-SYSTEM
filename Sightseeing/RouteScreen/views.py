@@ -11,8 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from RouteScreen.models import Trip, TripStop
 from MapScreen.models import Location
-
-
+from django.db import transaction
 
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
@@ -232,95 +231,87 @@ def Save_Trip(request):
         return JsonResponse({"error": "No user available"}, status=500)
     
     
-    # lấy title từ json
-    title = data.get("title") or f"Trip {Trip.objects.filter(owner=owner).count() + 1}"
-    # tạo hoặc update trip
-    trip, created = Trip.objects.get_or_create(
-        title = title,
-        owner = owner,
-        defaults={
-            "description": data.get("description", ""),
-            "avg_rating": data.get("avg_rating", 0),
-            "rating_count": data.get("rating_count", 1)
-        }
-    )
-    # Nếu trip đã tồn tại, xoá stops cũ
-    if not created:
-        trip.description = data.get("description", trip.description)
-        trip.avg_rating = data.get("avg_rating", trip.avg_rating)
-        trip.rating_count = data.get("rating_count", trip.rating_count)
-        trip.save()
-        trip.stops.all().delete()
     
     stops_data = data.get("stops", [])
-
-    # nếu không có stop thì returnn
     if not stops_data:
         return JsonResponse({
             "status": "EMPTY_STOPS",
-            "trip_id": trip.id,
-            "message": "Trip được tạo nhưng chưa có điểm dừng nào."
+            "message": "Chưa có điểm dừng nào"
         })
+
+    try:
+        with transaction.atomic():
+            # Luôn tạo một trip mới với rating là -1 để đánh dấu, vô phần My trip để chỉnh sửa, tên có thể có hoặc lấy theo thời gian tạo
+            trip = Trip.objects.create(
+                owner = owner,
+                title = data.get("title") or f"Draft Trip{int(time.time())}",
+                description = data.get("description", ""),
+                avg_rating = -1 ,# đánh dấu
+                rating_count = 1
+            )
         
     
-    # nếu location có rồi (pk đã có) thì cập nhật những trường còn thiếu, insert chứ không ghi đè, còn chưa có location(pk) thì tạo
-    for stop in stops_data:
-        loc_id = stop.get("pk")
-        loc = None
-        
-        if loc_id:
-            loc = Location.objects.filter(pk=loc_id).first()
-        
-        # xử lý trường hợp đầu vào khi rating rỗng (TH cập nhật địa điểm từ thanh search, OSM không trả về rating)
-        input_rating = stop.get("rating")
-        if input_rating == "" or input_rating is None:
-            input_rating = 4.0
-        else:
-            input_rating = float(input_rating)
-            
-        if not loc:
-        # trường hợp: Chưa có Location, Tạo mới hoàn toàn
-            create_kwargs = {
-                "name": stop["name"],
-                "latitude": stop["lat"],
-                "longtitude": stop["lon"],
-                "address": stop.get("address", ""),
-                "rating": input_rating,
-                "tags": stop.get("tags", {}),
-            }
-            # Chỉ set pk nếu có giá trị (từ OSM place_id)
-            if loc_id:
-                create_kwargs["pk"] = loc_id
-            
-            loc = Location.objects.create(**create_kwargs)
-        else:
-            # Trường hợp đã có thì update trường rỗng
-            updated = False
-            if not loc.address and stop.get("address"):
-                loc.address = stop.get("address")
-                updated = True
-            
-            # Kiểm tra Tags (Nếu DB chưa có tags hoặc tags rỗng)
-            if not loc.tags and stop.get("tags"):
-                loc.tags = stop.get("tags")
-                updated = True
-            
-            # Kiểm tra Rating (Ví dụ: nếu DB đang là 0 mà input có rating thì update)
-            if (loc.rating is None or loc.rating == 0) and input_rating > 0:
-                loc.rating = input_rating
-                updated = True
-
-            if updated:
-                loc.save()
+        # nếu location có rồi (pk đã có) thì cập nhật những trường còn thiếu, insert chứ không ghi đè, còn chưa có location(pk) thì tạo
+            for stop in stops_data:
+                loc_id = stop.get("pk")
+                loc = None
                 
-        # 4. Tạo TripStop liên kết Trip và Location
-        TripStop.objects.create(
-            trip=trip,
-            location=loc,
-            day_index=1,
-            order_index=stop.get("order", 1),
-            stay_minutes=stop.get("stay", 30),
-        )
+                if loc_id:
+                    loc = Location.objects.filter(pk=loc_id).first()
+                
+                # xử lý trường hợp đầu vào khi rating rỗng (TH cập nhật địa điểm từ thanh search, OSM không trả về rating)
+                input_rating = stop.get("rating")
+                if input_rating == "" or input_rating is None:
+                    input_rating = 4.0
+                else:
+                    input_rating = float(input_rating)
+                    
+                if not loc:
+                # trường hợp: Chưa có Location, Tạo mới hoàn toàn
+                    create_kwargs = {
+                        "name": stop["name"],
+                        "latitude": stop["lat"],
+                        "longtitude": stop["lon"],
+                        "address": stop.get("address", ""),
+                        "rating": input_rating,
+                        "tags": stop.get("tags", {}),
+                    }
+                    # Chỉ set pk nếu có giá trị (từ OSM place_id)
+                    if loc_id:
+                        create_kwargs["pk"] = loc_id
+                    
+                    loc = Location.objects.create(**create_kwargs)
+                else:
+                    # không cần check trường hợp lat, lon
+                    # Trường hợp đã có thì update trường rỗng
+                    updated = False
+                    if not loc.address and stop.get("address"):
+                        loc.address = stop.get("address")
+                        updated = True
+                    
+                    # Kiểm tra Tags (Nếu DB chưa có tags hoặc tags rỗng)
+                    if not loc.tags and stop.get("tags"):
+                        loc.tags = stop.get("tags")
+                        updated = True
+                    
+                    # Kiểm tra Rating (Ví dụ: nếu DB đang là 0 mà input có rating thì update)
+                    if (loc.rating is None or loc.rating == 0) and input_rating > 0:
+                        loc.rating = input_rating
+                        updated = True
+
+                    if updated:
+                        loc.save()
+                    
+                # Tạo TripStop liên kết Trip và Location
+                TripStop.objects.create(
+                    trip=trip,
+                    location=loc,
+                    day_index=1,
+                    order_index=stop.get("order", 1),
+                    stay_minutes=stop.get("stay", 30),
+                )
+    except Exception as e:
+        print(e)
         
     return JsonResponse({
         "status": "OK",

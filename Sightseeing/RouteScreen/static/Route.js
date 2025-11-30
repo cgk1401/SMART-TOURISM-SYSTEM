@@ -538,6 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.table(dataList);
 
         Recommended_Place = dataList.map(item => ({
+            pk: item.pk, // lấy pk từ db
             name: item.name,
             lat: parseFloat(item.lat),
             lon: parseFloat(item.lon),
@@ -690,31 +691,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnSaveTrip) {
             btnSaveTrip.addEventListener('click', event => {
                 event.preventDefault();
-                showSaveModal();
-            });
-        }
-
-        if (btnCloseModal) {
-            btnCloseModal.addEventListener('click', event => {
-                event.preventDefault();
+                                event.preventDefault();
                 console.log("BẮT ĐẦU SAVE");
                 if (!PLACES || PLACES.length === 0){
                     alert("Lội trình đang trống| Vui lòng thêm địa điểm trước khi Lưu");
+                    return;
                 }
                 //format lại dữ liệu trước khi lưu
                 const savedData = {
                     // các thông tin title, description, avg_rating, rating_count qua trang mytrip người dùng nhập
-                    title:TripName,
-                    description: "Xíu nữa người dùng nhập nhé",
-                    avg_rating: 0,
-                    rating_count: 1,
+                    // có tên nếu là default Trip còn không thì lấy tên mặc định, qua My trip chỉnh sửa
+                    title: TripName || "Trip " + new Date().toLocaleString(),
+                    description: "Draft trip from map",
+                    avg_rating: -1,
+                    rating_count: 0,
                     stops: PLACES.map((p, i) => ({
-                        pk: p.pk,
+                        pk: p.pk, // pk lấy của điểm trong db hoặc điểm mới từ thanh search
                         name: p.name,
                         lat: p.lat,
                         lon: p.lon,
                         address: p.address,
-                        rating: p.rating || 4.0,
+                        rating: p.rating || 4.5,
                         tags: p.tags || {},
                         stay: p.stay || 30,
                         order: i + 1,
@@ -730,6 +727,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }).catch(err => {
                     console.error("Save failed:", err);
                 })
+                showSaveModal();
+            });
+        }
+
+        if (btnCloseModal) {
+            btnCloseModal.addEventListener('click', event => {
                 closeSaveModal();
             });
         }

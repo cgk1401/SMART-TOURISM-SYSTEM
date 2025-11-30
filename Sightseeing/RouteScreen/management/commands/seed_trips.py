@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+# reset lại các default trip trong file default_trip.json
 class Command(BaseCommand):
     help = "Load default trips from JSON file into DB"
     
@@ -30,25 +31,32 @@ class Command(BaseCommand):
             return
         
         for trip_data in trips_data:
-            trip, created = Trip.objects.get_or_create(
-                title = trip_data["title"],
-                owner = owner_user,
-                defaults = {
-                    "description": trip_data.get("description", ""),
-                    "avg_rating": trip_data.get("avg_rating", 5.0),
-                    # nếu không truyền vào số người đánh giá thì lưu mặc định là 1, căn bản mỗi lần lưu thì cũng có một người lưu
-                    "rating_count": trip_data.get("rating_count", 1),
-                }
-            )
+            title = trip_data["title"]
             
-            if not created:
-                # nếu trip bị trùng (người khác cùng tạo lộ trình như vậy hoặc sử dụng lại lộ trình đã có sẵn (check trùng tên lộ trình))
-                defaults = {
-                    "description": trip_data.get("description", ""),
-                    "avg_rating": trip_data.get("avg_rating", 5.0),
-                }
+            qs = Trip.objects.filter(title=title)
+            # nếu trip đã được tạo, reset lại toàn bộ trip như theo file default_trip
+            if qs.exists():
+                trip = qs.first()
+                qs.exclude(pk = trip.pk).delete()
+                self.stdout.write(self.style.WARNING(f"Trip existed → resetting: {title}"))
+                # reset fields
+                trip.description = trip_data.get("description", "")
+                trip.avg_rating = trip_data.get("avg_rating", 4.5)
+                trip.rating_count = trip_data.get("rating_count", 1)
                 trip.save()
+                # xóa toàn bộ stops
                 trip.stops.all().delete()
+            
+            else:
+                # tạo mới
+                self.stdout.write(self.style.SUCCESS(f"Creating new trip: {title}"))
+                trip = Trip.objects.create(
+                    title=title,
+                    description=trip_data.get("description", ""),
+                    avg_rating=trip_data.get("avg_rating", 4.5),
+                    rating_count=trip_data.get("rating_count", 1),
+                    owner=owner_user
+                )
             
             for stop in trip_data["stops"]:
                 loc_id = stop.get("pk")
