@@ -10,7 +10,7 @@ h2 {
 .trip-layout{
     display: flex; 
     gap: 20px;     
-    width: 90%;   
+    width: 100%;   
     max-width: 1200px; 
     margin: 20px auto; 
     align-items: stretch; 
@@ -34,7 +34,7 @@ h2 {
 /* Đường kẻ ngang (Horizontal Rule) */
 .header-line .separator {
     flex-grow: 1; /* Cho phép đường kẻ chiếm hết không gian còn lại */
-    height: 1px;
+    height: 3px;
     background-color: #ccc;
     border: none;
     margin: 0 15px; /* Khoảng cách giữa đường kẻ và tiêu đề */

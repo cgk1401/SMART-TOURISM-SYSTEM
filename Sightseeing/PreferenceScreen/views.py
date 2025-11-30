@@ -4,16 +4,16 @@ from django.contrib.auth.decorators import login_required
 from .models import UserPref
 from MapScreen.models import Location
 
-def ranking_loc_default():
-    locations = Location.objects.all().order_by("-rating")
-    return list(locations[:20])
+# def ranking_loc_default():
+#     locations = Location.objects.all().order_by("-rating")
+#     return list(locations[:20])
 
 def function_preference(request):
     prefs = UserPref.objects.filter(user=request.user)
     start_hours_list = [7,8,9,10,11,12,1,2,3]
     end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
 
-    default_candidates = ranking_loc_default()
+    default_candidates = []
     context = {
         'prefs': prefs,
         'time_start_hours': start_hours_list,
@@ -53,36 +53,90 @@ def save_preference(request):
         pref.end_time = end_time_str or ""
         pref.save()
 
+        if main_loc_id:
+            return redirect(f'/PreferenceScreen/save_preference/list_trip/?main_loc_id={main_loc_id}')
+
         options = ranking_loc(pref)
 
-        itineraries = [] 
-        main_loc = None
+        candidates = []
+        top_n = 20 # Số lượng địa điểm bạn muốn hiển thị
+
+        for opt in options:
+            loc = opt['location']
+            
+            # Áp dụng các bộ lọc giống trong choose_main_loc:
+            name = loc.name.lower()
+            if "cgv" in name: continue
+            amenity = loc.tags.get("amenity", "")
+            if amenity in ["pub", "bar"]: continue
+
+            # Phải chia sẻ ít nhất một sở thích
+            common = set(loc.tags.get("interest", [])) & set(pref.interests)
+            if not common: continue
+
+            # Gán điểm số mới vào thuộc tính tạm thời của đối tượng Location
+            loc.ranking_score = opt['score']
+            candidates.append(loc) 
+            
+            if len(candidates) >= top_n:
+                break
         # main_loc = choose_main_loc(pref, options)
         # itineraries = build_list(pref, options, main_loc)
-        if main_loc_id:
-            try:
-                main_loc = Location.objects.get(pk=main_loc_id) 
-            except Location.DoesNotExist:
-                pass 
-                
-        if main_loc:
-            itineraries = build_list(pref, options, main_loc)
-
-
+        
         start_hours_list = [7,8,9,10,11,12,1,2,3]
         end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
         
         context = {
-            'itineraries': itineraries, 
+            'itineraries': [], 
             'time_start_hours': start_hours_list,
             'time_end_hours': end_hours_list,
             'prefs': pref,
+            'default_candidates': candidates,
         }
         
         return render(request, 'preference.html', context)
         # return redirect('/PreferenceScreen/')
 
     return redirect('/PreferenceScreen/')
+
+@login_required
+def generate_itinerary(request):
+    """View mới để xây dựng và hiển thị lộ trình sau khi chọn địa điểm chính."""
+    main_loc_id = request.GET.get('main_loc_id') # Lấy ID từ query parameter
+    
+    if not main_loc_id:
+        # Nếu không có ID, chuyển hướng về trang preference
+        return redirect('/PreferenceScreen/')
+
+    try:
+        main_loc = Location.objects.get(pk=main_loc_id)
+    except Location.DoesNotExist:
+        return redirect('/PreferenceScreen/') # Địa điểm không tồn tại
+
+    pref = UserPref.objects.filter(user=request.user).first()
+    if not pref:
+        return redirect('/PreferenceScreen/') # User chưa lưu preference
+
+    # 1. Xếp hạng địa điểm (để lấy options)
+    options = ranking_loc(pref) 
+
+    # 2. Xây dựng lộ trình
+    itinerary = build_list(pref, options, main_loc)
+    
+    # 3. Chuẩn bị context để render
+    start_hours_list = [7,8,9,10,11,12,1,2,3]
+    end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+    
+    context = {
+        'itineraries': itinerary, # Gửi lộ trình đã tạo
+        'time_start_hours': start_hours_list,
+        'time_end_hours': end_hours_list,
+        'prefs': pref,
+        'default_candidates': [], # Không cần hiển thị danh sách đề xuất ở đây
+    }
+    
+    # Render lại cùng template preference.html
+    return render(request, 'preference.html', context)
 
 
 def ranking_loc(pref):
