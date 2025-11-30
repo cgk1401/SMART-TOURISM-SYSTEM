@@ -23,8 +23,36 @@ h2 {
 }
 
 
+.header-line {
+    display: flex;
+    align-items: center;
+    width: 90%; /* Chiếm cùng độ rộng với trip-layout (90% width) */
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-.detail-list-trip {
+/* Đường kẻ ngang (Horizontal Rule) */
+.header-line .separator {
+    flex-grow: 1; /* Cho phép đường kẻ chiếm hết không gian còn lại */
+    height: 1px;
+    background-color: #ccc;
+    border: none;
+    margin: 0 15px; /* Khoảng cách giữa đường kẻ và tiêu đề */
+}
+
+/* Tiêu đề "Our best rating destinations" */
+.header-line .default-title {
+    font-family: "Karla", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #495057;
+    white-space: nowrap; /* Đảm bảo tiêu đề không bị xuống dòng */
+    text-transform: uppercase;
+}
+
+
+
+.detail-list-location {
     flex: 1;
     padding: 20px;
     border: 1px solid #ccc;
@@ -32,3 +60,66 @@ h2 {
     background-color: #ffffff; 
     min-height: 500px;
 }
+
+.candidate-list {
+    background-color: #f9fAf6;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
+}
+
+.candidate-card {
+    cursor: pointer; 
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start; 
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.candidate-card .card-info {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.candidate-card .name {
+    font-weight: 600;
+    white-space: normal;
+    max-width: 80%; 
+    flex-shrink: 1;
+    max-width: 70%;
+}
+
+.candidate-card .score {
+    flex-shrink: 0; 
+    margin-left: 15px; 
+    color: #666;
+    font-size: 0.95em;
+    white-space: nowrap; 
+}
+
+.candidate-card:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+
+.candidate-card.selected {
+    background-color: #e0f2f1; 
+    border: 1px solid #276968; 
+    box-shadow: 0 4px 8px rgba(39, 105, 104, 0.3); 
+    
+    font-weight: 500; 
+}
+
+.candidate-card.selected .name {
+    color: #276968; /* Màu tên đậm hơn */
+    font-weight: 700;
+}
+

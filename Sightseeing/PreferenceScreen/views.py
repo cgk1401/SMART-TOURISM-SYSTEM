@@ -4,15 +4,22 @@ from django.contrib.auth.decorators import login_required
 from .models import UserPref
 from MapScreen.models import Location
 
+def ranking_loc_default():
+    locations = Location.objects.all().order_by("-rating")
+    return list(locations[:20])
 
 def function_preference(request):
     prefs = UserPref.objects.filter(user=request.user)
     start_hours_list = [7,8,9,10,11,12,1,2,3]
     end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+
+    default_candidates = ranking_loc_default()
     context = {
         'prefs': prefs,
         'time_start_hours': start_hours_list,
         'time_end_hours': end_hours_list,
+        'default_candidates': default_candidates,
+        'itineraries': []
     }
     return render(request, 'preference.html', context)
 
@@ -30,6 +37,7 @@ def save_preference(request):
         start_minute = request.POST.get("time_start_minute", "")
         end_hour = request.POST.get("time_end_hour", "")
         end_minute = request.POST.get("time_end_minute", "")
+        main_loc_id = request.POST.get("main_loc_id")
 
         start_time_str = f"{start_hour}:{start_minute}" if start_hour and start_minute else ""
         end_time_str = f"{end_hour}:{end_minute}" if end_hour and end_minute else ""
@@ -46,9 +54,33 @@ def save_preference(request):
         pref.save()
 
         options = ranking_loc(pref)
-        main_loc = choose_main_loc(pref, options)
-        itineraries = build_list(pref, options, main_loc)
-        return redirect('/PreferenceScreen/')
+
+        itineraries = [] 
+        main_loc = None
+        # main_loc = choose_main_loc(pref, options)
+        # itineraries = build_list(pref, options, main_loc)
+        if main_loc_id:
+            try:
+                main_loc = Location.objects.get(pk=main_loc_id) 
+            except Location.DoesNotExist:
+                pass 
+                
+        if main_loc:
+            itineraries = build_list(pref, options, main_loc)
+
+
+        start_hours_list = [7,8,9,10,11,12,1,2,3]
+        end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+        
+        context = {
+            'itineraries': itineraries, 
+            'time_start_hours': start_hours_list,
+            'time_end_hours': end_hours_list,
+            'prefs': pref,
+        }
+        
+        return render(request, 'preference.html', context)
+        # return redirect('/PreferenceScreen/')
 
     return redirect('/PreferenceScreen/')
 
@@ -153,9 +185,15 @@ def choose_main_loc(pref, options):
     for i, opt in enumerate(candidates, 1):
         print(f"{i}. {opt['location'].name} ({opt['score']})")
 
-    # input from shell
-    choice = int(input("Enter number: "))
-    return candidates[choice-1]['location']
+    # # input from shell
+    # choice = int(input("Enter number: "))
+    # return candidates[choice-1]['location']
+
+    if candidates:
+        main_loc = candidates[0]['location']
+        return main_loc, candidates
+    
+    return None, []
 
 
 def distance_km(lat1, lon1, lat2, lon2):
