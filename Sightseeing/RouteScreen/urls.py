@@ -12,4 +12,7 @@ urlpatterns = [
     path('getdetailsRoute/<int:trip_id>/', views.detailsRoute),
     path('myTrips/', views.function_MyTrip),
     path('SaveTrip/', views.Save_Trip),
+    path('getunSavedTrip/', views.getUnsavedTrips),
+    path('getallTrips/', views.getAllTrips),
+    path('updateTrips/', views.Update_Trip),
 ]

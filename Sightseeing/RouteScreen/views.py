@@ -9,9 +9,11 @@ from RouteScreen.models import Trip
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from RouteScreen.models import Trip, TripStop
+from RouteScreen.models import Trip, TripStop, TripRating
+from django.db.models import Avg, Count
 from MapScreen.models import Location
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
@@ -215,6 +217,7 @@ def detailsRoute(request, trip_id):
 
 User = get_user_model()
 @csrf_exempt
+@login_required
 def Save_Trip(request):
     if request.method != "POST":
         return JsonResponse({"error": "Use POST"}, status=400)
@@ -231,7 +234,6 @@ def Save_Trip(request):
         return JsonResponse({"error": "No user available"}, status=500)
     
     
-    
     stops_data = data.get("stops", [])
     if not stops_data:
         return JsonResponse({
@@ -243,11 +245,11 @@ def Save_Trip(request):
         with transaction.atomic():
             # Luôn tạo một trip mới với rating là -1 để đánh dấu, vô phần My trip để chỉnh sửa, tên có thể có hoặc lấy theo thời gian tạo
             trip = Trip.objects.create(
-                owner = owner,
+                owner = request.user,
                 title = data.get("title") or f"Draft Trip{int(time.time())}",
                 description = data.get("description", ""),
                 avg_rating = -1 ,# đánh dấu
-                rating_count = 1
+                rating_count = 0, # lưu nhưng chưa rating nên sẽ để là 0 để đánh dấu
             )
         
     
@@ -320,6 +322,189 @@ def Save_Trip(request):
     })
         
             
+@login_required 
+def getUnsavedTrips(request):
+    # chỉ lấy đúng trip của mình, không lấy trip của người khác
+    trips = Trip.objects.filter(owner=request.user, avg_rating=-1).order_by('-create_at')
+    
+    results = []
+    
+    for trip in trips:
+        stops = trip.stops.all().order_by('day_index', 'order_index')
         
+        date_str = ""
+        if trip.create_at:
+            date_str = trip.create_at.strftime("%d/%m/%Y")
+        
+        results.append({
+            "id": trip.id,
+            "title": trip.title,
+            "description": trip.description,
+            "avg_rating": trip.avg_rating,
+            "rating_count": trip.rating_count,
+            "created_at": date_str, # Thêm trường này để hiển thị ngày
+            "stops": [
+                {
+                    "order": st.order_index,
+                    "day": st.day_index,
+                    "stay": st.stay_minutes,
+                    "note": st.note, # Thêm note nếu user muốn sửa note
+                    "location": {
+                        "pk": st.location.pk,
+                        "name": st.location.name,
+                        "lat": st.location.latitude,
+                        "lon": st.location.longtitude,
+                        "address": st.location.address or st.location.name,
+                        "rating": st.location.rating,
+                        "tags": st.location.tags,
+                    }
+                } for st in stops
+            ]
+        })
+    return JsonResponse(results, safe=False)
+
+@login_required
+def getAllTrips(request):
+    # tương tự cũng lấy trip của mình không lấy trip của người khác
+    trips = Trip.objects.filter(owner=request.user).exclude(avg_rating=-1).order_by('-create_at')
     
+    results = []
     
+    for trip in trips:
+        stops = trip.stops.all().order_by('day_index', 'order_index')
+        
+        date_str = ""
+        if trip.create_at:
+            date_str = trip.create_at.strftime("%d/%m/%Y")
+        
+        results.append({
+            "id": trip.id,
+            "title": trip.title,
+            "description": trip.description,
+            "avg_rating": trip.avg_rating,
+            "rating_count": trip.rating_count,
+            "created_at": date_str, # Thêm trường này để hiển thị ngày
+            "stops": [
+                {
+                    "order": st.order_index,
+                    "day": st.day_index,
+                    "stay": st.stay_minutes,
+                    "note": st.note, # Thêm note nếu user muốn sửa note
+                    "location": {
+                        "pk": st.location.pk,
+                        "name": st.location.name,
+                        "lat": st.location.latitude,
+                        "lon": st.location.longtitude,
+                        "address": st.location.address or st.location.name,
+                        "rating": st.location.rating,
+                        "tags": st.location.tags,
+                    }
+                } for st in stops
+            ]
+        })
+    return JsonResponse(results, safe=False)
+
+
+@csrf_exempt
+@login_required
+def Update_Trip(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Use POST"}, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        trip_id = data.get("trip_id")
+        # tìm chuyến đi theo ID
+        
+        # đảm bảo chỉ update trip của chính minh
+        trip = get_object_or_404(Trip, id=trip_id, owner=request.user)
+        
+        # Cập nhật thông tin người dùng
+        if "title" in data:
+            trip.title = data["title"]
+        
+        if "description" in data:
+            trip.description = data["description"]
+       
+        # cập nhật rating
+        input_rating = data.get("rating")
+        if input_rating and int(input_rating) > 0:
+            score_val = int(input_rating)
+            
+            TripRating.objects.update_or_create(
+                trip= trip,
+                user = request.user,
+                defaults={
+                    'score': score_val,
+                    'comment': data.get("description", "") # Lưu mô tả vào comment đánh giá luôn
+                }
+            )
+            stats = TripRating.objects.filter(trip=trip).aggregate(
+                avg_score=Avg('score'),
+                total_reviews=Count('id')
+            )
+            trip.avg_rating = stats['avg_score'] or score_val
+            trip.rating_count = stats['total_reviews'] or 1
+            
+        trip.save()
+        
+        # sau khi update xong thì xử lý lại các trip nếu bị trùng, chỉ mới xử lý trường hợp trùng của cùng một user
+        merge_duplicate_trips(trip)
+            
+        return JsonResponse({
+            "status": "OK",
+            "message": "Cập nhật chuyến đi thành công!"
+        })
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+from django.db.models.functions import Lower
+def trip_signature(trip):
+    # check trùng theo tọa độ các điểm trong trip
+    sig = []
+    for st in trip.stops.order_by("day_index", "order_index"):
+        lat = round(st.location.latitude, 6)
+        lon = round(st.location.longtitude, 6)
+        sig.append((lat, lon))
+    return tuple(sig)
+
+def merge_duplicate_trips(trip):
+    # merge các trip bị trùng (hiện tại chỉ check cùng một user)
+    # lấy tất cả các trip, trừ trip hiện tại
+    candidates = (
+        Trip.objects
+        .filter(owner=trip.owner)
+        .exclude(pk=trip.pk)
+    )
+    print(candidates)
+    # nếu tồn tại trip khác (chỉ có một trip) thì return
+    if not candidates.exists():
+        return
+    
+    base_sig = trip_signature(trip)
+    duplicate_trips = []
+    
+    # check trùng trip
+    for t in candidates:
+        if trip_signature(t) == base_sig:
+            duplicate_trips.append(t)
+            
+    if not duplicate_trips:
+        return
+    
+    dup_ids = [t.pk for t in duplicate_trips]
+    
+    with transaction.atomic():
+        
+        # lưu đè bởi trip mới nhất
+        
+        
+        # xóa trip trùng
+        Trip.objects.filter(pk__in=dup_ids).delete()
+        stats = TripRating.objects.filter(trip=trip).aggregate(
+            avg_score=Avg('score'),
+            total_reviews=Count('id')
+        )
+        trip.avg_rating = stats['avg_score'] or 0
+        trip.rating_count = stats['total_reviews'] or 0
+        trip.save()

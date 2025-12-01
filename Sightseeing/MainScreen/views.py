@@ -16,7 +16,7 @@ def logout_user(request):
     return redirect('/')
 
 def trip_list_api(request):
-    trips = Trip.objects.filter(owner=request.user).annotate(
+    trips = Trip.objects.filter(owner=request.user, title = "Không Gian Xanh và Thư Giãn").annotate(
         stop_count=Count('stops')  # Đếm số điểm dừng trong chuyến đi
     ).order_by('-avg_rating')[:6]
     
