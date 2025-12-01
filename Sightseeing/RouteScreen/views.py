@@ -624,7 +624,7 @@ def test_optimize_route_view(request):
     """
     Demo endpoint (using SAMPLE_LOCATIONS).
     """
-    locations_dict = SAMPLE_LOCATIONS
+    locations_dict = request.session["itinerary_data"]
     
     n = len(locations_dict)
     if n < 2:

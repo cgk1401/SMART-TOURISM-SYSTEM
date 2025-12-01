@@ -142,7 +142,7 @@ def generate_itinerary(request):
     # return render(request, 'preference.html', context)
     data_it = itineraries_to_list(itinerary)
     request.session["itinerary_data"] = data_it
-    return redirect('/MainScreen/RouteScreen/test-hardcoded-route/')
+    return redirect('/MainScreen/RouteScreen/?from_preference=true')
 
 
 

@@ -626,11 +626,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function getTripFromUrl(){
         const params = new URLSearchParams(window.location.search);
         const trip_id = params.get("trip_id");
+        const from_preference = params.get("from_preference");
         
         console.log("trip_id = ", trip_id);
-        if (!trip_id) return;
-
-        axios.get(`getdetailsRoute/${trip_id}/`).then(res => {
+        if (trip_id){
+            axios.get(`getdetailsRoute/${trip_id}/`).then(res => {
             console.log("Route details:", res.data);
             TripName = res.data.title;
             const triptitle = document.querySelector(".trip-title h1");
@@ -660,9 +660,42 @@ document.addEventListener("DOMContentLoaded", () => {
             if (itineraryList) {
                 initDragAndDrop(itineraryList);
             }
-        }).catch(err => {
-            console.error("Lỗi lấy trip từ trip_id:", err);
-        })
+            }).catch(err => {
+                console.error("Lỗi lấy trip từ trip_id:", err);
+            })
+        }else if (from_preference === "true"){
+            axios.get(`test-hardcoded-route/`).then(res => {
+            console.log("Route details from session:", res.data);
+            TripName = res.data.title || "Draft Trip from Preference";
+            const triptitle = document.querySelector(".trip-title h1");
+            triptitle.textContent = "";
+            triptitle.textContent = TripName;
+
+            res.data.stops.forEach(p => {
+                PLACES.push({
+                    id: CreateIdFromRouteTrip(),
+                    pk: p.location.pk,
+                    name: p.location.name,
+                    lat: p.location.lat,
+                    lon: p.location.lon,
+                    address: p.location.address || p.location.name,
+                    stay: p.stay || 30,
+                });
+            });
+            
+            renderItinerary(PLACES);
+            if (res.data.stops.length > 0) {
+                getRecommended_Place(res.data.stops[0].location.name);
+            }
+
+            const itineraryList = renderItinerary(PLACES);
+            if (itineraryList) {
+                initDragAndDrop(itineraryList);
+            }
+            }).catch(err => {
+                console.error("Lỗi lấy itinerary từ session:", err);
+            });
+        }
 
 
     }
