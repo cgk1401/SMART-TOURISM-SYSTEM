@@ -7,8 +7,45 @@
     {% csrf_token %}
 
     <div class="checkboxes">
+        <div class="time_travel">
+            <input type="checkbox" id="toggle-time-travel" class="toggle" checked>
+            <label for="toggle-time-travel" class="section_label">
+                Time Travel <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <div class="time_start">
+                    <label>Time Start:</label>
+                    <select name="time_start_hour">
+                        {% for hour in time_start_hours %}
+                            <option value="{{ hour }}{% if hour >= 7 and hour <= 11 %}AM{% elif hour == 12 %}PM{% elif hour >= 1 and hour <= 3 %}PM{% endif %}">
+                                {{ hour }}{% if hour >= 7 and hour <= 11 %}AM{% elif hour == 12 %}PM{% elif hour >= 1 and hour <= 3 %}PM{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="time_start_minute">
+                        <option value="00">00</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+                
+                <br> <div class="time_end">
+                    <label>Time End:</label>
+                    <select name="time_end_hour">
+                        {% for hour in time_end_hours %}
+                            <option value="{{ hour }}{% if hour == 12 %}PM{% elif hour >= 1 and hour <= 11 %}PM{% endif %}">
+                                {{ hour }}{% if hour == 12 %}PM{% elif hour >= 1 and hour <= 11 %}PM{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="time_end_minute">
+                        <option value="00">00</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="interest">
-            <input type="checkbox" id="toggle-interest" class="toggle">
+            <input type="checkbox" id="toggle-interest" class="toggle" checked>
             <label for="toggle-interest" class="section_label">
                 Interests <span class="arrow"></span>
             </label>
@@ -24,7 +61,7 @@
         </div>
 
         <div class="group_type">
-            <input type="checkbox" id="toggle-group" class="toggle">
+            <input type="checkbox" id="toggle-group" class="toggle" checked>
             <label for="toggle-group" class="section_label">
                 Group Type <span class="arrow"></span>
             </label>
@@ -36,7 +73,7 @@
         </div>
 
         <div class="budget">
-            <input type="checkbox" id="toggle-budget" class="toggle">
+            <input type="checkbox" id="toggle-budget" class="toggle" checked>
             <label for="toggle-budget" class="section_label">
                 Budget <span class="arrow"></span>
             </label>
@@ -50,7 +87,7 @@
         </div>
 
         <div class="activity_level">
-            <input type="checkbox" id="toggle-activity" class="toggle">
+            <input type="checkbox" id="toggle-activity" class="toggle" checked>
             <label for="toggle-activity" class="section_label">
                 Activity Level <span class="arrow"></span>
             </label>
@@ -63,9 +100,9 @@
         </div>
 
         <div class="eating_habit">
-            <input type="checkbox" id="toggle-eating" class="toggle">
+            <input type="checkbox" id="toggle-eating" class="toggle" checked>
             <label for="toggle-eating" class="section_label">
-                Eating habit <span class="arrow"></span>
+                Eating Habit <span class="arrow"></span>
             </label>
 
             <div class="options">
@@ -74,6 +111,19 @@
             </div>
         </div>
 
-        <button type="submit"> Save Preference </button>
+        <div class="visit_duration">
+            <input type="checkbox" id="toggle-duration" class="toggle" checked>
+            <label for="toggle-duration" class="section_label">
+                Visit Duration <span class="arrow"></span>
+            </label>
+
+            <div class="options">
+                <label><input type="radio" name="visit_duration" value="brief"> Brief</label>
+                <label><input type="radio" name="visit_duration" value="full_exp"> Full Experience</label>
+            </div>
+        </div>
+
+        <input type="hidden" name="main_loc_id" id="main-loc-id" value="">
+        <button type = "submit"> Save Preference </button>
     </div>
 </form>

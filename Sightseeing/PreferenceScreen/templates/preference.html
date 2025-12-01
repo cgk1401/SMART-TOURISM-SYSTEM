@@ -12,9 +12,57 @@
 {% block content %}
     <h2> Generate trip based on your preferences </h2>
 
-    {% include "checkboxes.html" %}
+
+    <div class = "trip-layout">
+        <div class = "form-container">
+            {% include "checkboxes.html" %}
+        </div>  
+
+        <div class="detail-list-trip">
+            <div class="header-line">
+                <hr class="separator">
+                <h3 class="default-title">Our best rating destinations</h3>
+                <hr class="separator">
+            </div>
+            {% if itineraries %}
+                <div class="itinerary-list">
+                    {% for loc in itineraries %}
+                        <div class="loc-card">{{ forloop.counter }}. {{ loc.name }} ({{ loc.tags.duration }} phút)</div>
+                    {% endfor %}
+                </div>
+            
+            {% else %}
+                <div class="candidate-list">
+                    {% for loc in default_candidates %}
+                        <div class="candidate-card" 
+                            data-loc-id="{{ loc.pk }}" 
+                            data-is-selected="false" 
+                            onclick="selectCenterpiece(this, '{{ loc.pk }}')">
+                            <span class="name">{{ loc.name }}</span>
+                            <span class="score">Rating: {{ loc.rating }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    function selectCenterpiece(element, locId) {
+        const hiddenInput = document.getElementById('main-loc-id');
+        const cards = document.querySelectorAll('.candidate-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+            card.dataset.isSelected = 'false';
+        });
+        element.classList.add('selected');
+        element.dataset.isSelected = 'true';
 
+        hiddenInput.value = locId;
+    }
+</script>
 {% endblock %}

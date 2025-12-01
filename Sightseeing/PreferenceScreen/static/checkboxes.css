@@ -90,3 +90,53 @@
     font-family: "Karla", sans-serif;
     font-weight: 400;
 }
+
+
+/* Đảm bảo các thành phần thời gian nằm trên cùng một dòng và có khoảng cách */
+.time_start, .time_end {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa các phần tử */
+    margin-bottom: 8px; /* Khoảng cách giữa Time Start và Time End */
+    font-weight: 400; /* Phù hợp với font-weight của các label khác */
+}
+
+/* Định kiểu cho thẻ SELECT */
+.time_travel select {
+    font-family: "Karla", sans-serif;
+    font-size: 14px;
+    padding: 4px 8px;
+    border: 1px solid #ccc; /* Đường viền nhẹ */
+    border-radius: 4px; /* Bo góc */
+    background-color: white;
+    appearance: none; /* Xóa kiểu dáng mặc định của trình duyệt */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    line-height: 1.5;
+
+    width: 65px;
+    box-sizing: border-box;
+}
+
+/* Định kiểu khi hover hoặc focus */
+.time_travel select:hover,
+.time_travel select:focus {
+    border-color: #276968; /* Đổi màu viền khi tương tác */
+    outline: none; /* Xóa viền focus mặc định */
+}
+
+/* Định kiểu cho label "Time Start" và "Time End" */
+.time_start label, 
+.time_end label {
+    font-weight: 500; /* Nổi bật hơn một chút so với giá trị */
+    margin-right: 4px;
+    min-width: 80px; /* Đảm bảo căn chỉnh dễ nhìn */
+}
+
+.time_travel .options > br {
+    display: none; /* Xóa thẻ <br> không cần thiết */
+}
+.time_travel .time_end {
+    margin-top: 8px; /* Thêm khoảng cách nếu cần */
+}

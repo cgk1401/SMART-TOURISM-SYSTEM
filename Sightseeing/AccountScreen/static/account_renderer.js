@@ -248,9 +248,7 @@ function handleEditClick(event) {
                 updateSummaryInfo(fieldId, newValue);
                 
                 // 2. Khôi phục nút
-                button.innerHTML = `<svg class="edit-icon-reusable" width="20" height="20">
-                                        <use href="#icon-edit-pencil" xlink:href="#icon-edit-pencil"></use>
-                                    </svg>
+                button.innerHTML = `<i class="fa-notdog fa-solid fa-pencil"></i>
                                     <span class="edit-text-style">Edit</span>`;
                 button.classList.remove('save-button');
                 
@@ -406,16 +404,16 @@ function updateSummaryInfo(fieldId, newValue) {
     
     switch (fieldId) {
         case 'user-email':
-            iconId = 'icon-email';
+            iconId = 'fa-envelope';
             break;
         case 'user-phone_number':
-            iconId = 'icon-phone';
+            iconId = 'fa-phone';
             break;
         case 'user-date_of_birth':
-            iconId = 'icon-calendar';
+            iconId = 'fa-calendar';
             break;
         case 'user-address':
-            iconId = 'icon-location';
+            iconId = 'fa-location-dot';
             break;
         default:
             return; 
@@ -439,8 +437,8 @@ function updateSummaryInfo(fieldId, newValue) {
         const newRow = clone.querySelector('.summary-info-row');
         newRow.classList.add(iconClass); // Thêm class để dễ dàng tìm kiếm lần sau
 
-        const svgElement = newRow.querySelector('.summary-icon');
-        svgElement.innerHTML = `<use href="#${iconId}" xlink:href="#${iconId}"></use>`;
+        const iconElement = newRow.querySelector('.summary-icon');
+        iconElement.classList.add('fa-solid', iconId);
         
         newRow.querySelector('.summary-value-text').textContent = newValue;
         container.appendChild(newRow);

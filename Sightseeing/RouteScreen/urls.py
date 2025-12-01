@@ -15,4 +15,5 @@ urlpatterns = [
     path('getunSavedTrip/', views.getUnsavedTrips),
     path('getallTrips/', views.getAllTrips),
     path('updateTrips/', views.Update_Trip),
+    path('test-hardcoded-route/', views.test_optimize_route_view, name='test_optimize_route'),
 ]

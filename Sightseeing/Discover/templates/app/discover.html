@@ -7,12 +7,212 @@
 
 {% block extra_css %}
     <link rel = "stylesheet" href = "{% static 'discover.css' %}">
+    <!-- <link rel = "stylesheet" href="{% static 'leaflet.css' %}" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
 
 {% block content %}
-    <h1> Discover page </h1>
+    <header class="hero">
+    <img class="hero__img" src="{% static 'images/Discover.jpg' %}" alt="Vietnam HCMC">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+        <h1 >Discover</h1>
+    </div>
+    </header>
+    
+    <div class="container">
+        <div class="description">
+            <div class="content" id="content1">
+                <h2>Independence Palace</h2>
+                <p>
+                    On June 25, 1976, the Independence Palace was recognized as a National Cultural and Historical Relic (77A/VHQD Decision). It was then designated a National Special Relic on August 12, 2009 by Vietnam’s Prime Minister (1272/QD-TTg Decision). The Independence Palace is among Vietnam’s first ten special national relics.
+                    <br>
+                    Reunification Hall is the management agency for the Independence Palace. Pursuant to Decision 709/QĐ-VPCP dated June 14, 2013 by the Minister, Chairman of the Government Office, Reunification Hall is a state-run business unit tasked with Palace management and preservation; as well as serving delegations attending government, Party, and State meetings, conferences, and other functions.
+                </p>
+                <img src="{% static 'images/Independence_Palace.jpg' %}" alt="Independence Palace (Dinh Doc Lap)">
+            </div>
+            <div class="content" id="content2">
+                <h2>War Remnants Museum</h2>
+                <p>
+                    The War Remnants Museum, established on September 4, 1975, is a member of the Vietnam Museum System, INMP and ICOM. The museum specializes in researching, collecting, preserving and displaying evidence of crimes and consequences of the war of aggression against Vietnam, thereby calling for awareness against unjust wars, protecting peace and promoting solidarity between nations. With 9 permanent exhibition themes, many short-term, mobile exhibitions and activities to interact with war witnesses, the Museum welcomes nearly 1 million visitors each year and is a cultural - tourism destination that attracts a large number of domestic and foreign public.
+                </p>
+                <img src="{% static 'images/War_Remnants_Museum.jpg' %}" alt="War Remnants Museum (Bao tang chung tich chien tranh)">
+            </div>
+            <div class="content" id="content3">
+                <h2>Ben Thanh Market</h2>
+                <p>
+                    Ben Thanh Market stands as Ho Chi Minh City's most iconic landmark and Vietnam's premier traditional market experience, representing over a century of authentic Vietnamese commerce and culture. Established in 1914 during the French colonial period, this historic 13,000-square-meter marketplace serves as the cultural heart of Saigon, welcoming over 15,000 visitors daily from around the world to explore authentic Vietnamese craftsmanship, cuisine, and traditional commerce in the bustling center of District 1.
+                </p>
+                <img src="{% static 'images/Ben_Thanh_Market.jpg' %}" alt="Cho Ben Thanh">
+            </div>
+            <div class="content" id="content4">
+                <h2>Notre Dame Cathedral of Saigon</h2>
+                <p>
+                    Two of Saigon`s most picturesque colonial buildings are found right next to each other, in the center of the city. The Central Post Office and the Notre-Dame Cathedral. <br>
+                    Notre Dame Cathedral in Vietnam is honored as one of the world's 19 most majestic cathedrals, the only representative from Southeast Asia. This long-lasting masterpiece, seen as the architectural symbol of Ho Chi Minh City, hosts a flock of new tourists every day who seek ancient grandeur, holiness, and enchanting photography spots.
+                </p>
+                <img src="{% static 'images/Notre_Dame_Cathedral.jpg' %}" alt="Nha tho Duc Ba">
+                <br>
+                <p>
+                    Saigon Central Post Office is notable for its perfect combination of neo-classical European architecture and Asian decorations. This magnificent post office attracts a large number of domestic and foreign visitors, making it a must-see when you are in Ho Chi Minh City.
+                </p>
+                <img src="{% static 'images/Central_Post_Office.jpg' %}" alt="Buu Dien Trung Tam">
+            </div>
+            <div class="content" id="content5">
+                <h2>Saigon Zoo and Botanical Gardens</h2>
+                <p>
+                    The Saigon Zoo and Botanical Gardens, or known locally as The Zoo, is Vietnam's largest zoo and botanical garden. The Saigon Zoo and Botanical Gardens was commissioned by Admiral Pierre-Paul de La Grandière in 1864, and was opened to the public in 1869, making it one of the world's oldest continuously operating zoos. 
+                </p>
+                <img src="{% static 'images/Saigon_Zoo.jpg' %}" style="width: 50%; height: 50%;" alt="Thao Cam Vien">
+            </div>
+            <div class="content" id="content6">
+                <h2>Jade Emperor Pagoda</h2>
+                <p>
+                    Jade Emperor Pagoda is a must-visit spot in Ho Chi Minh City. With its ancient Chinese architecture and sacred atmosphere, the temple offers a glimpse into the spiritual and cultural life of the local Chinese-Vietnamese community.
+                </p>
+                <img src="{% static 'images/Jade_Emperor_Pagoda.jpg' %}" style="width: 50%; height: 50%;" alt="Chua Ngoc Hoang">
+            </div>
+            <div class="content" id="content7">
+                <h2>Cu Chi Tunnel</h2>
+                <p>
+                    About 70km from Ho Chi Minh City, the Cu Chi Tunnels form a vast underground network stretching 250km. Built during the Seconde Anti-French War of Resistance and the Anti-American War of Resistance, they served as a strategic base for Vietnamese soldiers. This remarkable site reflects the resilience and ingenuity of wartime tactics.
+                </p>
+                <img src="{% static 'images/Cu_Chi_Tunnel.jpg' %}" style="width: 50%; height: 50%;" alt="Dia dao Cu Chi">
+            </div>
+            <div class="content" id="content8">
+                <h2>Can Gio Mangrove Forest and Beach</h2>
+                <p>
+                    The outskirts of Ho Chi Minh City are home to the lush Can Gio Mangrove Forest, an exotic escape where nature meets adventure. With intertwining waterways, diverse wildlife, and a vibrant ecosystem, it beckons travelers seeking both tranquility and excitement. Find out what you can uncover during your escape from the metropolis side of Ho Chi Minh City to Can Gio Mangrove Forest.
+                </p>
+                <img src="{% static 'images/Can_Gio_Mangrove_Forest.jpg' %}" style="width: 50%; height: 50%;" alt="Khu du tru sinh quyen Can Gio">
+            </div>
+            <div class="content" id="content9">
+                <h2>Binh Quoi Tourist Village</h2>
+                <p>
+                    Set by the Saigon River, Binh Quoi Tourist Village encompasses grassy lawns, tree-shaded walking paths, and indoor/outdoor fishing ponds. Land-based restaurants offer seating in open-air thatched cottages, while a huge floating restaurant has set menus and buffets. Bamboo bridges overlook giant lily pads and water wheels in tranquil lakes. Shows featuring traditional music and dance entertain visitors in the evening. 
+                </p>
+                <img src="{% static 'images/Binh_Quoi_Village.png' %}" style="width: 50%; height: 50%;" alt="Lang du lich Binh Quoi">
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="map" id="map">
+                <h3>Choose your place</h3>
+                <img src="{% static 'images/tmp_map.jpg' %}" alt="map saigon">
+            </div>
+
+            <div style="font-size: 1cm; font-weight: bold;">Others</div>
+            <!-- <div class="slideshow">
+                <h2>Others</h2>
+                <div class="places" id="place1">
+                    <h3>Independence Palace</h3>
+                    <img src="{% static 'images/independencepalace.jpg' %}" alt="suoitien">
+                    <p>Ben Thanh ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place2">
+                    <h3>War Remnants Museum</h3>
+                    <img src="{% static 'images/warremnantsmuseum.jpg' %}" alt="suoitien">
+                    <p>Xuan Hoa ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place3">
+                    <h3>Ben Thanh Market</h3>
+                    <img src="{% static 'images/benthanhmarket.jpg' %}" alt="suoitien">
+                    <p>Ben Thanh ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place4">
+                    <h3>Notre Dame Cathedral and Central Post Office</h3>
+                    <img src="{% static 'images/notredamepostoffice.jpg' %}" alt="suoitien">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place5">
+                    <h3>Suoi Tien Amusement Park</h3>
+                    <img src="{% static 'images/tmp_suoitien.jpg' %}" alt="suoitien">
+                    <p>Tang Nhon Phu ward, Ho Chi Minh city</p>
+                </div>
+            </div> -->
+                        <!-- Slideshow container -->
+            <div class="slideshow-container">
+
+            <!-- Full-width images with number and caption text -->
+            <div class="mySlides fade">
+                <div class="numbertext"></div>
+                <div class="places" id="place1">
+                    <h3>Independence Palace</h3>
+                    <img src="{% static 'images/independencepalace.jpg' %}" alt="dinh doc lap" onclick="showDes(1)">
+                    <p>Ben Thanh ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place2">
+                    <h3>War Remnants Museum</h3>
+                    <img src="{% static 'images/warremnantsmuseum.jpg' %}" alt="bao tang" onclick="showDes(2)">
+                    <p>Xuan Hoa ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place3">
+                    <h3>Ben Thanh Market</h3>
+                    <img src="{% static 'images/benthanhmarket.jpg' %}" alt="cho ben thanh" onclick="showDes(3)">
+                    <p>Ben Thanh ward, Ho Chi Minh city</p>
+                </div>
+                <div class="text"></div>
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext"></div>
+                <div class="places" id="place4">
+                    <h3>Notre Dame Cathedral and Central Post Office</h3>
+                    <img src="{% static 'images/notredamepostoffice.jpg' %}" alt="nha tho va buu dien" onclick="showDes(4)">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place5">
+                    <h3>Saigon Zoo and Botanical Gardens</h3>
+                    <img src="{% static 'images/sgzoo.jpg' %}" alt="thao cam vien" onclick="showDes(5)">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place6" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Jade Emperor Pagoda</h3>
+                    <img src="{% static 'images/jepagoda.jpg' %}" alt="chua ngoc hoang" onclick="showDes(6)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Sai Gon ward, Ho Chi Minh city</p>
+                </div>
+                <div class="text"></div>
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext"></div>
+                <div class="places" id="place7" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Cu Chi Tunnel</h3>
+                    <img src="{% static 'images/cuchitunnel.jpg' %}" alt="dia dao cu chi" onclick="showDes(7)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>An Nhon Tay commune, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place8" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Can Gio Mangrove Forest and Beach</h3>
+                    <img src="{% static 'images/cangio.jpg' %}" alt="bien can gio" onclick="showDes(8)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Can Gio commune, Ho Chi Minh city</p>
+                </div>
+                <div class="places" id="place9" style="margin-left: 15%;padding-top: 10px;padding-left: 10px;">
+                    <h3>Binh Quoi Tourist Village</h3>
+                    <img src="{% static 'images/binhquoi.jpg' %}" alt="lang du lich binh quoi" onclick="showDes(9)" style="object-fit: contain;width: 80%; height: 80%;">
+                    <p>Binh Quoi ward, Ho Chi Minh city</p>
+                </div>
+                <div class="text"></div>
+            </div>
+
+            <!-- Next and previous buttons -->
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+            <br>
+
+            <!-- The dots/circles -->
+            <div style="text-align:center">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 
 {% block extra_js %}
+            <script src = "{% static 'discover.js' %}" > </script>
+            <!-- <script src = "{% static 'leaflet.js' %}" > </script> -->
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n6qqBY+92h+Pm1CluH8m/JRBKlyaV4RvAJ4KgL+id=" crossorigin=""></script>
 {% endblock %}
