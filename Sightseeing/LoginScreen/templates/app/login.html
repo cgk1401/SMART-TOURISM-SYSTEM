@@ -1,29 +1,82 @@
-{% extends "common/base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@600&family=Montserrat:wght@400;500&family=Karla:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background -->
+    <div class="background-container">
+        <img class="background-image" src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80" alt="">
+        <div class="background-overlay"></div>
+    </div>
 
-{% block title %} Login - GOST {% endblock %}
+    <!-- Tagline -->
+    <div class="team-name">
+        <p>Plan now. Travel tomorrow</p>
+    </div>
 
-{% block body_class %} login-page {% endblock %}
+    <!-- Login Frame -->
+    <div class="login-frame">
 
-{% block extra_css %}
-    <link rel = "stylesheet" href = "{% static 'login.css' %}">
-{% endblock %}
+        <!-- Header -->
+        <div class="login-header">
+            <p class="login-title">Login</p>
+            <p class="login-subtitle">Login to access your planned trip</p>
+        </div>
 
-{% block content %}
-    <div class="login-container">
-        <div class="login-card">
-            <h2> Screen Login </h2>
-                <input type = "text" id = "username" placeholder="Username">
-                <input type = "password" id = "password" placeholder = "Password">
-                <div id = "message"> </div>
-                <button id = "ButtonLogin" > Login </button>
-            <p class="signup-link">Don't have an account? <a href="/register/">Register</a></p>
+        <!-- Form -->
+        <div class="login-form">
+
+            <!-- Username Field -->
+            <div class="input-group">
+                <input type="text" id="username" class="input-field" placeholder=" " required>
+                <label for="username">Username</label>
+            </div>
+
+            <!-- Password Field -->
+            <div class="input-group password-group">
+                <input type="password" id="passwordInput" class="input-field" placeholder=" " required>
+                <label for="passwordInput">Password</label>
+
+                <!-- Toggle Icon -->
+                <div class="toggle-password" id="togglePassword">
+                    <svg class="eye-closed" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+
+                    <svg class="eye-open" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+                        <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" 
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" 
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="message-frame" id="message"></div>
+
+            <!-- Login Button -->
+            <button class="login-button" id="ButtonLogin">
+                Login
+            </button>
+
+            <!-- Sign Up -->
+            <p class="signup-text">
+                Don't have an account? <a class="signup-link" href="/register/">Sign up</a>
+            </p>
+
         </div>
     </div>
-{% endblock %}
-
-{% block extra_js %}
-    <script src="" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
-    <script src = "{% static 'login.js' %}"> </script>
-{% endblock %}
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"> </script>
+        <script src = "{% static 'login.js' %}" > </script>
+</body>
+</html>

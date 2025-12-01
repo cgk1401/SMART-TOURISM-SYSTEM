@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 import os
-from MapScreen.models import location
+from MapScreen.models import Location
 from math import radians, sin, cos, asin, sqrt
 
 API_KEY_MAP = os.getenv("API_KEY_MAP") 
@@ -53,7 +53,7 @@ def all_location(request):
     
     if near_id is not None:
         # trường hợp đi theo điểm mặc định có trong db
-        center = location.objects.get(pk = int(near_id))
+        center = Location.objects.get(pk = int(near_id))
         near_lat = float(center.latitude)
         near_lon = float(center.longtitude)
     
@@ -61,7 +61,7 @@ def all_location(request):
     # lọc trước 
     dlat = r_km / 111.0
     dlon = r_km / (111.0 * max(0.1, cos(radians(near_lat))))
-    qs = location.objects.filter(
+    qs = Location.objects.filter(
         latitude__range=(near_lat - dlat, near_lat + dlat),
         longtitude__range=(near_lon - dlon, near_lon + dlon),
     )

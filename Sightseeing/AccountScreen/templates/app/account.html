@@ -1,0 +1,156 @@
+{% extends "common/base.html" %}
+{% load static %} 
+
+{% block title %} Account {% endblock %}
+
+{% block body_class %} {% endblock %}
+
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'account.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% include 'app/chat_widget.html' %}
+{% endblock %}
+
+{% block content %}
+
+<template id="account-row-template">
+        
+        <div class="account-row">
+            
+            <div class="info-details-wrapper">
+                <div class="info-label-text"></div> 
+                <div class="info-value-text"></div>
+            </div>
+            
+            <button type="button" class="edit-button-style">
+                <i class="fa-notdog fa-solid fa-pencil"></i>
+                <span class="edit-text-style">Edit</span>
+            </button>
+        
+    </div>
+</template>
+
+<template id="summary-info-template">
+    <div class="summary-info-row">
+        <i class="summary-icon"></i>
+        <span class="summary-value-text"></span>
+    </div>
+</template>
+
+<div class="profile-header">
+    <div class="avatar-wrapper">
+        {% if request.user.profile and request.user.profile.avatar %}
+        <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                class="user-avatar" id="avatar-img"
+                onclick="document.getElementById('avatar-input').click()">
+        {% else %}
+        <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                class="user-avatar" id="avatar-img"
+                onclick="document.getElementById('avatar-input').click()">
+        {% endif %}
+
+        <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
+            Edit
+        </div>
+
+        <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;"action="{% url 'AccountScreen:account' %}">
+            {% csrf_token %}
+            <input type="file" id="avatar-input" name="avatar" accept="image/*"
+                    onchange="submitAvatar()">
+        </form>
+    </div>
+
+    <div class="user-name">
+        {{ request.user.get_full_name|default:request.user.username }}
+    </div>
+</div>
+
+
+<div id="main-container">
+    
+    <div class= "nav-container">
+        <div class="nav-bar">
+            <a href="{% url 'AccountScreen:account' %}" class="nav-tab active-tab">
+                <span class="tab-text">Account</span>
+            </a>
+            <a href="{% url 'AccountScreen:history' %}" class="nav-tab">
+                <span class="tab-text">History</span>
+            </a>
+        </div>
+    </div>
+    
+    <div id= "content-container">
+        <div class = "Name-Account">Account</div>
+
+        
+
+        
+      
+        <div class = "profile-summary-box-father">
+            
+            <div class="profile-summary-box">
+                <div class = "Profile_details">
+                    <div class = "Profile_details_header">
+                        <div class="avatar-wrapper">
+                            {% if request.user.profile and request.user.profile.avatar %}
+                            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                                class="user-avatar" id="avatar-img"
+                                onclick="document.getElementById('avatar-input').click()">
+                            {% else %}
+                            <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                                class="user-avatar" id="avatar-img"
+                                onclick="document.getElementById('avatar-input').click()">
+                            {% endif %}
+
+                            <div class="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()">
+                                Edit
+                            </div>
+
+                            <form id="avatar-form" method="post" enctype="multipart/form-data" style="display:none;"action="{% url 'AccountScreen:account' %}">
+                                {% csrf_token %}
+                                <input type="file" id="avatar-input" name="avatar" accept="image/*"
+                                    onchange="submitAvatar()">
+                            </form>
+                        </div>
+                        <div class="user-name">
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </div>
+                        
+                        <div class = "member-since">
+                            <span>Member of GOST since: </span>
+                            <strong>{{ request.user.date_joined|date:"d/m/Y" }}</strong>
+                        </div>
+
+                        <hr class="profile-divider">
+
+                        <div class = "Profile_details_about">
+                            <div class = "About-me">About me</div>
+                                <div id="summary-info-container">
+                                    </div>                          
+                            </div>
+                    </div>
+                </div> 
+            </div> 
+            
+            <div class="account-info-box">
+                
+                <div id="account-info-list">
+                    </div>
+                
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.USER_DATA = JSON.parse('{{ user_data_json|escapejs }}');
+    console.log('User data loaded:', window.USER_DATA);
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'account_renderer.js' %}"></script>
+{% endblock %}

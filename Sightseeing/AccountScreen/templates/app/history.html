@@ -1,0 +1,112 @@
+{% extends "common/base.html" %}
+{% load static %} 
+
+{% block title %} History {% endblock %}
+
+{% block body_class %} {% endblock %}
+
+{% block extra_css %} 
+    <link rel = "stylesheet" href = "{% static 'history.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% include 'app/chat_widget.html' %}
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<template id="trip-history-item-template">
+    <div class="trip-card">
+        
+        <div class="trip-header"> 
+            <div class="trip-places-wrapper">
+                </div>
+            
+            <button class="view-details-button">
+                <i class="fa-notdog fa-solid fa-angle-right"></i>
+            </button>
+        </div>
+        
+        <div class="trip-footer">
+            <div class="trip-info-item">
+                <i class="fa-notdog fa-solid fa-calendar"></i>
+                <div class="info-text-wrapper">
+                    <span class="info-label">Date:</span>
+                    <span class="info-value" data-type="date">Dec 15, 2024</span> 
+                </div>
+            </div>
+            
+            <div class="trip-info-item">
+                <i class="fa-notdog fa-solid fa-location-dot"></i>
+                <div class="info-text-wrapper">
+                    <span class="info-label">Total Places:</span>
+                    <span class="info-value" data-type="total-places">3</span>
+                </div>
+            </div>
+            
+            <div class="trip-info-item">
+                <i class="fa-notdog fa-solid fa-clock"></i>
+                <div class="info-text-wrapper">
+                    <span class="info-label">Duration:</span>
+                    <span class="info-value" data-type="duration">4 hrs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <div class="avatar-wrapper">
+            {% if request.user.profile and request.user.profile.avatar %}
+            <img src="{{ request.user.profile.avatar.url }}" alt="Avatar"
+                 class="user-avatar" id="avatar-img">
+            {% else %}
+            <img src="{% static 'images/User_Default_Avatar.jpg' %}" alt="Avatar"
+                 class="user-avatar" id="avatar-img">
+            {% endif %}
+        </div>
+
+        <div class="user-name">
+            {{ request.user.get_full_name|default:request.user.username }}
+        </div>
+    </div>
+
+<div id = "main-container">
+
+    <div class= "nav-container">
+        <div class="nav-bar">
+            <a href="{% url 'AccountScreen:account' %}" class="nav-tab">
+                <span class="tab-text">Account</span>
+            </a>
+
+            <a href="{% url 'AccountScreen:history' %}" class="nav-tab active-tab">
+                <span class="tab-text">History</span>
+            </a>
+        </div>
+    </div>
+    
+    <div id= "content-container">
+        
+        <div class = "Name-History">Trip History</div>
+        
+        <div class="content-container-1">
+            <div id="history-list" class="trip-list-container"> 
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.TRIP_HISTORY = JSON.parse('{{ trip_history|escapejs }}');
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'history_renderer.js' %}"></script>
+{% endblock %}
+
+
+

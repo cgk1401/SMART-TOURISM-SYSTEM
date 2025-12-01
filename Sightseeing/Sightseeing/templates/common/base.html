@@ -1,36 +1,220 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang = "vi">
+<html lang="vi">
 <head>
-    <meta charset = "UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-
-    <title> {% block title %} {% endblock title %} </title>
-    <link rel = "stylesheet" href = " {% static 'base.css' %}">
-    <link rel = "stylesheet" href = "{% static "navbar.css" %}">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
     <link rel="stylesheet" href="{% static 'footer.css' %}?v=3">
-    {% block extra_css%} {% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
-
-<body class = "{% block body_class%} {% endblock %}">
-    {%include "common/navbar.html" %}
+<body class="{% block body_class %}{% endblock %}">
+    {% block navbar %}
+        {% include "common/navbar.html" %}
+    {% endblock %}
 
     <main>
-        {% block content %} {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
-    {% include "common/footer.html" %}
-    {% block extra_js %} {% endblock %}
+    {% block footer %}
+        {% include "common/footer.html" %}
+    {% endblock %}
 
+    {% block extra_js %}{% endblock %}
+
+    <!-- SETTINGS MODAL – ĐỔI MÀU NAVBAR + FOOTER + BACKGROUND -->
+    <div id="settings-modal" class="settings-modal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3>Settings</h3>
+                <span class="close-modal">×</span>
+            </div>
+
+            <div class="setting-item">
+                <label>Navbar Color</label>
+                <div class="color-picker-box">
+                    <input type="color" id="navbar-picker" value="#ffffff">
+                    <span id="navbar-hex">#ffffff</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Footer Color</label>
+                <div class="color-picker-box">
+                    <input type="color" id="footer-picker" value="#1a1a1a">
+                    <span id="footer-hex">#1a1a1a</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Background Color</label>
+                <div class="color-picker-box">
+                    <input type="color" id="bg-picker" value="#f6f7f2">
+                    <span id="bg-hex">#f6f7f2</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Modal không làm tối nền */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            background: transparent;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .settings-content {
+            pointer-events: auto;
+            background: #1a1a1a;
+            color: white;
+            padding: 32px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #444;
+        }
+
+        .close-modal {
+            font-size: 32px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+            .close-modal:hover {
+                color: white;
+            }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        .color-picker-box {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: rgba(255,255,255,0.08);
+            padding: 18px;
+            border-radius: 18px;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 100px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
+        }
+
+            input[type="color"]:hover {
+                transform: scale(1.1);
+            }
+
+            input[type="color"]::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+
+            input[type="color"]::-webkit-color-swatch {
+                border: none;
+                border-radius: 50%;
+            }
+
+        #navbar-hex, #footer-hex, #bg-hex {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 18px;
+            border-radius: 12px;
+            min-width: 120px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('settings-modal');
+            const openBtn = document.getElementById('open-settings-modal');
+            const closeBtn = document.querySelector('.close-modal');
+
+            // Load saved colors
+            const navColor = localStorage.getItem('navbarColor') || '#ffffff';
+            const footColor = localStorage.getItem('footerColor') || '#1a1a1a';
+            const bgColor = localStorage.getItem('bgColor') || '#f6f7f2';
+
+            // Áp dụng màu
+            document.querySelector('.navbar').style.backgroundColor = navColor;
+            document.getElementById('site-footer').style.backgroundColor = footColor;
+            document.body.style.backgroundColor = bgColor;
+
+            // Cập nhật picker + HEX
+            document.getElementById('navbar-picker').value = navColor;
+            document.getElementById('footer-picker').value = footColor;
+            document.getElementById('bg-picker').value = bgColor;
+            document.getElementById('navbar-hex').textContent = navColor;
+            document.getElementById('footer-hex').textContent = footColor;
+            document.getElementById('bg-hex').textContent = bgColor;
+
+            // Mở/đóng modal
+            openBtn?.addEventListener('click', e => { e.preventDefault(); modal.style.display = 'flex'; });
+            closeBtn?.addEventListener('click', () => modal.style.display = 'none');
+            window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+            // Navbar
+            document.getElementById('navbar-picker').addEventListener('input', e => {
+                const c = e.target.value;
+                document.querySelector('.navbar').style.backgroundColor = c;
+                document.getElementById('navbar-hex').textContent = c;
+                localStorage.setItem('navbarColor', c);
+            });
+
+            // Footer
+            document.getElementById('footer-picker').addEventListener('input', e => {
+                const c = e.target.value;
+                document.getElementById('site-footer').style.backgroundColor = c;
+                document.getElementById('footer-hex').textContent = c;
+                localStorage.setItem('footerColor', c);
+            });
+
+            // Background
+            document.getElementById('bg-picker').addEventListener('input', e => {
+                const c = e.target.value;
+                document.body.style.backgroundColor = c;
+                document.getElementById('bg-hex').textContent = c;
+                localStorage.setItem('bgColor', c);
+            });
+        });
+    </script>
 </body>
-
 </html>

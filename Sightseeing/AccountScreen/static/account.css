@@ -1,0 +1,460 @@
+/* CSS */
+
+
+/*Template account-row-template*/
+.edit-icon-reusable{
+     width:"20";
+      height:"20"
+}
+
+/*Template summary-info-template*/
+.summary-info-row{
+    display: flex;
+    align-items: center; 
+    gap: 15px; 
+    margin-bottom: 15px;
+}
+
+.summary-icon{
+    font-size: 24px; 
+    color: #051721; 
+    width: 24px; 
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-value-text{
+    color: #051721; 
+    font-size: 20px;
+}
+
+
+/*Template main-container*/
+#main-container{
+    width: 100%; 
+    height: 100%; 
+    flex-direction: column; 
+    align-items: center; 
+    display: inline-flex; 
+    gap: 40px
+}
+
+.nav-container{
+    width: 100%; 
+    height: 74px; 
+    position: relative; 
+    background: #FAFBFC; 
+    overflow: hidden; 
+    border-top: 1px #FAFBFC solid; 
+    border-bottom: 1px #FAFBFC solid; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.nav-bar{
+    width: 50%; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: inline-flex
+}
+
+#content-container{
+    width: 100%; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center; 
+    gap: 33px; 
+    display: flex
+}
+
+.Name-Account{
+    width: 153px; 
+    text-align: center; 
+    color: #051721; 
+    font-size: 32px; 
+    font-family: Montserrat Alternates; 
+    font-weight: 700; 
+    line-height: 40px; 
+    letter-spacing: 0.16px; 
+    word-wrap: break-word
+}
+
+.profile-summary-box-father{
+    width: 80%; 
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 33px; 
+    display: flex
+}
+
+.profile-summary-box{
+    width: 40%; 
+    padding: 54px 5%; 
+    background: #FAFBFC; 
+    box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05); 
+    overflow: hidden; 
+    border-radius: 30px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: flex
+}
+
+/* --- 1. KIỂU DÁNG CHUNG CHO CÁC MỤC (nav-tab) --- */
+.nav-tab {
+    /* Đặt lại kiểu mặc định của thẻ <a> */
+    text-decoration: none; 
+    
+    /* Thiết lập bố cục (từ flex-direction: column và gap: 20px) */
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    
+    /* Đặt kích thước (từ width: 164px) */
+    width: 164px;
+}
+
+/* 2. KIỂU DÁNG VĂN BẢN (tab-text) */
+.tab-text {
+    /* Kiểu dáng chung (từ font-size, font-family, font-weight) */
+    font-size: 25px;
+    font-family: 'Karla', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.10px;
+    
+    /* Màu mặc định (cho các tab KHÔNG active, như tab History) */
+    color: #37454D; 
+}
+
+
+/* --- 3. KIỂU DÁNG CHO TRẠNG THÁI ACTIVE (active-tab) --- */
+
+/* Màu chữ cho tab đang active */
+.active-tab .tab-text {
+    color: #276968; /* Màu xanh của bạn */
+}
+
+/* Hiệu ứng đường gạch chân (thay cho div có outline) */
+.active-tab {
+    /* Đặt lại thuộc tính position để có thể dùng pseudo-element */
+    position: relative; 
+}
+
+.active-tab::after {
+    content: ""; /* Bắt buộc phải có content cho pseudo-element */
+    position: absolute;
+    bottom: -2px; /* Điều chỉnh vị trí gạch chân */
+    left: 0;
+    
+    /* Tái tạo lại kiểu dáng đường gạch dưới: height: 0px; outline: 4px #276968 solid; */
+    height: 4px; 
+    width: 100%; 
+    background-color: #276968;
+}
+
+/* --- 4. HIỆU ỨNG KHI DI CHUỘT (Tùy chọn) --- */
+.nav-tab:hover .tab-text {
+    color: #276968; /* Đổi màu chữ khi hover */
+}
+
+
+/* 1. KIỂU DÁNG CƠ BẢN CỦA NÚT CHÍNH (.edit-button-style) */
+.edit-button-style {
+    /* Đặt các giá trị kích thước và căn chỉnh từ các div cũ */
+    width: 118px;
+    height: 48px;
+    padding: 8px 16px; /* padding-top/bottom: 8px, padding-left/right: 16px */
+    
+    /* Thiết lập Flexbox để căn giữa nội dung (từ justify-content: center, align-items: center) */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    
+    /* Thiết lập viền (Outline/Border) */
+    border-radius: 4px;
+    border: 1px solid #276968; /* Thay thế outline bằng border */
+    background: none; /* Quan trọng: Xóa nền mặc định của button */
+    cursor: pointer; /* Cho biết đây là một nút bấm */
+}
+
+/* 2. KIỂU DÁNG CỦA ICON (.edit-icon-reusable) */
+.edit-icon-reusable {
+    /* Màu mặc định cho icon  */
+    fill: #276968; 
+    width: 20px;
+    height: 20px;
+}
+
+/* 3. KIỂU DÁNG CỦA VĂN BẢN (.edit-text-style) */
+.edit-text-style {
+    color: #276968; 
+    font-size: 16px; 
+    font-family: Karla; 
+    font-weight: 500;
+}
+
+/* 4. HIỆU Ứng TƯƠNG TÁC (Ví dụ: Đổi màu khi hover) */
+.edit-button-style:hover {
+    background-color: #f0f8ff; /* Hiệu ứng nền nhẹ khi hover */
+}
+
+.edit-button-style:hover .edit-icon-reusable,
+.edit-button-style:hover .edit-text-style {
+    /* Đổi màu chữ và icon khi di chuột qua nút */
+    color: #051721;
+    fill: #051721; 
+}
+
+/* --- BỔ SUNG: 5. KIỂU DÁNG CHO KHUNG ACCOUNT ĐỘNG --- */
+
+/* Khối chứa chung toàn bộ 3 hàng thông tin (Name, Pass, DOB) */
+#account-info-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 41px; 
+    width: 100%; 
+}
+
+#account-info-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 41px; 
+    width: 100%; 
+}
+
+
+/* Khối chứa một hàng thông tin duy nhất (.account-row) */
+.account-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Khối chứa Label và Value (.info-details-wrapper) */
+.info-details-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* --- BỔ SUNG: 6. KIỂU DÁNG CHO VĂN BẢN ĐỘNG --- */
+
+/* Định kiểu cho Label (Name, Password, DOB) */
+.info-label-text {
+    opacity: 0.75;
+    color: #37454D;
+    font-size: 16px;
+    font-family: Karla;
+    font-weight: 400;
+}
+
+/* Định kiểu cho Value (Minh Triet, •••, 02-24-1996) */
+.info-value-text {
+    color: #051721;
+    font-size: 24px;
+    font-family: Karla;
+    font-weight: 500;
+}
+
+
+/* PROFILE HEADER */
+.profile-header {
+    width: 100%;
+    height: 240px;
+    background: url( "images/Image Container.jpg") center/cover no-repeat;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 16px;
+    color: white;
+    text-align: center;
+}
+
+.avatar-wrapper {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.edit-avatar-btn {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background: #e91e63;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.user-name {
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Montserrat Alternates', sans-serif;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Định kiểu cho Profile chi tiết */
+.Profile_details{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Định kiểu cho phần đầu Profile */
+.Profile_details_header {
+    /* Sử dụng Flexbox để căn giữa nội dung theo chiều dọc */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa theo chiều ngang (trục chính) */
+    
+    /* Thêm khoảng cách nếu cần */
+    padding-bottom: 20px; 
+}
+
+
+/* Định kiểu cho "Member Since" */
+.member-since {
+    text-align: center;
+    font-size: 24px;
+    color: #555;
+    line-height: 1.4;
+}
+
+
+.profile-divider {
+    /* Quan trọng: Thiết lập đường kẻ */
+    border: none; /* Loại bỏ đường viền mặc định của thẻ <hr> */
+    border-top: 1px solid #D7E2EE; /* Tạo đường kẻ mỏng màu xám nhạt */
+    
+    /* Thiết lập kích thước và vị trí */
+    width: 100%; /* Đảm bảo đường kẻ kéo dài toàn bộ chiều rộng của khối Profile_details */
+    margin: 15px 0; /* Thêm khoảng cách (margin) trên và dưới đường kẻ */
+}
+
+/* Định kiểu cho phần about Profile */
+.Profile_details_about {
+    /* Sắp xếp tiêu đề và các hàng thông tin */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các hàng thông tin */
+    
+    padding-top: 10px; /* Khoảng cách từ đường kẻ */
+}
+
+.About-me{
+    text-align: center; 
+    color: #051721; 
+    font-size: 22px; 
+    font-family: Montserrat Alternates; 
+    font-weight: 700; 
+    line-height: 40px; 
+    letter-spacing: 0.16px; 
+    word-wrap: break-word
+}
+
+#summary-info-container{
+    margin-top: 20px;
+}
+
+.account-info-box{
+    width: 40%; 
+    padding: 54px 5%; 
+    background: #FAFBFC; 
+    box-shadow: 0px 4px 16px rgba(5, 23, 33, 0.05); 
+    overflow: hidden; 
+    border-radius: 30px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    align-items: center; 
+    display: flex
+}
+
+.account-info-list{
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    gap: 41px; 
+    display: flex;
+}
+
+/* Tiêu đề "About me" */
+.Profile_details_about h3 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
+}
+
+/* Định kiểu cho từng hàng thông tin (icon + text) */
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa icon và text */
+    font-size: 16px;
+    color: #051721;
+}
+
+/* Định kiểu cho Icon (nếu là chữ/emoji) */
+.info-row i {
+    font-size: 18px; /* Đảm bảo icon lớn hơn một chút */
+    color: #333; /* Màu sắc icon */
+}
+
+/* Input field */
+.edit-input-field {
+    /* Đảm bảo nó chiếm đủ không gian */
+    width: 100%; 
+    padding: 8px 10px; 
+    margin: 5px 0;
+    
+    /* Kiểu dáng border */
+    border: 1px solid #ccc; 
+    border-radius: 4px; /* Bo góc nhẹ */
+    
+    /* Font và màu chữ */
+    font-size: 24px;
+    color: #051721;
+    font-family: Karla;
+    font-weight: 500;
+    
+    /* Hiệu ứng khi focus */
+    transition: border-color 0.3s ease;
+}
+
+/* Hiệu ứng khi người dùng click vào input */
+.edit-input-field:focus {
+    border-color: #007bff; /* Thay đổi màu border khi focus */
+    outline: none; /* Loại bỏ đường viền focus mặc định của trình duyệt */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Thêm box shadow nhẹ */
+}
