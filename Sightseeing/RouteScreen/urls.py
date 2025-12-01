@@ -10,4 +10,7 @@ urlpatterns = [
     path("get_similar_location/", views.get_similar_locations),
     path("getRoute/", views.get_route),
     path('getdetailsRoute/<int:trip_id>/', views.detailsRoute),
+
+    path('test-hardcoded-route/', views.test_optimize_route_view, name='test_optimize_route'),
+
 ]
