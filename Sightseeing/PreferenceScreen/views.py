@@ -4,16 +4,40 @@ from django.contrib.auth.decorators import login_required
 from .models import UserPref
 from MapScreen.models import Location
 
-# def ranking_loc_default():
-#     locations = Location.objects.all().order_by("-rating")
-#     return list(locations[:20])
+
+def ranking_loc_default():
+    locations = Location.objects.all().order_by("-rating")
+
+    candidates = []
+    top = 20
+
+    for loc in locations:
+        name = loc.name.lower()
+
+        if "cgv" in name or "cinema" in name:
+            continue
+
+        amenity = loc.tags.get("amenity", "")
+        if amenity in ["pub", "bar"]:
+            continue
+
+        interests = loc.tags.get("interest", [])
+        if not interests:
+            continue
+
+        candidates.append(loc)
+        if len(candidates) >= top:
+            break
+
+    return candidates
+
 
 def function_preference(request):
     prefs = UserPref.objects.filter(user=request.user)
-    start_hours_list = [7,8,9,10,11,12,1,2,3]
-    end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+    start_hours_list = [7, 8, 9, 10, 11, 12, 1, 2, 3]
+    end_hours_list = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-    default_candidates = []
+    default_candidates = ranking_loc_default()
     context = {
         'prefs': prefs,
         'time_start_hours': start_hours_list,
@@ -22,6 +46,7 @@ def function_preference(request):
         'itineraries': []
     }
     return render(request, 'preference.html', context)
+
 
 @login_required
 def save_preference(request):
@@ -54,37 +79,14 @@ def save_preference(request):
         pref.save()
 
         if main_loc_id:
+            # pass
             return redirect(f'/PreferenceScreen/save_preference/list_trip/?main_loc_id={main_loc_id}')
 
         options = ranking_loc(pref)
-
-        candidates = []
-        top_n = 20 # Số lượng địa điểm bạn muốn hiển thị
-
-        for opt in options:
-            loc = opt['location']
-            
-            # Áp dụng các bộ lọc giống trong choose_main_loc:
-            name = loc.name.lower()
-            if "cgv" in name: continue
-            amenity = loc.tags.get("amenity", "")
-            if amenity in ["pub", "bar"]: continue
-
-            # Phải chia sẻ ít nhất một sở thích
-            common = set(loc.tags.get("interest", [])) & set(pref.interests)
-            if not common: continue
-
-            # Gán điểm số mới vào thuộc tính tạm thời của đối tượng Location
-            loc.ranking_score = opt['score']
-            candidates.append(loc) 
-            
-            if len(candidates) >= top_n:
-                break
-        # main_loc = choose_main_loc(pref, options)
-        # itineraries = build_list(pref, options, main_loc)
+        candidates = choose_main_loc(pref, options)
         
-        start_hours_list = [7,8,9,10,11,12,1,2,3]
-        end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+        start_hours_list = [7, 8, 9, 10, 11, 12, 1, 2, 3]
+        end_hours_list = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         
         context = {
             'itineraries': [], 
@@ -104,8 +106,7 @@ def generate_itinerary(request):
     """View mới để xây dựng và hiển thị lộ trình sau khi chọn địa điểm chính."""
     main_loc_id = request.GET.get('main_loc_id') # Lấy ID từ query parameter
     
-    if not main_loc_id:
-        # Nếu không có ID, chuyển hướng về trang preference
+    if not main_loc_id:  # safety check
         return redirect('/PreferenceScreen/')
 
     try:
@@ -124,11 +125,11 @@ def generate_itinerary(request):
     itinerary = build_list(pref, options, main_loc)
     
     # 3. Chuẩn bị context để render
-    start_hours_list = [7,8,9,10,11,12,1,2,3]
-    end_hours_list = [12,1,2,3,4,5,6,7,8,9,10,11]
+    start_hours_list = [7, 8, 9, 10, 11, 12, 1, 2, 3]
+    end_hours_list = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     
     context = {
-        'itineraries': itinerary, # Gửi lộ trình đã tạo
+        'itineraries': itinerary,
         'time_start_hours': start_hours_list,
         'time_end_hours': end_hours_list,
         'prefs': pref,
@@ -136,6 +137,7 @@ def generate_itinerary(request):
     }
     
     # Render lại cùng template preference.html
+    # Need to pass to route <---------------------------------------------------
     return render(request, 'preference.html', context)
 
 
@@ -212,7 +214,7 @@ def ranking_loc(pref):
 
 def choose_main_loc(pref, options):
     candidates = []
-    top = 15
+    top = 20
 
     for opt in options:
         loc = opt['location']
@@ -230,22 +232,21 @@ def choose_main_loc(pref, options):
         if not common:
             continue
 
-        candidates.append(opt)
-        if len(candidates) == top:
+        candidates.append(loc)
+        if len(candidates) >= top:
             break
 
     # print in shell
-    print("Choose centerpiece:")
-    for i, opt in enumerate(candidates, 1):
-        print(f"{i}. {opt['location'].name} ({opt['score']})")
+    # print("Choose centerpiece:")
+    # for i, opt in enumerate(candidates, 1):
+    #     print(f"{i}. {opt['location'].name} ({opt['score']})")
 
     # # input from shell
     # choice = int(input("Enter number: "))
     # return candidates[choice-1]['location']
 
     if candidates:
-        main_loc = candidates[0]['location']
-        return main_loc, candidates
+        return candidates
     
     return None, []
 
@@ -362,6 +363,7 @@ def build_list(pref, options, main_loc):
     LOC_PER = 6
 
     # init with main_loc
+    main_loc.tags["duration"] = get_duration(main_loc, pref.visit_duration)
     itineraries = [[main_loc] for _ in range(N)]
 
     # remove main_loc from buckets
