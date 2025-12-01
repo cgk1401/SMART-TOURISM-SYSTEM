@@ -101,6 +101,7 @@ def save_preference(request):
 
     return redirect('/PreferenceScreen/')
 
+
 @login_required
 def generate_itinerary(request):
     """View mới để xây dựng và hiển thị lộ trình sau khi chọn địa điểm chính."""
@@ -138,7 +139,11 @@ def generate_itinerary(request):
     
     # Render lại cùng template preference.html
     # Need to pass to route <---------------------------------------------------
-    return render(request, 'preference.html', context)
+    # return render(request, 'preference.html', context)
+    data_it = itineraries_to_list(itinerary)
+    request.session["itinerary_data"] = data_it
+    return redirect('/MainScreen/RouteScreen/test-hardcoded-route/')
+
 
 
 def ranking_loc(pref):
@@ -406,7 +411,7 @@ def build_list(pref, options, main_loc):
 
         for i in range(N):
             if remaining and len(itineraries[i]) < LOC_PER:
-                # Check for duplicates before adding
+                # check for duplicates before adding
                 location_ids_in_itinerary = {loc.pk for loc in itineraries[i]}
 
                 for j in range(len(remaining)):
@@ -435,6 +440,10 @@ def print_itineraries(itineraries):
         print(json.dumps(model_to_dict(loc), indent=4))
 
 
+def itineraries_to_list(itineraries):
+    from django.forms.models import model_to_dict
+
+    return [model_to_dict(loc) for loc in itineraries]
 @login_required
 def delete_preference(request, pref_id):
     if request.method == "POST":
