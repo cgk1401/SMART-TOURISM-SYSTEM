@@ -531,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await axios.get("get_similar_location/", {
             params:{
                 "base_location": name,
-                "limit": 7,
+                "limit": 3,
             }
         })
         const dataList = res.data;
@@ -674,18 +674,18 @@ document.addEventListener("DOMContentLoaded", () => {
             res.data.stops.forEach(p => {
                 PLACES.push({
                     id: CreateIdFromRouteTrip(),
-                    pk: p.location.pk,
-                    name: p.location.name,
-                    lat: p.location.lat,
-                    lon: p.location.lon,
-                    address: p.location.address || p.location.name,
+                    pk: p.pk,
+                    name: p.name,
+                    lat: p.lat,
+                    lon: p.lon,
+                    address: p.address || p.name,
                     stay: p.stay || 30,
                 });
             });
             
             renderItinerary(PLACES);
             if (res.data.stops.length > 0) {
-                getRecommended_Place(res.data.stops[0].location.name);
+                getRecommended_Place(res.data.stops[0].name);
             }
 
             const itineraryList = renderItinerary(PLACES);

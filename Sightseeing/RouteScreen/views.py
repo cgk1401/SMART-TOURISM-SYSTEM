@@ -102,7 +102,9 @@ def match_tags(base_tags, other_tags):
 def get_similar_locations(request):
     base_name = request.GET.get("base_location")
 
-    base_location = Location.objects.get(name = base_name)
+    #base_location = Location.objects.get(name = base_name)
+    base_location = Location.objects.filter(name=base_name).first()
+    
     limit = int(request.GET.get("limit"))
     
     base_tags = base_location.tags 
@@ -503,7 +505,7 @@ def format_final_response(formatted_stops):
     return {
         "title": "",
         "description": "",
-        "stops": formatted_stops,
+        "stops": formatted_stops,    
     }
 
 
