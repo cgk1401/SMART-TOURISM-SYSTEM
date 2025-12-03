@@ -1,97 +1,86 @@
 from django.shortcuts import render
-from django.http import HttpRequest, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-import requests
+import time, requests
+from django.http import JsonResponse
 import os
-from MapScreen.models import Location
-from math import radians, sin, cos, asin, sqrt
+from django.http import JsonResponse
+from deep_translator import GoogleTranslator
 
-API_KEY_MAP = os.getenv("API_KEY_MAP") 
+API_WEATHER_KEY = os.getenv("API_WEATHER_API")
 
-def render_map(request):
+def Render_Map(request):
     return render(request, 'app/Map.html')
 
-@csrf_exempt
-def get_route(request):
-    url = "https://api.openrouteservice.org/v2/directions/driving-car"
-    
-    data = json.loads(request.body)
-    coords = []
-    for lat, lon in data["coordinates"]:
-        coords.append([lon, lat])
-    
-    headers = {
-        "Authorization": API_KEY_MAP,
-        "Content-Type": "application/json"
-    }
-    body = {"coordinates": coords}
-    
-    response = requests.post(url, json = body, headers = headers)
-    
-    return JsonResponse(response.json())
+NOMINATIM = "https://nominatim.openstreetmap.org"
+UA = {"User-Agent": "OSM-Demo-Geocode/1.0 (contact: doomanhcuongg@gmail.com)"}
 
-def haversine_km(lat1, lon1, lat2, lon2):
-    # tính khoảng cách giữa hai điểm
-    R = 6371 # bk trái đất
-    # chuyển sang radian
-    lat1 = radians(lat1)
-    lon1 = radians(lon1)
-    lat2 = radians(lat2)
-    lon2 = radians(lon2)
-    
-    distance_lat = lat2 - lat1
-    distance_lon = lon2 - lon1
-    
-    a = sin(distance_lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(distance_lon / 2) ** 2
-    return R * 2 * asin(sqrt(a))
+OVERPASS = "https://overpass.kumi.systems/api/interpreter"
 
-def all_location(request):
-    near_id = request.GET.get("near_id")
-    r_km = float(request.GET.get("r_km"))
-    limit = int(request.GET.get("limit", 30))
+def geocode(request):
+    q = request.GET.get("q", "")
+    if not q:
+        return JsonResponse({
+            "error": "Missing",
+        }, status = 400)
+    time.sleep(1.0)
+    r = requests.get(f"{NOMINATIM}/search", params={
+        "q": q, "format": "jsonv2", "limit": 1, "addressdetails": 1
+    }, headers=UA, timeout=60)
+    r.raise_for_status()
+    data = r.json()
+    if not data: raise ValueError("Không tìm thấy kết quả")
+    item = data[0]
+    # print("Query:", q)
+    # print("Lat/Lon:", item["lat"], item["lon"])
+    # print("Display name:", item.get("display_name"))
+    return JsonResponse(item, safe = False, json_dumps_params = {"ensure_ascii": False})
+
+
+def Find_POI(request):
+    lat = request.GET.get("LAT")
+    lon = request.GET.get("LON")
     
-    if near_id is not None:
-        # trường hợp đi theo điểm mặc định có trong db
-        center = Location.objects.get(pk = int(near_id))
-        near_lat = float(center.latitude)
-        near_lon = float(center.longtitude)
+    if not lat or not lon:
+        return JsonResponse({
+            "error": "Missing lat or lon"
+        }, status = 400)
+    RADIUS_M = 1000
+    QL = f"""
+    [out:json][timeout:60];
+    nwr(around:{RADIUS_M},{lat},{lon})["amenity"="cafe"];
+    out center 20;
+    """
     
-        
-    # lọc trước 
-    dlat = r_km / 111.0
-    dlon = r_km / (111.0 * max(0.1, cos(radians(near_lat))))
-    qs = Location.objects.filter(
-        latitude__range=(near_lat - dlat, near_lat + dlat),
-        longtitude__range=(near_lon - dlon, near_lon + dlon),
-    )
-    
-    items = []
-    for o in qs :
-        distance = haversine_km(near_lat, near_lon, float(o.latitude), float(o.longtitude))
-        
-        if distance <= r_km and (not center or o.id != center.id):
-            items.append((distance, o))
-            
-    items.sort()
-    items = items[:limit]
-    
-    data = []
-    for a, b in items:
-        data.append({
-            "id": b.id,
-            "name": b.name,
-            "lat": b.latitude,
-            "lon": b.longtitude,
-            "description": b.description or "",
-            "img": b.image_path
-        })
+    time.sleep(1.0)
+    r = requests.post(OVERPASS, data=QL.encode("utf-8"), headers=UA, timeout=120)
+    data = r.json().get("elements", [])
     return JsonResponse(data, safe = False, json_dumps_params = {"ensure_ascii": False})
+
+
+def get_current_city_weather_from_location(lat: float, lon: float) -> dict:
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    
+    params = {
+        "lat": lat,
+        "lon": lon,
+        "appid": API_WEATHER_KEY ,
+        "units": "metric",
+    }
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    data = response.json()
+
+    return data
+
+
+def get_weather(request):
+    lat = request.GET.get("lat")
+    lon = request.GET.get("lon")
+
+    if not lat or not lon:
+        return JsonResponse({"error": "Missing lat/lon"}, status=400)
+
+    data = get_current_city_weather_from_location(lat, lon)
     
     
-    
-    
-        
-        
-    
-    
+    return JsonResponse(data, safe=False)

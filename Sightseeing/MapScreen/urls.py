@@ -3,7 +3,8 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.render_map),
-    path('api/route/', views.get_route),
-    path('full_location/', views.all_location)
+    path('', views.Render_Map),
+    path('getLocation/', views.geocode),
+    path('getPOI/', views.Find_POI),
+    path("getWeather/", views.get_weather),
 ]

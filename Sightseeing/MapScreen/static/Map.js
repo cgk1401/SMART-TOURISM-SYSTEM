@@ -1,86 +1,98 @@
-let PLACES = []
+const map = L.map('map').setView([10.775844, 106.701753], 12);
 
-const params = new URLSearchParams(window.location.search);
-const nearid = params.get("near_id");
+// Thêm lớp bản đồ (Tile Layer) từ OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 
-axios.get('/MainScreen/MapScreen/full_location/',{
-    params: {
-        near_id: nearid,
-        r_km: 1,
-        limit: 10,
-    }
-}).then(res => {
-    PLACES = res.data;
+let lat, lon
+
+document.addEventListener("DOMContentLoaded", function(){
+    const input = document.getElementById("location-search");
+    const buttonSearch = document.getElementById("search-button");
+    const tempElement = document.getElementById("weather-temp");
+    const humidityElement = document.getElementById("weather-humidity");
+    const windElement = document.getElementById("weather-wind");
+    const addressElement = document.getElementById("search-address");
+    const latElement = document.getElementById("lat")
+    const lonElement = document.getElementById("lon")
 
 
-    const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
+    buttonSearch.addEventListener("click", async function () {
+        const query = input.value.trim();
 
-    let routeLayer = null;
-    const destList = document.getElementById('destList');
-    const previewImg = document.getElementById('placeImage');
-
-    PLACES.forEach((p, idx) => {
-        p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
-        
-        const li = document.createElement('li');
-        li.className = 'dest-item';
-        
-        li.innerHTML = `
-            <input type="checkbox" class="sel" data-id="${p.id}">
-            <div>
-                <div class="name">${idx + 1}. ${p.name}</div>
-                <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
-            </div>`;
-        
-        li.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('sel')) {
-                li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
-            }
-            
-            map.panTo([p.lat, p.lon]); 
-            p.marker.openPopup(); 
-            previewImg.src = p.img;
-        });
-        
-        destList.appendChild(li);
-    });
-
-    document.getElementById('btnDraw').addEventListener('click', async () => {
-        const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
-        if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
-        if (routeLayer){
-            map.removeLayer(routeLayer);
-            routeLayer = null;
+        if (!query){
+            alert("Thieu input")
+            return;
         }
 
-        const coords = ids.map(id => {
-        const p = PLACES.find(x => x.id === id);
-        return [p.lat, p.lon];
-        });
+        try{
+            const ans = await axios.get("getLocation/", {
+                params:{
+                    q: query
+                }
+            })
+            lat = parseFloat(ans.data.lat);
+            lon = parseFloat(ans.data.lon);
 
-    try {
-        const res = await axios.post('/MainScreen/MapScreen/api/route/', 
-            { coordinates: coords }, 
-            { headers:{'Content-Type':'application/json'} });
-        const encoded = res.data.routes[0].geometry;
+            L.marker([lat, lon]).addTo(map).bindPopup(ans.data.display_name).openPopup();
+            map.setView([lat, lon], 15);
 
-        const tmp = polyline.decode(encoded);
-        const latlngs = tmp.map(c => [c[0], c[1]]);
+            const weather = await axios.get("getWeather/", {
+                params: {
+                    lat: lat,
+                    lon: lon
+                }
+            });
+
+            HCMC_data = weather.data;
+
+            address = ans.data.display_name,
+            temperature = HCMC_data["main"]["temp"]
+            humidity = HCMC_data["main"]["humidity"]
+            wind_speed = HCMC_data["wind"]["speed"]
+
+
+            const shortName = ans.data.display_name.split(',')[0].trim(); 
         
-        routeLayer = L.polyline(latlngs, {
-            color: 'blue',
-            weight: 8,
-            opacity: 0.8,
-        }
-        ).addTo(map);
-        map.fitBounds(routeLayer.getBounds());
+            addressElement.innerHTML = `
+                <div class="address-name">${shortName}</div>
+                <div class="address-detail">${ans.data.display_name}</div>
+            `;
+            latElement.innerHTML = `<strong>Vĩ Độ:</strong> ${lat.toFixed(5)}°`;
+            lonElement.innerHTML = `<strong>Kinh Độ:</strong> ${lon.toFixed(5)}°`;
+            tempElement.innerHTML = `<strong>Nhiệt độ:</strong> ${temperature}°C`;
+            humidityElement.innerHTML = `<strong>Độ ẩm:</strong> ${humidity}%`;
+            windElement.innerHTML = `<strong>Tốc độ gió:</strong> ${wind_speed} m/s`;
 
-    } catch (e) {
-        console.error(e); alert('Lỗi gọi API.');
-    }
-    });
-    
-}).catch(err => {
-    console.error("Lỗi lấy dữ liệu từ db", err);
+        }catch(err){
+            console.error(err)
+            alert("Loi tim kiem dia diem");
+        }
+
+        try{
+            const POI = await axios.get("getPOI/",{
+                params:{
+                    "LAT": lat,
+                    "LON": lon
+                }
+            })
+
+            const topFivePOI = POI.data.slice(0, 5);
+            console.log(topFivePOI);
+
+            topFivePOI.forEach(p => {
+                const nameLocation = p.tags.name || "Khong co ten";
+
+                if (p.lat && p.lon)
+                    L.marker([p.lat, p.lon]).addTo(map).bindPopup(nameLocation).openPopup();
+            });
+
+        }catch(err){
+            console.error(err)
+            alert("Loi tim kiem POI");
+        }
+
+        
+    })
 })
