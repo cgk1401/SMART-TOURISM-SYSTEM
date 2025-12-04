@@ -111,9 +111,13 @@ function openTripDetails(tripId){
             // sap theo thu tu neu stops chua sap xep
             const sortedStops = data.stops.sort((a, b) => a.order - b.order);
             sortedStops.forEach(stop => {
+                const linkUrl = `/MainScreen/MapScreen/?name=${encodeURIComponent(stop.location.name)}`;
                 stopsHtml += `
                 <div class="timeline-item" data-order="${stop.order}">
-                    <div class="stop-name">${stop.location.name}</div>
+                    <div class="stop-name">
+                        <a href="${linkUrl}" class="stop-link" style="text-decoration: none; color: inherit; cursor: pointer;">
+                        ${stop.location.name}
+                    </div>
                     <div class="stop-address"><i class="fa-solid fa-map-pin"></i> ${stop.location.address}</div>
                     <div class="stop-meta">
                         <i class="fa-regular fa-clock"></i> Stay: ${stop.stay} mins
@@ -123,6 +127,7 @@ function openTripDetails(tripId){
             });
 
             stopsContainer.innerHTML = stopsHtml;
+
 
         }
     ).catch(function (error) {

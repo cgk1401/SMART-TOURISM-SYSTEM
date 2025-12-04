@@ -17,10 +17,10 @@ document.addEventListener("DOMContentLoaded", function(){
     const latElement = document.getElementById("lat")
     const lonElement = document.getElementById("lon")
 
+    const params = new URLSearchParams(window.location.search)
+    const nameLocation = params.get("name")
 
-    buttonSearch.addEventListener("click", async function () {
-        const query = input.value.trim();
-
+    async function searchLocation(query){
         if (!query){
             alert("Thieu input")
             return;
@@ -69,30 +69,16 @@ document.addEventListener("DOMContentLoaded", function(){
             console.error(err)
             alert("Loi tim kiem dia diem");
         }
+    }
 
-        try{
-            const POI = await axios.get("getPOI/",{
-                params:{
-                    "LAT": lat,
-                    "LON": lon
-                }
-            })
-
-            const topFivePOI = POI.data.slice(0, 5);
-            console.log(topFivePOI);
-
-            topFivePOI.forEach(p => {
-                const nameLocation = p.tags.name || "Khong co ten";
-
-                if (p.lat && p.lon)
-                    L.marker([p.lat, p.lon]).addTo(map).bindPopup(nameLocation).openPopup();
-            });
-
-        }catch(err){
-            console.error(err)
-            alert("Loi tim kiem POI");
-        }
-
-        
+    buttonSearch.addEventListener("click", async function () {
+        const query = input.value.trim();
+        searchLocation(query);
     })
+
+    if (nameLocation){
+        input.value = nameLocation;
+        searchLocation(nameLocation);
+    }
 })
+

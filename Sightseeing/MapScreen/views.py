@@ -35,27 +35,6 @@ def geocode(request):
     return JsonResponse(item, safe = False, json_dumps_params = {"ensure_ascii": False})
 
 
-def Find_POI(request):
-    lat = request.GET.get("LAT")
-    lon = request.GET.get("LON")
-    
-    if not lat or not lon:
-        return JsonResponse({
-            "error": "Missing lat or lon"
-        }, status = 400)
-    RADIUS_M = 1000
-    QL = f"""
-    [out:json][timeout:60];
-    nwr(around:{RADIUS_M},{lat},{lon})["amenity"="cafe"];
-    out center 20;
-    """
-    
-    time.sleep(1.0)
-    r = requests.post(OVERPASS, data=QL.encode("utf-8"), headers=UA, timeout=120)
-    data = r.json().get("elements", [])
-    return JsonResponse(data, safe = False, json_dumps_params = {"ensure_ascii": False})
-
-
 def get_current_city_weather_from_location(lat: float, lon: float) -> dict:
     url = "https://api.openweathermap.org/data/2.5/weather"
     

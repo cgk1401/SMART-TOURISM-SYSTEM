@@ -5,6 +5,5 @@ from . import views
 urlpatterns = [
     path('', views.Render_Map),
     path('getLocation/', views.geocode),
-    path('getPOI/', views.Find_POI),
     path("getWeather/", views.get_weather),
 ]

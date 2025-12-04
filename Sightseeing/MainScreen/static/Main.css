@@ -473,6 +473,11 @@
     margin-bottom: 4px;
 }
 
+.stop-name a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
 .stop-address {
     font-size: 0.85rem;
     color: #6b7280;
