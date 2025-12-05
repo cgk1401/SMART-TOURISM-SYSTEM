@@ -3,12 +3,14 @@ import time, requests
 from django.http import JsonResponse
 import os
 from django.http import JsonResponse
-from deep_translator import GoogleTranslator
 
+MAPTILER_KEY = os.getenv("MAPTILER_KEY")
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
 
 def Render_Map(request):
-    return render(request, 'app/Map.html')
+    return render(request, 'app/Map.html',{
+        "MAP_KEY": MAPTILER_KEY
+    })
 
 NOMINATIM = "https://nominatim.openstreetmap.org"
 UA = {"User-Agent": "OSM-Demo-Geocode/1.0 (contact: doomanhcuongg@gmail.com)"}

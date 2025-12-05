@@ -1,11 +1,35 @@
-const map = L.map('map').setView([10.775844, 106.701753], 12);
+const mapElement = document.getElementById('map');
+const MAP_KEY = mapElement.getAttribute('data-key');
 
-// Thêm lớp bản đồ (Tile Layer) từ OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+const streetLayer = L.tileLayer(`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MAP_KEY}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+    tileSize: 512,
+    zoomOffset: -1,
+    maxZoom: 20
+});
 
-let lat, lon
+const satelliteLayer = L.tileLayer(`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAP_KEY}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+    tileSize: 512,
+    zoomOffset: -1,
+    maxZoom: 20
+});
+
+const map = L.map('map', {
+    center: [10.775844, 106.701753],
+    zoom: 12,
+    layers: [streetLayer]
+});
+
+// Tạo nút chuyển đổi hai chế độ map
+
+const baseMaps = {
+        "Bản đồ thường": streetLayer,
+        "Vệ tinh": satelliteLayer
+    };
+
+L.control.layers(baseMaps).addTo(map);
+
 
 document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("location-search");

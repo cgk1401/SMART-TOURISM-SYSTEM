@@ -33,13 +33,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initMap(){
-        map = L.map('map').setView([10.7757116,106.6979296], 12);
+        const mapElement = document.getElementById('map');
+        const MAP_KEY = mapElement.getAttribute('data-key');
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            { attribution:'&copy; OpenStreetMap' }
-        ).addTo(map);
+        const streetLayer = L.tileLayer(`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MAP_KEY}`, {
+            attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+            tileSize: 512,
+            zoomOffset: -1,
+            maxZoom: 20
+        });
 
+        const satelliteLayer = L.tileLayer(`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAP_KEY}`, {
+            attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+            tileSize: 512,
+            zoomOffset: -1,
+            maxZoom: 20
+        });
+
+        map = L.map('map', {
+            center: [10.775844, 106.701753],
+            zoom: 12,
+            layers: [streetLayer]
+        });
+
+        // Tạo nút chuyển đổi hai chế độ map
+
+        const baseMaps = {
+            "Bản đồ thường": streetLayer,
+            "Vệ tinh": satelliteLayer
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+        
         currentMarker = L.marker([10.7757116,106.6979296]).addTo(map).bindPopup('Trung Tâm Thành Phố').openPopup();
+        
         document.getElementById("info-close").addEventListener("click", () => {
             document.getElementById("map-info-panel").classList.add("hidden");
         });
@@ -724,7 +751,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnSaveTrip) {
             btnSaveTrip.addEventListener('click', event => {
                 event.preventDefault();
-                                event.preventDefault();
                 console.log("BẮT ĐẦU SAVE");
                 if (!PLACES || PLACES.length === 0){
                     alert("Lội trình đang trống| Vui lòng thêm địa điểm trước khi Lưu");

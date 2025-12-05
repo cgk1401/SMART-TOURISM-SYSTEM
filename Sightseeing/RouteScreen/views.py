@@ -19,6 +19,8 @@ import math
 import sys
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
+MAPTILER_KEY = os.getenv("MAPTILER_KEY")
+
 OSRM_HOST = "http://router.project-osrm.org"
 REQUEST_TIMEOUT = 30 
 NOMINATIM_TIMEOUT = 5
@@ -27,7 +29,9 @@ if API_WEATHER_KEY:
     print("yeeee")
 
 def function_Route(request):
-    return render(request, 'app/Route.html')
+    return render(request, 'app/Route.html', {
+        "MAP_KEY": MAPTILER_KEY
+    })
 
 def function_MyTrip(request):
     return render(request, 'app/Mytrip.html')
