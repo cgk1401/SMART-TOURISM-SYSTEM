@@ -90,38 +90,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const createdAt = trip.created_at || "";
 
+            let ratingHtml = "";
+            if (allowRatingEdit){
+                const currentScore = trip.avg_rating > 0 ? Math.round(trip.avg_rating) : 0;
+                
+                // Tạo 5 ngôi sao
+                let starsStr = "";
+                for (let i = 1; i <= 5; i++){
+                    const activeClass = i <= currentScore ? "active" : "";
+                    starsStr += `<i class="fa-solid fa-star star-editable ${activeClass}" data-value="${i}"></i>`;
+                }
+
+                ratingHtml = `
+                    <div class="rating-input-row">
+                        <span>Đánh giá:</span>
+                        <div class="star-rating-control" data-rating="${currentScore}">
+                            ${starsStr}
+                        </div>
+                        <button class="btn-save-rating">Lưu</button>
+                    </div>
+                `
+            }else{
+                // Nếu là tab lịch sử thì chỉ hiện kết quả
+                ratingHtml = trip.avg_rating >= 0 ? 
+                `<div class="rating-badge"><i class="fa-solid fa-star"></i>${trip.avg_rating.toFixed(1)} (${trip.rating_count})</div>`
+                    : `<div class="rating-badge">Nháp</div>`;
+                
+            }
+
             card.innerHTML = `
                 <div class="trip-card-main">
-                    <div class="trip-card-title">${trip.title || "Chuyến đi không tên"}</div>
+                    <div class="trip-card-title-row">
+                    ${
+                        allowRatingEdit
+                            ? `<div
+                                class="trip-card-title trip-title-editable"
+                                contenteditable="true"
+                                spellcheck="false"
+                            >${trip.title || ""}</div>`
+                            : `<div class="trip-card-title">${trip.title || "Chuyến đi không tên"}</div>`
+                        }
+                    </div>
                     <div class="trip-card-meta">
                         <span><i class="fa-regular fa-calendar"></i>${createdAt}</span>
                         <span><i class="fa-regular fa-clock"></i>${trip.stops.length} điểm dừng</span>
                     </div>
                 </div>
                 <div class="trip-card-rating">
-                    ${
-                        trip.avg_rating >= 0
-                            ? `<div class="rating-badge"><i class="fa-solid fa-star"></i>${trip.avg_rating.toFixed(1)} (${trip.rating_count})</div>`
-                            : `<div class="rating-badge">Nháp</div>`
-                    }
-                    ${
-                        allowRatingEdit
-                            ? `<div class="rating-input-row">
-                                   <span>Đánh giá:</span>
-                                   <input type="number" min="1" max="5" step="1" value="${
-                                       trip.avg_rating > 0 ? trip.avg_rating : 5
-                                   }" class="rating-input" />
-                                   <button class="btn-save-rating">Lưu</button>
-                               </div>`
-                            : ""
-                    }
+                    ${ratingHtml}
                 </div>
             `;
 
             // chọn trip
             card.addEventListener("click", e => {
-                // không trigger khi bấm nút Lưu
-                if (e.target.closest(".btn-save-rating")) return;
+                // Không active card khi đang bấm rating hoặc sửa tiêu đề
+                if (e.target.closest(".rating-input-row") || e.target.closest(".trip-title-editable")) return;
 
                 container
                     .querySelectorAll(".trip-card")
@@ -132,25 +155,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // lưu rating nếu cho phép
             if (allowRatingEdit) {
+                const starControl = card.querySelector(".star-rating-control");
                 const btnSave = card.querySelector(".btn-save-rating");
-                const inputRating = card.querySelector(".rating-input");
+                const inputTitle = card.querySelector(".trip-title-editable");
 
+                if (starControl){
+                    const stars = starControl.querySelectorAll(".star-editable");
+                    stars.forEach(star => {
+                        star.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const val = parseInt(star.dataset.value);
+                            starControl.dataset.rating = val;
+                            // Cập nhật giao diện
+                            stars.forEach(s => {
+                                const sVal = parseInt(s.dataset.value);
+                                if (sVal <= val) {
+                                    s.classList.add("active");
+                                } else {
+                                    s.classList.remove("active");
+                                }
+                            })
+                        })
+                    })
+                }
                 btnSave.addEventListener("click", async e => {
                     e.stopPropagation();
-                    const score = parseInt(inputRating.value, 10);
-                    if (isNaN(score) || score < 1 || score > 5) {
-                        alert("Điểm rating phải từ 1 đến 5");
-                        return;
+                    let score = parseInt(starControl.dataset.rating);
+
+                    if (score === 0) {
+                        alert("Vui lòng chọn số sao để đánh giá!");
+                        return; 
                     }
+
+                    const newTitleRaw = inputTitle ? inputTitle.innerText.trim() : "";
+                    const newTitle = newTitleRaw || trip.title || ""; // Nếu rỗng thì dùng lại trip cũ
                     try {
                         await axios.post("/MainScreen/RouteScreen/updateTrips/", {
                             trip_id: trip.id,
-                            title: trip.title,
+                            title: newTitle,
                             description: trip.description,
                             rating: score,
                         });
                         alert("Lưu đánh giá thành công!");
                         // reload history trips (trip đã đánh giá có thể chuyển sang history)
+                        trip.title = newTitle;
                         await loadCurrentTrips();
                         await loadHistoryTrips();
                     } catch (err) {

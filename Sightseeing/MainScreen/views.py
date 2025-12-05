@@ -16,9 +16,9 @@ def logout_user(request):
     return redirect('/')
 
 def trip_list_api(request):
-    trips = Trip.objects.filter(owner=request.user).annotate(
+    trips = Trip.objects.annotate(
         stop_count=Count('stops')  # Đếm số điểm dừng trong chuyến đi
-    ).order_by('-avg_rating')[:6]
+    ).order_by('-avg_rating', '-rating_count')[:6]
     
     image_pool = [
         "https://images.unsplash.com/photo-1670202602847-09a4f8999054?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8UyVDMyVBMGklMjBnJUMzJUIybnxlbnwwfHwwfHx8MA%3D%3D",

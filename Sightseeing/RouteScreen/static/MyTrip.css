@@ -272,40 +272,59 @@
 .rating-input-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    background: #f9fafb;
-    padding: 4px;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    gap: 8px; /* Khoảng cách giữa các thành phần */
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e5e7eb;
 }
 
+/* Chữ "Đánh giá:" */
 .rating-input-row span {
-    color: #4b5563;
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
 }
 
-.rating-input-row input[type="number"] {
-    width: 40px;
-    padding: 2px 4px;
-    border-radius: 4px;
-    border: 1px solid #d1d5db;
-    background: #fff;
-    color: #111827;
-    text-align: center;
+/* Container chứa 5 ngôi sao */
+.star-rating-control {
+    display: flex;
+    flex-direction: row;
+    gap: 2px; /* Khoảng cách giữa các ngôi sao */
+    cursor: pointer;
+}
+
+/* Style từng ngôi sao */
+.star-editable {
+    color: #d1d5db; /* Màu xám mặc định */
+    font-size: 1.1rem; /* Kích thước sao */
+    transition: all 0.2s ease;
+    padding: 2px;
+}
+/* Sao sáng (active) */
+.star-editable.active {
+    color: #f59e0b; /* Màu vàng cam */
+    text-shadow: 0 1px 2px rgba(245, 158, 11, 0.3);
+}
+
+/* Hiệu ứng hover */
+.star-editable:hover {
+    transform: scale(1.2);
+    color: #fbbf24;
 }
 
 .btn-save-rating {
+    background-color: #4f46e5;
+    color: white;
     border: none;
+    padding: 4px 12px;
     border-radius: 4px;
-    padding: 4px 8px;
-    background: var(--primary-blue);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 600;
     cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
 }
+
 .btn-save-rating:hover {
-    background: #2563eb;
+    background-color: #4338ca;
 }
 
 .trip-detail {

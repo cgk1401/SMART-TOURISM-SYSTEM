@@ -226,140 +226,6 @@ def detailsRoute(request, trip_id):
     }
     return JsonResponse(data)
 
-SAMPLE_LOCATIONS = [
-    {
-    "id": 39598493,
-    "name": "Dinh Độc Lập",
-    "latitude": 10.777017,
-    "longtitude": 106.6954031,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "interest": [
-            "history",
-            "sightseeing"
-        ],
-        "budget": "budget",
-        "activity_level": "moderate",
-        "group_type": "all"
-    },
-    "website": "",
-    "opening_hours": "Mo-Su 08:00-11:00,13:00-16:30",
-    "rating": 9.66
-},
-{
-    "id": 186249226,
-    "name": "Bảo tàng Chứng tích Chiến tranh",
-    "latitude": 10.7793793,
-    "longtitude": 106.6921923,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "amenity": "museum",
-        "interest": [
-            "history",
-            "culture",
-            "sightseeing"
-        ],
-        "budget": "budget",
-        "activity_level": "moderate",
-        "group_type": "all",
-        "duration": 130
-    },
-    "website": "https://www.baotangchungtichchientranh.vn/contact.html",
-    "opening_hours": "Mo-Su 07:30-12:00, 13:30-17:00",
-    "rating": 9.45
-},
-{
-    "id": 808022726,
-    "name": "Bảo tàng Hồ Chí Minh",
-    "latitude": 10.7682684,
-    "longtitude": 106.7068035,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "amenity": "museum",
-        "interest": [
-            "history",
-            "culture",
-            "sightseeing"
-        ],
-        "budget": "budget",
-        "activity_level": "moderate",
-        "group_type": "all",
-        "duration": 130
-    },
-    "website": "",
-    "opening_hours": "Mo,Fr 08:00-12:00; Tu-Th,Sa,Su 08:00-12:00,14:00-16:30",
-    "rating": 8.4
-},
-{
-    "id": 39514795,
-    "name": "Chợ Bến Thành",
-    "latitude": 10.7725707,
-    "longtitude": 106.6980174,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "amenity": "marketplace",
-        "interest": [
-            "sightseeing"
-        ],
-        "budget": "budget",
-        "activity_level": "relaxed",
-        "group_type": "all",
-        "duration": 87
-    },
-    "website": "https://benthanhmarket.vn/",
-    "opening_hours": "Mo-Su 06:00-18:00",
-    "rating": 9.66
-},
-{
-    "id": 39514793,
-    "name": "Bưu điện Trung tâm Sài Gòn",
-    "latitude": 10.7799812,
-    "longtitude": 106.7000211,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "amenity": "post_office",
-        "interest": [
-            "history",
-            "sightseeing"
-        ],
-        "budget": "budget",
-        "activity_level": "relaxed",
-        "group_type": "all",
-        "duration": 72
-    },
-    "website": "",
-    "opening_hours": "Mo-Su 07:00-22:00",
-    "rating": 9.03
-},
-{
-    "id": 9587486349,
-    "name": "Chùa Phụng Sơn",
-    "latitude": 10.7664477,
-    "longtitude": 106.6983992,
-    "description": "",
-    "image_path": "",
-    "tags": {
-        "amenity": "place_of_worship",
-        "interest": [
-            "culture",
-            "sightseeing"
-        ],
-        "activity_level": "relaxed",
-        "group_type": "all",
-        "duration": 65
-    },
-    "website": "",
-    "opening_hours": "",
-    "rating": 8.27
-},
-]
-
-
 def call_osrm_route(lat1, lon1, lat2, lon2):
     try:
         coords = f"{lon1},{lat1};{lon2},{lat2}"
@@ -677,7 +543,7 @@ def test_optimize_route_view(request):
 User = get_user_model()
 @csrf_exempt
 @login_required
-def Save_Trip(request):
+def saveTripBeforeEdit(request):
     if request.method != "POST":
         return JsonResponse({"error": "Use POST"}, status=400)
     # lấy json từ front end
@@ -779,7 +645,7 @@ def Save_Trip(request):
         "message": "Trip saved successfully!"
     })
         
-            
+# Hàm để lấy các trip sau hàm saveTripBeforeEdit(Các trip được lưu tạm từ hàm này chưa chỉnh sửa (rating và đặt tên))  
 @login_required 
 def getUnsavedTrips(request):
     # chỉ lấy đúng trip của mình, không lấy trip của người khác
@@ -821,6 +687,7 @@ def getUnsavedTrips(request):
         })
     return JsonResponse(results, safe=False)
 
+# Hàm để lấy lịch sử Trip của mình(Hiện thị trong phần History)
 @login_required
 def getAllTrips(request):
     # tương tự cũng lấy trip của mình không lấy trip của người khác
@@ -863,6 +730,7 @@ def getAllTrips(request):
     return JsonResponse(results, safe=False)
 
 
+# Sau khi rating gọi hàm này để tiến hành lưu chuyến đi
 @csrf_exempt
 @login_required
 def Update_Trip(request):
@@ -879,7 +747,7 @@ def Update_Trip(request):
         
         # Cập nhật thông tin người dùng
         if "title" in data:
-            trip.title = data["title"]
+            trip.title = (data["title"] or "").strip()
         
         if "description" in data:
             trip.description = data["description"]
@@ -926,6 +794,7 @@ def trip_signature(trip):
         sig.append((lat, lon))
     return tuple(sig)
 
+# Xử lý trip bị trùng (Sử lý trường hợp của một user)
 def merge_duplicate_trips(trip):
     # merge các trip bị trùng (hiện tại chỉ check cùng một user)
     # lấy tất cả các trip, trừ trip hiện tại
