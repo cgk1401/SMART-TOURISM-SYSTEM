@@ -16,6 +16,8 @@ class Trip(models.Model):
     create_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     description = models.TextField(blank = True)
+    # Tạo mã hóa riêng biệt cho từng chuỗi
+    route_hash = models.CharField(max_length=64, db_index=True, blank=True, null=True)
     
     # Tổng rating tb
     avg_rating = models.FloatField(default = 0)

@@ -5,10 +5,12 @@ from RouteScreen.models import Trip, TripStop
 from MapScreen.models import Location
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from RouteScreen.views import calculate_route_hash
 
 User = get_user_model()
 
 # reset lại các default trip trong file default_trip.json
+# Hàm dùng để tạo một vài trip mặc định
 class Command(BaseCommand):
     help = "Load default trips from JSON file into DB"
     
@@ -32,6 +34,8 @@ class Command(BaseCommand):
         
         for trip_data in trips_data:
             title = trip_data["title"]
+            stops_data = trip_data["stops"]
+            route_hash_val = calculate_route_hash(stops_data)
             
             qs = Trip.objects.filter(title=title)
             # nếu trip đã được tạo, reset lại toàn bộ trip như theo file default_trip
@@ -43,6 +47,7 @@ class Command(BaseCommand):
                 trip.description = trip_data.get("description", "")
                 trip.avg_rating = trip_data.get("avg_rating", 4.5)
                 trip.rating_count = trip_data.get("rating_count", 1)
+                trip.route_hash = route_hash_val
                 trip.save()
                 # xóa toàn bộ stops
                 trip.stops.all().delete()
@@ -55,7 +60,8 @@ class Command(BaseCommand):
                     description=trip_data.get("description", ""),
                     avg_rating=trip_data.get("avg_rating", 4.5),
                     rating_count=trip_data.get("rating_count", 1),
-                    owner=owner_user
+                    owner=owner_user,
+                    route_hash=route_hash_val,
                 )
             
             for stop in trip_data["stops"]:

@@ -15,8 +15,7 @@ from MapScreen.models import Location
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from functools import lru_cache
-import math
-import sys
+import hashlib
 
 API_WEATHER_KEY = os.getenv("API_WEATHER_API")
 MAPTILER_KEY = os.getenv("MAPTILER_KEY")
@@ -552,13 +551,14 @@ def saveTripBeforeEdit(request):
     except:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
         
-    # Lấy user làm chủ trip
-    owner = User.objects.filter(is_superuser=True).first() or User.objects.first()
-    if not owner:
-        return JsonResponse({"error": "No user available"}, status=500)
+    # # Lấy user làm chủ trip
+    # owner = User.objects.filter(is_superuser=True).first() or User.objects.first()
+    # if not owner:
+    #     return JsonResponse({"error": "No user available"}, status=500)
     
     
     stops_data = data.get("stops", [])
+    route_hash_val = calculate_route_hash(stops_data)
     if not stops_data:
         return JsonResponse({
             "status": "EMPTY_STOPS",
@@ -572,12 +572,14 @@ def saveTripBeforeEdit(request):
                 owner = request.user,
                 title = data.get("title") or f"Draft Trip{int(time.time())}",
                 description = data.get("description", ""),
+                route_hash = route_hash_val,
                 avg_rating = -1 ,# đánh dấu
                 rating_count = 0, # lưu nhưng chưa rating nên sẽ để là 0 để đánh dấu
             )
         
     
         # nếu location có rồi (pk đã có) thì cập nhật những trường còn thiếu, insert chứ không ghi đè, còn chưa có location(pk) thì tạo
+        # Cập nhật thêm các location cho db
             for stop in stops_data:
                 loc_id = stop.get("pk")
                 loc = None
@@ -742,17 +744,19 @@ def Update_Trip(request):
         trip_id = data.get("trip_id")
         # tìm chuyến đi theo ID
         
-        # đảm bảo chỉ update trip của chính minh
-        trip = get_object_or_404(Trip, id=trip_id, owner=request.user)
+        # Bất kì user nào cũng lấy được trip để rating
+        trip = get_object_or_404(Trip, id=trip_id)
         
-        # Cập nhật thông tin người dùng
-        if "title" in data:
+        is_owner = (trip.owner_id == request.user.id)
+        
+        # Chỉ có owner mới được phép chỉnh sửa tên của chuyến đi
+        if is_owner and "title" in data:
             trip.title = (data["title"] or "").strip()
         
-        if "description" in data:
+        if is_owner and "description" in data:
             trip.description = data["description"]
        
-        # cập nhật rating
+        # cập nhật rating(ai cũng có thể rating)
         input_rating = data.get("rating")
         if input_rating and int(input_rating) > 0:
             score_val = int(input_rating)
@@ -774,6 +778,7 @@ def Update_Trip(request):
             
         trip.save()
         
+        # chỉ owner mới được merge dulplicate của mình
         # sau khi update xong thì xử lý lại các trip nếu bị trùng, chỉ mới xử lý trường hợp trùng của cùng một user
         merge_duplicate_trips(trip)
             
@@ -783,49 +788,27 @@ def Update_Trip(request):
         })
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-    
-from django.db.models.functions import Lower
-def trip_signature(trip):
-    # check trùng theo tọa độ các điểm trong trip
-    sig = []
-    for st in trip.stops.order_by("day_index", "order_index"):
-        lat = round(st.location.latitude, 6)
-        lon = round(st.location.longtitude, 6)
-        sig.append((lat, lon))
-    return tuple(sig)
 
 # Xử lý trip bị trùng (Sử lý trường hợp của một user)
 def merge_duplicate_trips(trip):
-    # merge các trip bị trùng (hiện tại chỉ check cùng một user)
-    # lấy tất cả các trip, trừ trip hiện tại
-    candidates = (
-        Trip.objects
-        .filter(owner=trip.owner)
-        .exclude(pk=trip.pk)
-    )
-    print(candidates)
-    # nếu tồn tại trip khác (chỉ có một trip) thì return
-    if not candidates.exists():
+    # Nếu chưa có hash thì không check được
+    if not trip.route_hash:
         return
     
-    base_sig = trip_signature(trip)
-    duplicate_trips = []
+    # Tìm các trip cùa cùng user, có cùng hash, trừ trip hiện tại
+    candidates = Trip.objects.filter(
+        owner = trip.owner,
+        route_hash = trip.route_hash,
+    ).exclude(pk = trip.pk)
     
-    # check trùng trip
-    for t in candidates:
-        if trip_signature(t) == base_sig:
-            duplicate_trips.append(t)
-            
-    if not duplicate_trips:
+    if not candidates:
         return
     
-    dup_ids = [t.pk for t in duplicate_trips]
+    # Lấy danh sách các trip cần xóa
+    dup_ids = list(candidates.values_list('pk', flat = True))
     
     with transaction.atomic():
-        
         # lưu đè bởi trip mới nhất
-        
-        
         # xóa trip trùng
         Trip.objects.filter(pk__in=dup_ids).delete()
         stats = TripRating.objects.filter(trip=trip).aggregate(
@@ -835,3 +818,17 @@ def merge_duplicate_trips(trip):
         trip.avg_rating = stats['avg_score'] or 0
         trip.rating_count = stats['total_reviews'] or 0
         trip.save()
+
+def calculate_route_hash(stops_data):
+    sorted_stops = sorted(stops_data, key=lambda x: (x.get('day', 1), x.get('order',1)))
+    
+    # Tạo chuỗi string tọa độ
+    
+    coords_str = ""
+    for stop in sorted_stops:
+        lat = round(float(stop["lat"]), 5)
+        lon = round(float(stop["lon"]), 5)
+        coords_str += f"{lat}, {lon}|"
+        
+    return hashlib.md5(coords_str.encode()).hexdigest()
+
