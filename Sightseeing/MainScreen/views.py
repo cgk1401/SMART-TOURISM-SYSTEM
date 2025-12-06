@@ -52,7 +52,7 @@ def getCommunityTrips(request):
         # Thêm 2 cột mới vào giá trị tính toán trong truy vấn
         total_reviews=Count('id'), # Tổng số bài viết của nhóm này (đếm số người đã đi)
         community_rating=Avg('avg_rating')
-    ).order_by('total_reviews', '-community_rating')[:13]
+    ).order_by('total_reviews', '-community_rating')[:6]
     
     image_pool = [
         "https://images.unsplash.com/photo-1670202602847-09a4f8999054?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8UyVDMyVBMGklMjBnJUMzJUIybnxlbnwwfHwwfHx8MA%3D%3D",
