@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import time, requests
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 import os
 from MapScreen.models import Location
 from django.views.decorators.csrf import csrf_exempt
@@ -45,6 +46,27 @@ def geocode(request):
     # print("Lat/Lon:", item["lat"], item["lon"])
     # print("Display name:", item.get("display_name"))
     return JsonResponse(item, safe = False, json_dumps_params = {"ensure_ascii": False})
+
+@csrf_exempt
+def get_current_location(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("POST only")
+
+    try:
+        data = json.loads(request.body)
+        lat = float(data.get("lat"))
+        lon = float(data.get("lon"))
+    except:
+        return HttpResponseBadRequest("Invalid JSON or missing lat/lon")
+
+    address = get_address_from_coords(lat, lon)
+
+    return JsonResponse({
+        "lat": lat,
+        "lon": lon,
+        "address": address
+    })
+
 
 
 def get_current_city_weather_from_location(lat: float, lon: float) -> dict:
@@ -133,7 +155,25 @@ def get_similar_locations(request):
     results.sort(key = lambda x : x["score"], reverse = True)
     
     return JsonResponse(results[:limit], safe = False) 
-   
+
+
+@csrf_exempt
+def get_current_gps(request):
+    #if request.method != "POST":
+    #    return HttpResponseBadRequest("POST only")
+
+    try:
+        data = json.loads(request.body)
+        lat = float(data["lat"])
+        lon = float(data["lon"])
+    except:
+        return HttpResponseBadRequest("Invalid JSON or missing lat/lon")
+
+    return JsonResponse({
+        "latitude": lat,
+        "longitude": lon,
+        "source": "gps"
+    })   
       
 
 def autocomplete_places(request):
@@ -468,23 +508,39 @@ def compute_route_from_indices(original_locations_dict, matrix, route_indices):
             "total_distance_km": 0.0,
             "total_duration_min": 0.0,
         }
-        
+
     total_d = 0.0
     total_t = 0.0
     formatted_locations = []
-    for i in range(len(route_indices) - 1):
-        a = route_indices[i]
-        b = route_indices[i+1]
-        
-        dist, dur = matrix[a][b]
-        total_d += dist
-        total_t += dur
 
-    for i, idx in enumerate(route_indices):
-        current_location_dict = original_locations_dict[idx]
-        
-        formatted_obj = format_location_data(current_location_dict, i)
-        
+    for i in range(len(route_indices)):
+        idx = route_indices[i]
+        location_data = original_locations_dict[idx]
+
+        if i < len(route_indices) - 1:
+            next_idx = route_indices[i + 1]
+            dist, dur = matrix[idx][next_idx]
+            travel_time = round(dur) 
+            total_d += dist
+            total_t += dur
+        else:
+            travel_time = 0 
+
+        formatted_obj = {
+            "pk": location_data.get("id"),
+            "name": location_data.get("name"),
+            "lat": location_data.get("latitude"),
+            "lon": location_data.get("longtitude"),
+            "order": i + 1,
+            "address": get_address_from_coords(
+                float(location_data["latitude"]),
+                float(location_data["longtitude"])
+            ),
+            "tags": location_data.get("tags"),
+            "travel_time": travel_time,
+            "stay": 30
+        }
+
         formatted_locations.append(formatted_obj)
 
     return {
@@ -492,6 +548,7 @@ def compute_route_from_indices(original_locations_dict, matrix, route_indices):
         "total_distance_km": total_d,
         "total_duration_min": total_t,
     }
+
 
 def format_final_response(formatted_stops):
     return {

@@ -12,5 +12,6 @@ urlpatterns = [
     path('getdetailsRoute/<int:trip_id>/', views.detailsRoute),
 
     path('test-hardcoded-route/', views.test_optimize_route_view, name='test_optimize_route'),
+    path("get_current_gps/", views.get_current_gps, name="get_current_gps"),
 
 ]
