@@ -94,8 +94,9 @@ def save_preference(request):
             'time_end_hours': end_hours_list,
             'prefs': pref,
             'default_candidates': candidates,
+            'is_after_preference': True
         }
-        
+
         return render(request, 'preference.html', context)
         # return redirect('/PreferenceScreen/')
 
@@ -143,7 +144,6 @@ def generate_itinerary(request):
     data_it = itineraries_to_list(itinerary)
     request.session["itinerary_data"] = data_it
     return redirect('/MainScreen/RouteScreen/?from_preference=true')
-
 
 
 def ranking_loc(pref):
@@ -251,7 +251,8 @@ def choose_main_loc(pref, options):
     # return candidates[choice-1]['location']
 
     if candidates:
-        return candidates
+        return [{'location': loc, 'score': next(o['score'] for o in options if o['location'] == loc)}
+                for loc in candidates]
     
     return None, []
 
