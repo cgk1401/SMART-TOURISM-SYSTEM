@@ -339,7 +339,7 @@ def format_location_data(input_location_dict, order_index):
         "lat": lat_val,                             
         "lon": lon_val,                     
         "order": order_index + 1,                    
-        "stay": 30,                          
+        "stay": input_location_dict.get("tags").get("duration"),
         "tags": input_location_dict.get("tags"),
     }
     
