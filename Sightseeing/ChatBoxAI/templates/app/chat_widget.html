@@ -1,32 +1,51 @@
+{% extends "common/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static "chat_widget.css" %}">
-</head>
-<body>
-    <div id="AI-Bubble">
-        <button id="AI-Toggle">💬</button>
-        <div id="AI-Panel" hidden>
-            <div id="AI-Head">
-                <strong>AI</strong>
-                <button id="AI-Close">✕</button>
+
+{% block title %} {% endblock %}
+
+{% block body_class %} {% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'chat_widget.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="chat-widget-container">
+        <div id="chat-toggle-btn" class="chat-toggle-btn">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+
+        <div id="chat-box" class="chat-box hidden">
+            <div class="chat-header">
+                <h3 class="chat-title">Trợ lý Du lịch AI TP.HCM</h3>
+                <span class="chat-status">Online</span>
             </div>
-            <div id="AI-Chat"></div>
-            <div id="AI-Input">
-                <input id="Button-Input" type="text" placeholder="Input ...."/>
-                <button id="Button-Send">Send</button>
+            <div id="chat-messages" class="chat-messages">
+                <div class="message ai-message">
+                    <div class="message-bubble">
+                        Xin chào! Tôi là Trợ lý AI du lịch TP.HCM. Bạn cần gợi ý hay thông tin gì về chuyến đi của mình không?
+                    </div>
+                </div>
+                {# Messages sẽ được thêm vào đây bằng JS #}
             </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Nhập tin nhắn...">
+                <button id="send-btn" class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
         </div>
     </div>
 
-    <!--
-    axios là thư viện dùng để gửi request trong JavsScript
-    thay vì cài đặt thư viện npm install axios chỉ cần để dùng như này trong html là có thể chạy được thư viện
+{% endblock %}
+
+{% block extra_js %}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="{% static "chat_widget.js" %}"></script>
-</body>
-</html>
+    <script src="{% static 'chat_widget.js' %}"></script>
+{% endblock %}

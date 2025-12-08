@@ -4,3 +4,9 @@ python-dotenv==1.0.1
 google-genai==0.3.0
 folium==0.20.0
 overpy==0.7
+# langchain
+# langchain-community
+# langchain-text-splitters
+# langchain-ollama
+# chromadb
+

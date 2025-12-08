@@ -1,62 +1,61 @@
-import os
-import json
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from google import genai
-from google.genai.errors import APIError 
+import json
+from .utils import get_rag_chain 
+from langchain_core.messages import HumanMessage, AIMessage
+import traceback 
 
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") 
-GEMINI_MODEL = os.getenv("GEMINI_MODEL")
-
-if GEMINI_API_KEY:
-    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-    print("Gemini API Client initialized.")
-else:
-    gemini_client = None
-    print("NOT FOUND API_KEY")
-    
+def chat_page(request):
+    return render(request, 'app/chat_widget.html')
 
 @csrf_exempt
-def ai_chat(request):
-    if request.method != "POST":
-        return JsonResponse({
-            "reply": "Chỉ hỗ trợ POST request"
-        }, status=405)
+def chat_api(request):
+    if request.method == 'POST':
+       try:
+            # Lấy dữ liệu từ client
+            data = json.loads(request.body)
 
-    try:
-        data = json.loads(request.body.decode("utf-8"))
-        user_message = data.get("message", "").strip()
+            user_message = data.get('message', '')
 
-        if not user_message:
-            return JsonResponse({
-                "reply": "Nhập tin nhắn"
-            }, status=400)
-        
-        if gemini_client is None:
-            return JsonResponse({
-                "reply": "Lỗi: API Key chưa được cấu hình."
-            }, status=500)
-
-        response = gemini_client.models.generate_content(
-            model = GEMINI_MODEL,
-            contents=user_message 
-        )
-        
-        # Trả về phản hồi từ AI
-        reply = response.text
-        
-        return JsonResponse({"reply": reply})
-
-    except APIError as e:
-        return JsonResponse({
-            "reply": f"Lỗi API: {str(e)}"
-        }, status=500)
-        
-    except Exception as e:
-        return JsonResponse({
-            "reply": f"Lỗi chung: {str(e)}"
-        }, status=500)
-
-
-
+            # Gọi hàm để lấy chain(Chỉ khởi tạo lần đầu)
+            chain = get_rag_chain()
+            if chain is None:
+                return JsonResponse({'response': 'Hệ thống chưa nạp được dữ liệu (Kiểm tra thư mục fixtures).'})
+            
+            # Lấy History từ session
+            raw_history = request.session.get("chat_history", [])
+            history = []
+            for m in raw_history:
+                if m["role"] == "human":
+                    history.append(HumanMessage(content=m["content"]))
+                elif m["role"] == "ai":
+                    history.append(AIMessage(content=m["content"]))
+                    
+            # Hỏi AI
+            result = chain.invoke(
+                {
+                    "input": user_message,
+                    "chat_history" :history
+                })
+            answer = result['answer']
+            
+            # Cập nhật history trong session
+            raw_history.append(
+                {"role": "human", "content": user_message}
+            )
+            
+            raw_history.append(
+                {"role": "ai", "content": answer}
+            )
+            
+            request.session["chat_history"] = raw_history
+            
+            return JsonResponse({'response': answer})
+       except Exception as e:
+           
+           traceback.print_exc()
+           return JsonResponse({
+               'error': str(e)
+           }, status = 500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
