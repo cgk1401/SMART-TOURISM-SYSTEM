@@ -599,8 +599,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 map.removeLayer(currentMarker);
             }
             routeMarkersGroup.clearLayers();
-            PLACES.forEach(p => {
-                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.name}</b>`);
+            PLACES.forEach((p, idx) => {
+                const icon = L.divIcon({
+                    html: `<div class="route-index-marker">${idx + 1}</div>`,
+                    className: "route-index-icon",
+                    iconSize: [24, 24]
+                });
+
+                const marker = L.marker([p.lat, p.lon], { icon }).bindPopup(`<b>${p.name}</b>`);
                 routeMarkersGroup.addLayer(marker);
             });
 

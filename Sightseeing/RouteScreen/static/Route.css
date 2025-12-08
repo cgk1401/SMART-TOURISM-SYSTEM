@@ -810,3 +810,24 @@ body {
     box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
     color: white;
 }
+
+/* Map Marker */
+.route-index-icon {
+    background: transparent;
+    border: none;
+}
+
+.route-index-marker {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1e90ff;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
