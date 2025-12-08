@@ -424,7 +424,15 @@ def estimate_route(lat1, lon1, lat2, lon2):
 
 @lru_cache(maxsize=None)
 def cached_segment(lat1, lon1, lat2, lon2):
-    return estimate_route(float(lat1), float(lon1), float(lat2), float(lon2))
+    #return estimate_route(float(lat1), float(lon1), float(lat2), float(lon2))
+    from math import radians, sin, cos, sqrt, atan2
+    R = 6371
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+    distance = R * 2 * atan2(sqrt(a), sqrt(1-a))
+    return [distance, distance / 2]
 
 
 
