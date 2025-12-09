@@ -1,18 +1,18 @@
-import json
-import os
+import os, json
 from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
-from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_classic.chains import create_retrieval_chain
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from django.conf import settings
 import traceback
+from langchain_ollama import OllamaEmbeddings
 
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") 
 
 data_path = os.path.join(settings.BASE_DIR, "ChatBoxAI", "fixtures")
-# Biến toàn cục để lưu Chain, giúp không phải load lại mỗi lần gọi
 cached_rag_chain = None
 
 def format_location(item):
@@ -56,7 +56,6 @@ def format_trip(trip):
 
 def get_rag_chain():
     global cached_rag_chain
-    # Nếu đã load rồi thì trả về luôn, không làm lại từ đầu
     if cached_rag_chain is not None:
         return cached_rag_chain
     
@@ -81,7 +80,7 @@ def get_rag_chain():
                         items_to_process = [data]
                         
                     for item in items_to_process:
-                        text_content = None # Khởi tạo là None
+                        text_content = None
                         
                         if item.get("model") == "MapScreen.Location":
                             text_content = format_location(item)
@@ -106,18 +105,34 @@ def get_rag_chain():
             print(f"Số lượng files trong fixtures: {len(os.listdir(data_path))} files")
         return None
     
-    print(f"Đã nạp thành công {len(documents)} documents.") # THÊM DÒNG NÀY ĐỂ XÁC NHẬN
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
-    splits = text_splitter.split_documents(documents) # Sửa lỗi chính tả spilts -> splits
+    print(f"Đã nạp thành công {len(documents)} documents.")
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=4000, chunk_overlap=200)
+    splits = text_splitter.split_documents(documents)
     
     try:
-        vectorstore = Chroma.from_documents(
-            documents=splits,
-            embedding=OllamaEmbeddings(model="nomic-embed-text", client_kwargs={"timeout": 700} )
+        embedding = OllamaEmbeddings(
+            model="nomic-embed-text",
+            client_kwargs={"timeout": 700}
         )
+        persist_dir = os.path.join(settings.BASE_DIR, "ChatBoxAI", "chroma_db")
+
+        if os.path.exists(persist_dir):
+            vectorstore = Chroma(
+                persist_directory=persist_dir,
+                embedding_function=embedding
+            )
+        else:
+            vectorstore = Chroma.from_documents(
+                documents=splits,
+                embedding=embedding,
+                persist_directory=persist_dir,
+            )
+            
         
-        # Setup LLM
-        llm = ChatOllama(model="llama3.1", temperature=0.5, client_kwargs={"timeout": 700})
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-2.0-flash",
+            temperature=0.2,
+        )
         
         system_prompt = (
             "Bạn là trợ lý AI chuyên gợi ý du lịch tại TP.HCM. "
@@ -139,16 +154,17 @@ def get_rag_chain():
         )
         
         question_answer_chain = create_stuff_documents_chain(llm, prompt)
-        retriever = vectorstore.as_retriever()
+        retriever = vectorstore.as_retriever(
+            search_kwargs={"k": 3}
+        )
         
-        # Lưu vào biến toàn cục
         cached_rag_chain = create_retrieval_chain(retriever, question_answer_chain)
         
         print("--- Khởi tạo xong ---")
         return cached_rag_chain
     except Exception as e:
         print(f"LỖI KHỞI TẠO LLM/VECTORSTORE: {e}")
-        traceback.print_exc() # In chi tiết lỗi vào terminal
+        traceback.print_exc()
         return None
     
     
