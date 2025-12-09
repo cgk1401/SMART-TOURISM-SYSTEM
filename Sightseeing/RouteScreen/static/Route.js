@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         searchLocation();
         renderRoute();
         clearMap();
+        calculateRoute();
         SaveTrip();
 
         const itineraryList = renderItinerary(PLACES)
@@ -656,6 +657,73 @@ document.addEventListener("DOMContentLoaded", () => {
         }) 
     }
 
+    async function calculateRoute() {
+        console.log("calculateRoute called!");
+
+        const button = document.getElementById("btn-calculate-route");
+        if (!button) return;
+
+        button.addEventListener("click", async () => {
+            if (PLACES.length < 2) return;
+
+            // Build request body
+            const payload = {
+                locations: PLACES.map(p => ({
+                    id: p.pk || null,
+                    name: p.name,
+                    latitude: p.lat,
+                    longtitude: p.lon,
+                    address: p.address,
+                    rating: p.rating || 4.5,
+                    tags: p.tags || {},
+                    stay: p.stay || 30
+                }))
+            };
+
+            try {
+                axios.defaults.xsrfCookieName = "csrftoken";
+                axios.defaults.xsrfHeaderName = "X-CSRFToken";
+                axios.defaults.withCredentials = true;
+
+                // Send to backend
+                const res = await axios.post("optimize_route_fast/", payload);
+
+                // Backend returns formatted locations (already in correct order)
+                const optimized = res.data.stops;
+                if (!optimized || !Array.isArray(optimized)) {
+                    console.error("Invalid optimize response:", res.data);
+                    return;
+                }
+
+                // update PLACES in the new optimized order
+                PLACES = optimized.map((loc, idx) => ({
+                    id: idx + 1,
+                    pk: loc.pk,
+                    name: loc.name,
+                    address: loc.address,
+                    lat: parseFloat(loc.lat),
+                    lon: parseFloat(loc.lon),
+                    stay: loc.stay || 30,
+                    rating: loc.rating,
+                    tags: loc.tags || {}
+                }));
+
+                // Re-render itinerary UI
+                const itineraryList = renderItinerary(PLACES);
+                if (itineraryList) initDragAndDrop(itineraryList);
+
+                // Redraw the route on the map
+                if (typeof renderRoute === "function") {
+                    renderRoute();
+                }
+
+            } catch (err) {
+                console.error("Optimize route error:", err);
+            }
+        });
+    }
+
+
     function getTripFromUrl(){
         const params = new URLSearchParams(window.location.search);
         const trip_id = params.get("trip_id");
@@ -814,6 +882,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initApp();
 });
-
-
 

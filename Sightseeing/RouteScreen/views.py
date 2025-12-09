@@ -439,6 +439,8 @@ def total_route_view(request):
 
 
 def optimize_route_fast_view(request):
+    print("optimize_route_fast_view() is called")
+
     if request.method != 'POST':
         return HttpResponseBadRequest("require POST and JSON Body.")
 
@@ -449,7 +451,6 @@ def optimize_route_fast_view(request):
         return HttpResponseBadRequest("json in request body need to check again.")
     except Exception as e:
         return HttpResponseBadRequest("request error: " + str(e))
-
 
     if not locations_dict or not isinstance(locations_dict, list):
         return HttpResponseBadRequest("location error.")
@@ -503,6 +504,8 @@ def test_optimize_route_view(request):
     """
     Demo endpoint (using SAMPLE_LOCATIONS).
     """
+    print("test_optimize_route_view() is called")
+
     locations_dict = request.session["itinerary_data"]
     
     n = len(locations_dict)
