@@ -17,11 +17,18 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-    {% include "common/navbar.html" %}
+    {% block navbar %}
+        {% include "common/navbar.html" %}
+    {% endblock %}
+
     <main>
         {% block content %}{% endblock %}
     </main>
-    {% include "common/footer.html" %}
+
+    {% block footer %}
+        {% include "common/footer.html" %}
+    {% endblock %}
+
     {% block extra_js %}{% endblock %}
 
     <!-- SETTINGS MODAL – ĐỔI MÀU NAVBAR + FOOTER + BACKGROUND (GIỮ NGUYÊN GIAO DIỆN ĐẸP) -->

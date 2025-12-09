@@ -1,86 +1,108 @@
-let PLACES = []
+const mapElement = document.getElementById('map');
+const MAP_KEY = mapElement.getAttribute('data-key');
 
-const params = new URLSearchParams(window.location.search);
-const nearid = params.get("near_id");
+const streetLayer = L.tileLayer(`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MAP_KEY}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+    tileSize: 512,
+    zoomOffset: -1,
+    maxZoom: 20
+});
 
-axios.get('/MainScreen/MapScreen/full_location/',{
-    params: {
-        near_id: nearid,
-        r_km: 1,
-        limit: 10,
-    }
-}).then(res => {
-    PLACES = res.data;
+const satelliteLayer = L.tileLayer(`https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAP_KEY}`, {
+    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+    tileSize: 512,
+    zoomOffset: -1,
+    maxZoom: 20
+});
+
+const map = L.map('map', {
+    center: [10.775844, 106.701753],
+    zoom: 12,
+    layers: [streetLayer]
+});
+
+// Tạo nút chuyển đổi hai chế độ map
+
+const baseMaps = {
+        "Bản đồ thường": streetLayer,
+        "Vệ tinh": satelliteLayer
+    };
+
+L.control.layers(baseMaps).addTo(map);
 
 
-    const map = L.map('map').setView([PLACES[0].lat, PLACES[0].lon], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'&copy; OpenStreetMap' }).addTo(map);
+document.addEventListener("DOMContentLoaded", function(){
+    const input = document.getElementById("location-search");
+    const buttonSearch = document.getElementById("search-button");
+    const tempElement = document.getElementById("weather-temp");
+    const humidityElement = document.getElementById("weather-humidity");
+    const windElement = document.getElementById("weather-wind");
+    const addressElement = document.getElementById("search-address");
+    const latElement = document.getElementById("lat")
+    const lonElement = document.getElementById("lon")
 
-    let routeLayer = null;
-    const destList = document.getElementById('destList');
-    const previewImg = document.getElementById('placeImage');
+    const params = new URLSearchParams(window.location.search)
+    const nameLocation = params.get("name")
 
-    PLACES.forEach((p, idx) => {
-        p.marker = L.marker([p.lat, p.lon]).addTo(map).bindPopup(`<b>${p.name}</b>`);
-        
-        const li = document.createElement('li');
-        li.className = 'dest-item';
-        
-        li.innerHTML = `
-            <input type="checkbox" class="sel" data-id="${p.id}">
-            <div>
-                <div class="name">${idx + 1}. ${p.name}</div>
-                <div class="sub">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</div>
-            </div>`;
-        
-        li.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('sel')) {
-                li.querySelector('.sel').checked = !li.querySelector('.sel').checked;
-            }
-            
-            map.panTo([p.lat, p.lon]); 
-            p.marker.openPopup(); 
-            previewImg.src = p.img;
-        });
-        
-        destList.appendChild(li);
-    });
-
-    document.getElementById('btnDraw').addEventListener('click', async () => {
-        const ids = Array.from(document.querySelectorAll('.sel:checked')).map(cb => +cb.dataset.id);
-        if (ids.length < 2) { alert('Chọn ít nhất 2 điểm.'); return; }
-        if (routeLayer){
-            map.removeLayer(routeLayer);
-            routeLayer = null;
+    async function searchLocation(query){
+        if (!query){
+            alert("Thieu input")
+            return;
         }
 
-        const coords = ids.map(id => {
-        const p = PLACES.find(x => x.id === id);
-        return [p.lat, p.lon];
-        });
+        try{
+            const ans = await axios.get("getLocation/", {
+                params:{
+                    q: query
+                }
+            })
+            lat = parseFloat(ans.data.lat);
+            lon = parseFloat(ans.data.lon);
 
-    try {
-        const res = await axios.post('/MainScreen/MapScreen/api/route/', 
-            { coordinates: coords }, 
-            { headers:{'Content-Type':'application/json'} });
-        const encoded = res.data.routes[0].geometry;
+            L.marker([lat, lon]).addTo(map).bindPopup(ans.data.display_name).openPopup();
+            map.setView([lat, lon], 15);
 
-        const tmp = polyline.decode(encoded);
-        const latlngs = tmp.map(c => [c[0], c[1]]);
+            const weather = await axios.get("getWeather/", {
+                params: {
+                    lat: lat,
+                    lon: lon
+                }
+            });
+
+            HCMC_data = weather.data;
+
+            address = ans.data.display_name,
+            temperature = HCMC_data["main"]["temp"]
+            humidity = HCMC_data["main"]["humidity"]
+            wind_speed = HCMC_data["wind"]["speed"]
+
+
+            const shortName = ans.data.display_name.split(',')[0].trim(); 
         
-        routeLayer = L.polyline(latlngs, {
-            color: 'blue',
-            weight: 8,
-            opacity: 0.8,
-        }
-        ).addTo(map);
-        map.fitBounds(routeLayer.getBounds());
+            addressElement.innerHTML = `
+                <div class="address-name">${shortName}</div>
+                <div class="address-detail">${ans.data.display_name}</div>
+            `;
+            latElement.innerHTML = `<strong>Vĩ Độ:</strong> ${lat.toFixed(5)}°`;
+            lonElement.innerHTML = `<strong>Kinh Độ:</strong> ${lon.toFixed(5)}°`;
+            tempElement.innerHTML = `<strong>Nhiệt độ:</strong> ${temperature}°C`;
+            humidityElement.innerHTML = `<strong>Độ ẩm:</strong> ${humidity}%`;
+            windElement.innerHTML = `<strong>Tốc độ gió:</strong> ${wind_speed} m/s`;
 
-    } catch (e) {
-        console.error(e); alert('Lỗi gọi API.');
+        }catch(err){
+            console.error(err)
+            alert("Loi tim kiem dia diem");
+        }
     }
-    });
-    
-}).catch(err => {
-    console.error("Lỗi lấy dữ liệu từ db", err);
+
+    buttonSearch.addEventListener("click", async function () {
+        const query = input.value.trim();
+        searchLocation(query);
+    })
+
+    if (nameLocation){
+        input.value = nameLocation;
+        searchLocation(nameLocation);
+    }
 })
+

@@ -1,47 +1,56 @@
 ﻿{% load static %}
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title> Sightseeing - GOST </title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <link rel="stylesheet" href=" {% static 'Map.css' %}">
+        <link rel="stylesheet" href="{% static 'Map.css' %}">
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     </head>
-    <body>
-        <div class="wrap">
-            <aside class="left">
-                <div id="map"></div>
-            </aside>
+    <body class="map-page-layout">
 
-        <main class="right">
-            <section class="dest">
-                <div class="dest-head">
-                    <h3>Destinations</h3>
-                    <button id="btnDraw" class="btn">Draw route</button>
-                </div>
-                <ul id="destList" class="dest-list"> </ul>
-            </section>
+    <div class="main-layout">
 
-            <section class="image-box">
-                <img id="placeImage" src = '{% static 'images/HCMUS.jpg' %}' alt="Preview">
-            </section>
-        </main>
-  </div>
+        <!-- Cột trái -->
+        <div class="left-panel">
 
-        {% comment %} thư viện để đọc mã của api trả về của OpenRouteService {% endcomment %}
-        <script src="https://unpkg.com/@mapbox/polyline@1.2.1/src/polyline.js"></script>
+            <!-- Tìm kiếm -->
+            <div id="search-panel">
+                <h1>Tìm kiếm Địa điểm</h1>
+                <input type="text" id="location-search" placeholder="Nhập địa điểm...">
+                <button id="search-button">Tìm</button>
+            </div>
 
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src = "{% static 'Map.js' %}" > </script>
-        {% include 'common/footer.html' %}
+            <div id="address-info">
+                <h2>Thông Tin Địa Chỉ</h2>
+                <p id="search-address"><strong>Địa chỉ:</strong> --</p>
+            </div>
+
+            <div id="lat-lon-info">
+                <h2>Thông tin Tọa độ</h2>
+                <p id="lat"><strong>Vĩ Độ:</strong> --</p>
+                <p id="lon"><strong>Kinh Độ:</strong> --</p>
+            </div>
+            <!-- Thời tiết -->
+            <div id="weather-info">
+                <h2>Thời tiết hiện tại</h2>
+                <p id="weather-temp"><strong>Nhiệt độ:</strong> --</p>
+                <p id="weather-humidity"><strong>Độ ẩm:</strong> --</p>
+                <p id="weather-wind"><strong>Tốc độ gió:</strong> --</p>
+            </div>
+
+        </div>
+
+        <!-- Cột phải: Bản đồ -->
+        <div class="right-panel">
+            <div id="map" data-key="{{ MAP_KEY }}"></div>
+        </div>
+
+    </div>
+
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="" async defer></script>
+    <script src="{% static 'Map.js' %}" ></script>
     </body>
 </html>

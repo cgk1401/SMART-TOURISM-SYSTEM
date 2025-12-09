@@ -5,6 +5,9 @@
 
 {% block body_class %} route {% endblock %}
 
+{% block navbar %} {% endblock %}
+{% block footer %} {% endblock %}
+
 {% block extra_css %}
     <link rel = "stylesheet" href = "{% static 'Route.css' %}" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -13,6 +16,32 @@
 
 {% block content %}
     <div class = "route-container">
+
+        <nav class="sidebar">
+            <!-- Logo hoặc nút Home -->
+            <a href="/MainScreen/" class="nav-logo" title="Trang chủ">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </a>
+
+            <!-- Các công cụ chính -->
+            <div class="nav-tools">
+                <button class = "nav-item" id = "btn-draw-route" title = "Vẽ lộ trình">
+                    <i class = "fa-solid fa-pen-nib"></i>
+                    <span> Draw </span>
+                </button>
+                
+                <button class = "nav-item" id = "btn-save-trip" title = "Lưu chuyến đi">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                    <span> Save </span>
+                </button>
+
+                <button class = "nav-item" id = "btn-clear-map" title = "Clear map">
+                    <i class = "fa-solid fa-eraser"> </i>
+                    <span> Clear Map </span>
+                </button>
+            </div>
+        </nav>
+
         <aside class = "trip-panel">
             <div class = "trip-header">
                 <img src = "{% static 'images/Cho_Ben_Thanh.jpg' %}" alt = "Trip-banner">
@@ -22,58 +51,62 @@
                 </div>
             </div>
 
-            <section class="trip-section" id = "destination-route">
-            {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
-            <h2> Destination </h2>
-                <div class="flight-card">
-                    <div class="flight-route">
-                        <h3> Test → Test</h3>
-                        <p> Time </p>
-                        <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
-                    </div>
-                </div>
-            </section>
+            <div class="trip-body-content">
 
-            <section class = "trip-section" id = "recommended-destination">
-                <div class = "search-location-container">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <input type = "text" placeholder = "Add a location" id ="Search-location" autocomplete="off">
-
-                    <div id="search-suggestions" class="suggestions hidden"></div>
-
-                    <div class = "action-buttons">
-                        <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
-                        <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
-                    </div>
-                </div>
-
-                    {% comment %} suggest destination {% endcomment %}
-                <div class = "recommendations-container">
-                    <div class = "recommendations-header">
-                        <i class="fa-solid fa-chevron-down"></i>
-                        <h2> Recommended places </h2>
-                    </div>
-
-                    <div class = "places-carousel-wrapper">
-
-                        {% comment %} Scroll Left {% endcomment %}
-                        <button class = "scroll-arrow" id = "scrollLeftBtn">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-
-                        <div class = "places-carousel" id = "placesCarousel">
-                            {% comment %} Region Recommended Destination {% endcomment %}
+                <section class="trip-section" id = "destination-route">
+                {% comment %} để mặc định destination nhưng nếu PLACES trong js có không trống sẽ đè toàn bộ flight-card, flight-route {% endcomment %}
+                <h2> Destination </h2>
+                    <div class="flight-card">
+                        <div class="flight-route">
+                            <h3> Test → Test</h3>
+                            <p> Time </p>
+                            <p><strong>5:30 PM</strong> → <strong>10:45 PM</strong></p>
                         </div>
-                        {% comment %} Scroll Right {% endcomment %}
-                        <button class = "scroll-arrow" id = "scrollRightBtn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                <section class = "trip-section" id = "recommended-destination">
+                    <div class = "search-location-container">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type = "text" placeholder = "Add a location" id ="Search-location" autocomplete="off">
+
+                        <div id="search-suggestions" class="suggestions hidden"></div>
+
+                        <div class = "action-buttons">
+                            <button class = "action-btn"> <i class="fa-regular fa-clone"> </i> </button>
+                            <button class = "action-btn"> <i class="fa-solid fa-list-check"> </i> </button>
+                        </div>
+                    </div>
+
+                        {% comment %} suggest destination {% endcomment %}
+                    <div class = "recommendations-container">
+                        <div class = "recommendations-header">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            <h2> Recommended places </h2>
+                        </div>
+
+                        <div class = "places-carousel-wrapper">
+
+                            {% comment %} Scroll Left {% endcomment %}
+                            <button class = "scroll-arrow" id = "scrollLeftBtn">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <div class = "places-carousel" id = "placesCarousel">
+                                {% comment %} Region Recommended Destination {% endcomment %}
+                            </div>
+                            {% comment %} Scroll Right {% endcomment %}
+                            <button class = "scroll-arrow" id = "scrollRightBtn">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
         </aside> 
         <div class = "map-wrapper">
-            <div id="map"></div>
+            <div id="map" data-key="{{ MAP_KEY }}"></div>
             <div id = "map-info-panel" class = "info-panel hidden">
                 <div class = "info-header">
                     <div>
@@ -113,6 +146,38 @@
 
     </div>
 
+    {% comment %} thông pop up khi save thành công {% endcomment %}
+
+    <div id="save-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon-wrapper">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            
+            <h2 class="modal-title">Lưu thành công!</h2>
+            
+            <p class="modal-desc">
+                Chuyến đi của bạn đã được lưu vào hệ thống.
+            </p>
+            
+            <div class="modal-instruction">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>
+                    Vui lòng truy cập <strong>Account > My Trip</strong> để đặt tên cụ thể và viết đánh giá cho lộ trình này nhé!
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-modal-close" class="modal-btn btn-secondary">
+                    Tiếp tục thiết kế
+                </button>
+                <!-- Đường dẫn href bạn chỉnh lại cho đúng với URL project của bạn -->
+                <a href="myTrips/" class="modal-btn btn-primary">
+                    Đến My Trips <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}

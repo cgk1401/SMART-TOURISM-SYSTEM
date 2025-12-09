@@ -1,0 +1,98 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block title %} My Trips {% endblock %}
+
+{% block body_class %} mytrip {% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'MyTrip.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="mytrip-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <a href="/MainScreen/" class="nav-logo" title="Trang chủ">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </a>
+
+            <div class="nav-tools">
+                <button class="nav-item active" id="btn-current-route" title="Chuyến đi hiện tại">
+                    <i class="fa-solid fa-location-arrow"></i>
+                    <span>Hiện tại</span>
+                </button>
+
+                <button class="nav-item" id="btn-history-trip" title="Lịch sử chuyến đi">
+                    <i class="fa-solid fa-history"></i>
+                    <span>Lịch sử</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main area -->
+        <main class="mytrip-main">
+            <header class="mytrip-header">
+                <h1 id="mytrip-title">Chuyến đi của bạn</h1>
+                <p class="mytrip-subtitle">
+                    Quản lý các lộ trình đã tạo, cập nhật tên, mô tả và đánh giá hành trình.
+                </p>
+            </header>
+
+            <!-- CURRENT TRIPS (draft / avg_rating = -1) -->
+            <section id="current-trip-section" class="trip-section active">
+                <div class="trip-section-header">
+                    <h2>Chuyến đi đang chỉnh sửa</h2>
+                    <span class="section-hint">Những trip có avg_rating = -1</span>
+                </div>
+
+                <div class="trip-layout">
+                    <div class="trip-list-wrapper">
+                        <div id="current-trip-list" class="trip-list"></div>
+                        <div id="current-empty" class="empty-state hidden">
+                            Chưa có chuyến đi nháp nào. Hãy tạo lộ trình ở màn Route.
+                        </div>
+                    </div>
+
+                    <div class="trip-detail-wrapper">
+                        <div id="current-trip-detail" class="trip-detail empty">
+                            <p>Chọn một chuyến đi bên trái để xem chi tiết và chỉnh sửa.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORY TRIPS (avg_rating != -1) -->
+            <section id="history-trip-section" class="trip-section">
+                <div class="trip-section-header">
+                    <h2>Lịch sử chuyến đi</h2>
+                    <span class="section-hint">Các chuyến đi đã lưu với đánh giá</span>
+                </div>
+
+                <div class="trip-layout">
+                    <div class="trip-list-wrapper">
+                        <div id="history-trip-list" class="trip-list"></div>
+                        <div id="history-empty" class="empty-state hidden">
+                            Bạn chưa có chuyến đi nào đã lưu.
+                        </div>
+                    </div>
+
+                    <div class="trip-detail-wrapper">
+                        <div id="history-trip-detail" class="trip-detail empty">
+                            <p>Chọn một chuyến đi bên trái để xem chi tiết lộ trình.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{% static 'Mytrip.js' %}"></script>
+{% endblock %}

@@ -1,56 +1,68 @@
 {% extends "common/base.html" %}
+{% load static %}
 
 {% block title %} Preference Screen {% endblock %}
 
 {% block body_class %} {% endblock %}
 
 {% block extra_css %}
-
+    <link rel = "stylesheet" href = "{% static 'preference.css' %}">
 {% endblock %}
 
 {% block content %}
-    <h2> Preference </h2>
+    <h2> Generate trip based on your preferences </h2>
 
-    <form method="POST" action="{% url 'save_preference' %}">
-        {% csrf_token %}
 
-        <label>Interests:</label><br>
-        <input type="checkbox" name="interest" value="sightseeing"> Sightseeing<br>
-        <input type="checkbox" name="interest" value="history"> History<br>
-        <input type="checkbox" name="interest" value="entertainment"> Entertainment<br>
-        <input type="checkbox" name="interest" value="shopping"> Shopping<br>
-        <input type="checkbox" name="interest" value="art"> Art<br>
-        <input type="checkbox" name="interest" value="nature"> Nature<br>
+    <div class = "trip-layout">
+        <div class = "form-container">
+            {% include "checkboxes.html" %}
+        </div>  
 
-        <label>Group Type:</label><br>
-        <input type="checkbox" name="group_type" value="solo"> Solo<br>
-        <input type="checkbox" name="group_type" value="duo"> Duo<br>
-        <input type="checkbox" name="group_type" value="group"> Group<br>
-
-        <label>Activity Level:</label><br>
-        <input type="checkbox" name="activity_level" value="relaxed"> Relaxed<br>
-        <input type="checkbox" name="activity_level" value="moderated"> Moderated<br>
-        <input type="checkbox" name="activity_level" value="relaxed"> Active<br>
-
-        <label></label>
-
-        <button type="submit"> Save Preference </button>
-    </form>
-
-    <h3>Your saved preferences:</h3>
-        {% for p in prefs %}
-            <p>Interests: {{ p.interests }}</p>
-            <p>Group types: {{ p.group_types }}</p>
-            <p>Activity levels: {{ p.activity_levels }}</p>
-            <form method="POST" action="{% url 'delete_preference' p.id %}">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
-            </form>
-        {% empty %}
-            <p>No saved preferences yet.</p>
-        {% endfor %}
+        <div class="detail-list-trip">
+            <div class="header-line">
+                <hr class="separator">
+                <h3 class="default-title">Our best rating destinations</h3>
+                <hr class="separator">
+            </div>
+            {% if itineraries %}
+                <div class="itinerary-list">
+                    {% for loc in itineraries %}
+                        <div class="loc-card">{{ forloop.counter }}. {{ loc.name }} ({{ loc.tags.duration }} phút)</div>
+                    {% endfor %}
+                </div>
+            
+            {% else %}
+                <div class="candidate-list">
+                    {% for loc in default_candidates %}
+                        <div class="candidate-card" 
+                            data-loc-id="{{ loc.pk }}" 
+                            data-is-selected="false" 
+                            onclick="selectCenterpiece(this, '{{ loc.pk }}')">
+                            <span class="name">{{ loc.name }}</span>
+                            <span class="score">Rating: {{ loc.rating }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    function selectCenterpiece(element, locId) {
+        const hiddenInput = document.getElementById('main-loc-id');
+        const cards = document.querySelectorAll('.candidate-card');
+        cards.forEach(card => {
+            card.classList.remove('selected');
+            card.dataset.isSelected = 'false';
+        });
+        element.classList.add('selected');
+        element.dataset.isSelected = 'true';
 
+        hiddenInput.value = locId;
+    }
+</script>
 {% endblock %}
