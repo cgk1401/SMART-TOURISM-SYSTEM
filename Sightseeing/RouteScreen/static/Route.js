@@ -75,17 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    // function updateTripTitleFromURL(){
-    //     const params = new URLSearchParams(window.location.search);
-    //     const namerepalce = params.get("name");
-
-    //     const triptitle = document.querySelector(".trip-title h1");
-    //     triptitle.textContent = "";
-    //     triptitle.textContent = namerepalce;
-        
-    //     getRecommended_Place(namerepalce)
-    // }
-
     function renderRecommendation(places){
         const Add_placesCarousel = document.getElementById("placesCarousel")
         Add_placesCarousel.innerHTML = "";
@@ -557,26 +546,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function getRecommended_Place(name){
-        const res = await axios.get("get_similar_location/", {
-            params:{
-                "base_location": name,
-                "limit": 3,
-            }
-        })
-        const dataList = res.data;
-        console.table(dataList);
+        const bases = PLACES.slice(0, 3).map(p => p.name);
 
-        Recommended_Place = dataList.map(item => ({
-            pk: item.pk, // lấy pk từ db
+        const res = await axios.get("get_similar_location/", {
+            params: {
+                bases: JSON.stringify(bases),
+                per_base: 1
+            }
+        });
+
+        const data = res.data;
+
+        Recommended_Place = data.map(item => ({
+            pk: item.pk,
             name: item.name,
             lat: parseFloat(item.lat),
             lon: parseFloat(item.lon),
             rating: item.rating,
-            address: item.address || "",
+            address: item.address || ""
         }));
-        
+
         refreshRecommendationUI();
-        
     }
 
     function renderRoute(){
@@ -949,53 +939,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showNearbyResults(places) {
-    const panel = document.getElementById("nearby-panel");
-    if (!panel) return;
+        const panel = document.getElementById("nearby-panel");
+        if (!panel) return;
 
-    if (places.length === 0) {
-        panel.innerHTML = "<p>No places found near this location.</p>";
-        return;
-    }
+        if (places.length === 0) {
+            panel.innerHTML = "<p>No places found near this location.</p>";
+            return;
+        }
 
-    // Horizontal scroll container
-    panel.innerHTML = `
-        <h3>Nearby Places</h3>
-        <div class="nearby-list-horizontal" id="nearby-list"></div>
-    `;
-
-    const list = document.getElementById("nearby-list");
-
-    places.forEach(place => {
-        const item = document.createElement("div");
-        item.className = "nearby-item";
-
-        item.innerHTML = `
-            <strong>${place.name}</strong><br>
-            <small>${place.address}</small><br>
-            <small>Distance: ${place.distance_km} km</small><br>
-            <button class="nearby-add-btn">Add</button>
+        // Horizontal scroll container
+        panel.innerHTML = `
+            <h3>Nearby Places</h3>
+            <div class="nearby-list-horizontal" id="nearby-list"></div>
         `;
 
-        item.querySelector(".nearby-add-btn").addEventListener("click", () => {
-            PLACES.push({
-                id: PLACES.length + 1,
-                pk: place.pk,
-                name: place.name,
-                lat: place.lat,
-                lon: place.lon,
-                address: place.address,
-                tags: place.tags || {},
-                stay: place.tags?.duration || 30
+        const list = document.getElementById("nearby-list");
+
+        places.forEach(place => {
+            const item = document.createElement("div");
+            item.className = "nearby-item";
+
+            item.innerHTML = `
+                <strong>${place.name}</strong><br>
+                <small>${place.address}</small><br>
+                <small>Distance: ${place.distance_km} km</small><br>
+                <button class="nearby-add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            `;
+
+            item.querySelector(".nearby-add-btn").addEventListener("click", () => {
+                PLACES.push({
+                    id: PLACES.length + 1,
+                    pk: place.pk,
+                    name: place.name,
+                    lat: place.lat,
+                    lon: place.lon,
+                    address: place.address,
+                    tags: place.tags || {},
+                    stay: place.tags?.duration || 30
+                });
+
+                const itineraryList = renderItinerary(PLACES);
+                if (itineraryList) initDragAndDrop(itineraryList);
             });
 
-            const itineraryList = renderItinerary(PLACES);
-            if (itineraryList) initDragAndDrop(itineraryList);
+            list.appendChild(item);
         });
-
-        list.appendChild(item);
-    });
-}
+    }
 
     initApp();
 });
-

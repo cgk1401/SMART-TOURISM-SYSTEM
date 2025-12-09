@@ -972,7 +972,7 @@ body {
 
 /* When added to PLACES */
 .nearby-add-btn.added {
-    background: #10b981;
+    background-color: #10b981;
+    color: white;
     border-color: #10b981;
-    color: #fff;
 }

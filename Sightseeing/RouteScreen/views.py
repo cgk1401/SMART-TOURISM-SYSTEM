@@ -102,54 +102,78 @@ def match_tags(base_tags, other_tags):
     
     return scores
 
+
 def get_similar_locations(request):
-    base_name = request.GET.get("base_location")
+    bases_json = request.GET.get("bases")
+    per_base = int(request.GET.get("per_base", 1))
 
-    #base_location = Location.objects.get(name = base_name)
-    base_location = Location.objects.filter(name=base_name).first()
-    
-    limit = int(request.GET.get("limit"))
-    
-    base_tags = base_location.tags 
-    all_location = Location.objects.exclude(pk = base_location.pk)
-    
-    if not base_tags:
-        # nếu địa điểm truyền vào không có tags thì sẽ lấy các tags mặc đinh sau đây
-        # tags này của Thảo cầm viên sài gòn
-        base_tags = {
-            "interest": ["nature"], 
-            "budget": "budget", 
-            "activity_level": "relaxed", 
-            "group_type": "all"
-            }
-        
-    results = []
-    
-    for loc in all_location:
-        loc_tags = loc.tags
-        scores = 0
-        
-        for key, base_value_tags in base_tags.items():
-            other_value_tags = loc_tags.get(key)
-            if other_value_tags is not None:
-                scores += match_tags(base_value_tags, other_value_tags)
-        if scores > 0:    
-            results.append({
-                # trả về thông tin của các location theo một form
-                "score": scores,
-                "name": loc.name,
-                "lat": loc.latitude,
-                "lon": loc.longtitude,
-                "rating": loc.rating,
-                "address": loc.address,
-            })
-                
+    try:
+        base_names = json.loads(bases_json) if bases_json else []
+    except:
+        return HttpResponseBadRequest("Invalid bases format")
 
-    results.sort(key = lambda x : x["score"], reverse = True)
-    
-    return JsonResponse(results[:limit], safe = False) 
-   
-      
+    if not base_names:
+        return JsonResponse([], safe=False)
+
+    DEFAULT_TAGS = {
+        "interest": ["nature"],
+        "budget": "budget",
+        "activity_level": "relaxed",
+        "group_type": "all"
+    }
+
+    used_pk = set()
+    final_results = []
+
+    for base_name in base_names:
+
+        base_location = Location.objects.filter(name=base_name).first()
+        if not base_location:
+            continue
+
+        base_tags = base_location.tags or DEFAULT_TAGS
+        candidate_locations = Location.objects.exclude(pk=base_location.pk)
+
+        scored = []
+
+        for loc in candidate_locations:
+            loc_tags = loc.tags
+            if not loc_tags:
+                continue
+
+            score = 0
+            for key, base_tag in base_tags.items():
+                other_tag = loc_tags.get(key)
+                if other_tag is not None:
+                    score += match_tags(base_tag, other_tag)
+
+            if score > 0:
+                scored.append({
+                    "pk": loc.pk,
+                    "score": score,
+                    "name": loc.name,
+                    "lat": loc.latitude,
+                    "lon": loc.longtitude,
+                    "rating": loc.rating,
+                    "address": loc.address,
+                })
+
+        scored.sort(key=lambda x: x["score"], reverse=True)
+
+        count = 0
+        for item in scored:
+            if item["pk"] in used_pk:
+                continue
+
+            used_pk.add(item["pk"])
+            final_results.append(item)
+            count += 1
+
+            if count >= per_base:
+                break
+
+    return JsonResponse(final_results, safe=False)
+
 
 def autocomplete_places(request):
     q = request.GET.get("q", "")
