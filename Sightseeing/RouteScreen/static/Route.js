@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearMap();
         calculateRoute();
         SaveTrip();
+        initNearbyButton();
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -723,7 +724,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     function getTripFromUrl(){
         const params = new URLSearchParams(window.location.search);
         const trip_id = params.get("trip_id");
@@ -879,6 +879,122 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     }
+
+    function initNearbyButton() {
+        const btn = document.getElementById("open-nearby");
+        if (!btn) return;
+
+        btn.addEventListener("click", () => {
+            const panel = document.getElementById("nearby-panel");
+
+            // Toggle open/close
+            const isOpen = panel.style.display === "block";
+
+            if (isOpen) {
+                panel.style.display = "none";
+                btn.classList.remove("active");
+            } else {
+                openNearbyAmenityMenu(); // show amenity options
+                panel.style.display = "block";
+                btn.classList.add("active");
+            }
+        });
+    }
+
+    async function loadNearbyPlaces(category) {
+        const places = await fetchNearbyPlaces(category);
+        showNearbyResults(places);
+    }
+
+    function openNearbyAmenityMenu() {
+        const panel = document.getElementById("nearby-panel");
+        if (!panel) return;
+
+        panel.style.display = "block";
+        panel.innerHTML = `
+            <h3>Select a category</h3>
+            <div class="amenity-options">
+                <button data-cat="restaurant">Restaurant</button>
+                <button data-cat="bar">Bar / Pub</button>
+                <button data-cat="park">Park</button>
+                <button data-cat="cinema">Cinema</button>
+                <button data-cat="cafe">Cafe</button>
+            </div>
+        `;
+
+        panel.querySelectorAll("button[data-cat]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const category = btn.dataset.cat;
+                loadNearbyPlaces(category);
+            });
+        });
+    }
+
+    async function fetchNearbyPlaces(category) {
+        const base = PLACES[0];
+        if (!base) {
+            alert("Your itinerary is empty!");
+            return [];
+        }
+
+        const res = await axios.get("find_nearby/", {
+            params: {
+                lat: base.lat,
+                lon: base.lon,
+                category: category
+            }
+        });
+
+        return res.data;
+    }
+
+    function showNearbyResults(places) {
+    const panel = document.getElementById("nearby-panel");
+    if (!panel) return;
+
+    if (places.length === 0) {
+        panel.innerHTML = "<p>No places found near this location.</p>";
+        return;
+    }
+
+    // Horizontal scroll container
+    panel.innerHTML = `
+        <h3>Nearby Places</h3>
+        <div class="nearby-list-horizontal" id="nearby-list"></div>
+    `;
+
+    const list = document.getElementById("nearby-list");
+
+    places.forEach(place => {
+        const item = document.createElement("div");
+        item.className = "nearby-item";
+
+        item.innerHTML = `
+            <strong>${place.name}</strong><br>
+            <small>${place.address}</small><br>
+            <small>Distance: ${place.distance_km} km</small><br>
+            <button class="nearby-add-btn">Add</button>
+        `;
+
+        item.querySelector(".nearby-add-btn").addEventListener("click", () => {
+            PLACES.push({
+                id: PLACES.length + 1,
+                pk: place.pk,
+                name: place.name,
+                lat: place.lat,
+                lon: place.lon,
+                address: place.address,
+                tags: place.tags || {},
+                stay: place.tags?.duration || 30
+            });
+
+            const itineraryList = renderItinerary(PLACES);
+            if (itineraryList) initDragAndDrop(itineraryList);
+        });
+
+        list.appendChild(item);
+    });
+}
 
     initApp();
 });

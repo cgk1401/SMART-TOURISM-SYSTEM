@@ -269,7 +269,7 @@ def cached_segment(lat1, lon1, lat2, lon2):
 
     a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
     distance = R * 2 * atan2(sqrt(a), sqrt(1-a))
-    return [distance, distance / 2]
+    return [distance, distance * 2]
 
 
 
@@ -843,3 +843,53 @@ def calculate_route_hash(stops_data):
         
     return hashlib.md5(coords_str.encode()).hexdigest()
 
+
+@login_required
+def find_nearby(request):
+    category = request.GET.get("category")
+    lat = float(request.GET.get("lat"))
+    lon = float(request.GET.get("lon"))
+    radius = 1.5  # km
+
+    queryset = Location.objects.all()
+
+    results = []
+    for loc in queryset:
+        amenity = loc.tags.get("amenity")
+        if not amenity:
+            continue
+
+        if category == "restaurant":
+            if amenity != category:
+                continue
+
+            from PreferenceScreen.models import UserPref
+            pref, __ = UserPref.objects.get_or_create(user=request.user)
+            eating_pref = pref.eating_habits or []
+            eating_habit = loc.tags.get("eating_habit")
+            if eating_pref:     # if pref empty then whatever
+                if eating_habit not in eating_pref:
+                    continue
+        elif category == "bar":
+            if amenity not in ["bar", "pub"]:
+                continue
+        elif category != amenity:
+            continue
+
+        d_km, _ = cached_segment(lat, lon, loc.latitude, loc.longtitude)
+
+        if d_km <= radius:
+            results.append({
+                "pk": loc.pk,
+                "name": loc.name,
+                "lat": loc.latitude,
+                "lon": loc.longtitude,
+                "address": loc.address,
+                "tags": loc.tags,
+                "rating": loc.rating,
+                "distance_km": round(d_km, 2)
+            })
+
+    results = sorted(results, key=lambda x: x["rating"], reverse=True)
+
+    return JsonResponse(results[:6], safe=False)
