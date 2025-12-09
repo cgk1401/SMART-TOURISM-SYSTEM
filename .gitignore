@@ -20,3 +20,7 @@ Sightseeing/media/
 *.sqlite3
 *.db
 Sightseeing/db.sqlite3
+
+Sightseeing/ChatBoxAI/fixtures/
+Sightseeing/MapScreen/fixtures/
+Sightseeing/RouteScreen/fixtures/
