@@ -810,3 +810,169 @@ body {
     box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
     color: white;
 }
+
+/* Map Marker */
+.route-index-icon {
+    background: transparent;
+    border: none;
+}
+
+.route-index-marker {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1e90ff;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* ============================
+   NEARBY PLACES PANEL
+   ============================ */
+
+/* Nearby toggle button */
+.add-nearby {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.add-nearby:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    transform: scale(1.05);
+}
+
+.nearby-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* h2 on left, button on right */
+    margin-bottom: 8px;
+}
+
+/* Active state when panel is open */
+.add-nearby.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+}
+
+
+.nearby-panel {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: #f9fafb; /* light gray like your search box */
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.nearby-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Amenity Category Buttons */
+.amenity-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.amenity-options button {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #374151;
+    transition: all 0.15s ease;
+}
+
+.amenity-options button:hover {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+/* Each nearby place item */
+.nearby-list-horizontal {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 6px;
+    margin-top: 8px;
+}
+
+.nearby-item {
+    flex: 0 0 220px; /* width of each card */
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nearby-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    border-color: #93c5fd;
+}
+
+.nearby-item strong {
+    font-size: 0.95rem;
+    color: #1f2937;
+}
+
+.nearby-item small {
+    display: block;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* ADD BUTTON */
+.nearby-add-btn {
+    margin-top: 8px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nearby-add-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 3px 8px rgba(59,130,246,0.3);
+}
+
+/* When added to PLACES */
+.nearby-add-btn.added {
+    background-color: #10b981;
+    color: white;
+    border-color: #10b981;
+}

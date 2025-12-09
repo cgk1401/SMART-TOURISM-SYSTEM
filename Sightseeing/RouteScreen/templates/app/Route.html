@@ -25,19 +25,24 @@
 
             <!-- Các công cụ chính -->
             <div class="nav-tools">
-                <button class = "nav-item" id = "btn-draw-route" title = "Vẽ lộ trình">
+                <button class = "nav-item" id = "btn-draw-route" title = "Draw Route">
                     <i class = "fa-solid fa-pen-nib"></i>
                     <span> Draw </span>
                 </button>
                 
-                <button class = "nav-item" id = "btn-save-trip" title = "Lưu chuyến đi">
+                <button class = "nav-item" id = "btn-save-trip" title = "Save Trip">
                     <i class="fa-regular fa-floppy-disk"></i>
                     <span> Save </span>
                 </button>
 
-                <button class = "nav-item" id = "btn-clear-map" title = "Clear map">
+                <button class = "nav-item" id = "btn-clear-map" title = "Clear Map">
                     <i class = "fa-solid fa-eraser"> </i>
                     <span> Clear Map </span>
+                </button>
+
+                <button class = "nav-item" id = "btn-calculate-route" title= "Calculate Route">
+                    <i class="fa-solid fa-route"></i>
+                    <span> Calculate Route </span>
                 </button>
             </div>
         </nav>
@@ -78,10 +83,19 @@
                         </div>
                     </div>
 
+                    <div class = "find-nearby-places">
+                        <div class="nearby-header">
+                            <h2> Find nearby places </h2>
+                            <button class="add-nearby" id="open-nearby" title="Add Nearby Place">
+                                    <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="nearby-panel" class="nearby-panel" style="display:none;"></div>
+                    </div>
+
                         {% comment %} suggest destination {% endcomment %}
                     <div class = "recommendations-container">
                         <div class = "recommendations-header">
-                            <i class="fa-solid fa-chevron-down"></i>
                             <h2> Recommended places </h2>
                         </div>
 

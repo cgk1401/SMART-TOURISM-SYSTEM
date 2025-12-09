@@ -7,43 +7,6 @@
     {% csrf_token %}
 
     <div class="checkboxes">
-        <div class="time_travel">
-            <input type="checkbox" id="toggle-time-travel" class="toggle" checked>
-            <label for="toggle-time-travel" class="section_label">
-                Time Travel <span class="arrow"></span>
-            </label>
-
-            <div class="options">
-                <div class="time_start">
-                    <label>Time Start:</label>
-                    <select name="time_start_hour">
-                        {% for hour in time_start_hours %}
-                            <option value="{{ hour }}{% if hour >= 7 and hour <= 11 %}AM{% elif hour == 12 %}PM{% elif hour >= 1 and hour <= 3 %}PM{% endif %}">
-                                {{ hour }}{% if hour >= 7 and hour <= 11 %}AM{% elif hour == 12 %}PM{% elif hour >= 1 and hour <= 3 %}PM{% endif %}</option>
-                        {% endfor %}
-                    </select>
-                    <select name="time_start_minute">
-                        <option value="00">00</option>
-                        <option value="30">30</option>
-                    </select>
-                </div>
-                
-                <br> <div class="time_end">
-                    <label>Time End:</label>
-                    <select name="time_end_hour">
-                        {% for hour in time_end_hours %}
-                            <option value="{{ hour }}{% if hour == 12 %}PM{% elif hour >= 1 and hour <= 11 %}PM{% endif %}">
-                                {{ hour }}{% if hour == 12 %}PM{% elif hour >= 1 and hour <= 11 %}PM{% endif %}</option>
-                        {% endfor %}
-                    </select>
-                    <select name="time_end_minute">
-                        <option value="00">00</option>
-                        <option value="30">30</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
         <div class="interest">
             <input type="checkbox" id="toggle-interest" class="toggle" checked>
             <label for="toggle-interest" class="section_label">
@@ -124,6 +87,10 @@
         </div>
 
         <input type="hidden" name="main_loc_id" id="main-loc-id" value="">
-        <button type = "submit"> Save Preference </button>
+        {% if is_after_preference %}
+            <button type="submit">Change Preference</button>
+        {% else %}
+            <button type="submit">Save Preference</button>
+        {% endif %}
     </div>
 </form>

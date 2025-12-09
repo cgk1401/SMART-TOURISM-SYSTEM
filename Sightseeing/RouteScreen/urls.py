@@ -16,4 +16,6 @@ urlpatterns = [
     path('getallTrips/', views.getAllTrips),
     path('updateTrips/', views.Update_Trip),
     path('test-hardcoded-route/', views.test_optimize_route_view, name='test_optimize_route'),
+    path('optimize_route_fast/', views.optimize_route_fast_view),
+    path('find_nearby/', views.find_nearby)
 ]

@@ -21,25 +21,69 @@
         <div class="detail-list-trip">
             <div class="header-line">
                 <hr class="separator">
-                <h3 class="default-title">Our best rating destinations</h3>
+                <h3 class="default-title">
+                    {% if is_after_preference %}
+                        Choose your main attraction
+                    {% elif itineraries %}
+                        Your itinerary
+                    {% else %}
+                        Our best rating destinations
+                    {% endif %}
+                </h3>
                 <hr class="separator">
             </div>
-            {% if itineraries %}
-                <div class="itinerary-list">
-                    {% for loc in itineraries %}
-                        <div class="loc-card">{{ forloop.counter }}. {{ loc.name }} ({{ loc.tags.duration }} phút)</div>
+            {% if is_after_preference %}
+                <div class="candidate-list">
+                    {% for item in default_candidates %}
+                        <div class="candidate-card"
+                            data-loc-id="{{ item.location.pk }}"
+                            onclick="selectCenterpiece(this, '{{ item.location.pk }}')">
+
+                            <span class="name">{{ item.location.name }}</span>
+                            <span class="score">Score: {{ item.score }}</span>
+
+                            {% if item.location.tags.duration %}
+                                <span class="duration">Visit: {{ item.location.tags.duration }} phút</span>
+                            {% endif %}
+
+                            {% if item.location.tags.interest %}
+                                <div class="tag-container">
+                                    {% for tag in item.location.tags.interest %}
+                                        <span class="tag-pill">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
-            
+
+            {% elif itineraries %}
+                <div class="itinerary-list">
+                    {% for loc in itineraries %}
+                        <div class="loc-card">
+                            {{ forloop.counter }}. {{ loc.name }}
+                            {% if loc.tags.duration %} ({{ loc.tags.duration }} phút){% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
             {% else %}
                 <div class="candidate-list">
                     {% for loc in default_candidates %}
-                        <div class="candidate-card" 
-                            data-loc-id="{{ loc.pk }}" 
-                            data-is-selected="false" 
+                        <div class="candidate-card"
+                            data-loc-id="{{ loc.pk }}"
                             onclick="selectCenterpiece(this, '{{ loc.pk }}')">
+
                             <span class="name">{{ loc.name }}</span>
                             <span class="score">Rating: {{ loc.rating }}</span>
+
+                            {% if loc.tags.interest %}
+                                <div class="tag-container">
+                                    {% for tag in loc.tags.interest %}
+                                        <span class="tag-pill">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

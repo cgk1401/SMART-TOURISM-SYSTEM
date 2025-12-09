@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
         searchLocation();
         renderRoute();
         clearMap();
+        calculateRoute();
         SaveTrip();
+        initNearbyButton();
 
         const itineraryList = renderItinerary(PLACES)
         if (itineraryList){
@@ -72,17 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     }
-
-    // function updateTripTitleFromURL(){
-    //     const params = new URLSearchParams(window.location.search);
-    //     const namerepalce = params.get("name");
-
-    //     const triptitle = document.querySelector(".trip-title h1");
-    //     triptitle.textContent = "";
-    //     triptitle.textContent = namerepalce;
-        
-    //     getRecommended_Place(namerepalce)
-    // }
 
     function renderRecommendation(places){
         const Add_placesCarousel = document.getElementById("placesCarousel")
@@ -555,26 +546,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function getRecommended_Place(name){
-        const res = await axios.get("get_similar_location/", {
-            params:{
-                "base_location": name,
-                "limit": 3,
-            }
-        })
-        const dataList = res.data;
-        console.table(dataList);
+        const bases = PLACES.slice(0, 3).map(p => p.name);
 
-        Recommended_Place = dataList.map(item => ({
-            pk: item.pk, // lấy pk từ db
+        const res = await axios.get("get_similar_location/", {
+            params: {
+                bases: JSON.stringify(bases),
+                per_base: 1
+            }
+        });
+
+        const data = res.data;
+
+        Recommended_Place = data.map(item => ({
+            pk: item.pk,
             name: item.name,
             lat: parseFloat(item.lat),
             lon: parseFloat(item.lon),
             rating: item.rating,
-            address: item.address || "",
+            address: item.address || ""
         }));
-        
+
         refreshRecommendationUI();
-        
     }
 
     function renderRoute(){
@@ -599,8 +591,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 map.removeLayer(currentMarker);
             }
             routeMarkersGroup.clearLayers();
-            PLACES.forEach(p => {
-                const marker = L.marker([p.lat, p.lon]).bindPopup(`<b>${p.name}</b>`);
+            PLACES.forEach((p, idx) => {
+                const icon = L.divIcon({
+                    html: `<div class="route-index-marker">${idx + 1}</div>`,
+                    className: "route-index-icon",
+                    iconSize: [24, 24]
+                });
+
+                const marker = L.marker([p.lat, p.lon], { icon }).bindPopup(`<b>${p.name}</b>`);
                 routeMarkersGroup.addLayer(marker);
             });
 
@@ -648,6 +646,72 @@ document.addEventListener("DOMContentLoaded", () => {
                 
             console.log("Map cleared!");
         }) 
+    }
+
+    async function calculateRoute() {
+        console.log("calculateRoute called!");
+
+        const button = document.getElementById("btn-calculate-route");
+        if (!button) return;
+
+        button.addEventListener("click", async () => {
+            if (PLACES.length < 2) return;
+
+            // Build request body
+            const payload = {
+                locations: PLACES.map(p => ({
+                    id: p.pk || null,
+                    name: p.name,
+                    latitude: p.lat,
+                    longtitude: p.lon,
+                    address: p.address,
+                    rating: p.rating || 4.5,
+                    tags: p.tags || {},
+                    stay: p.stay || 30
+                }))
+            };
+
+            try {
+                axios.defaults.xsrfCookieName = "csrftoken";
+                axios.defaults.xsrfHeaderName = "X-CSRFToken";
+                axios.defaults.withCredentials = true;
+
+                // Send to backend
+                const res = await axios.post("optimize_route_fast/", payload);
+
+                // Backend returns formatted locations (already in correct order)
+                const optimized = res.data.stops;
+                if (!optimized || !Array.isArray(optimized)) {
+                    console.error("Invalid optimize response:", res.data);
+                    return;
+                }
+
+                // update PLACES in the new optimized order
+                PLACES = optimized.map((loc, idx) => ({
+                    id: idx + 1,
+                    pk: loc.pk,
+                    name: loc.name,
+                    address: loc.address,
+                    lat: parseFloat(loc.lat),
+                    lon: parseFloat(loc.lon),
+                    stay: loc.stay || 30,
+                    rating: loc.rating,
+                    tags: loc.tags || {}
+                }));
+
+                // Re-render itinerary UI
+                const itineraryList = renderItinerary(PLACES);
+                if (itineraryList) initDragAndDrop(itineraryList);
+
+                // Redraw the route on the map
+                if (typeof renderRoute === "function") {
+                    renderRoute();
+                }
+
+            } catch (err) {
+                console.error("Optimize route error:", err);
+            }
+        });
     }
 
     function getTripFromUrl(){
@@ -806,8 +870,123 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+    function initNearbyButton() {
+        const btn = document.getElementById("open-nearby");
+        if (!btn) return;
+
+        btn.addEventListener("click", () => {
+            const panel = document.getElementById("nearby-panel");
+
+            // Toggle open/close
+            const isOpen = panel.style.display === "block";
+
+            if (isOpen) {
+                panel.style.display = "none";
+                btn.classList.remove("active");
+            } else {
+                openNearbyAmenityMenu(); // show amenity options
+                panel.style.display = "block";
+                btn.classList.add("active");
+            }
+        });
+    }
+
+    async function loadNearbyPlaces(category) {
+        const places = await fetchNearbyPlaces(category);
+        showNearbyResults(places);
+    }
+
+    function openNearbyAmenityMenu() {
+        const panel = document.getElementById("nearby-panel");
+        if (!panel) return;
+
+        panel.style.display = "block";
+        panel.innerHTML = `
+            <h3>Select a category</h3>
+            <div class="amenity-options">
+                <button data-cat="restaurant">Restaurant</button>
+                <button data-cat="bar">Bar / Pub</button>
+                <button data-cat="park">Park</button>
+                <button data-cat="cinema">Cinema</button>
+                <button data-cat="cafe">Cafe</button>
+            </div>
+        `;
+
+        panel.querySelectorAll("button[data-cat]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const category = btn.dataset.cat;
+                loadNearbyPlaces(category);
+            });
+        });
+    }
+
+    async function fetchNearbyPlaces(category) {
+        const base = PLACES[0];
+        if (!base) {
+            alert("Your itinerary is empty!");
+            return [];
+        }
+
+        const res = await axios.get("find_nearby/", {
+            params: {
+                lat: base.lat,
+                lon: base.lon,
+                category: category
+            }
+        });
+
+        return res.data;
+    }
+
+    function showNearbyResults(places) {
+        const panel = document.getElementById("nearby-panel");
+        if (!panel) return;
+
+        if (places.length === 0) {
+            panel.innerHTML = "<p>No places found near this location.</p>";
+            return;
+        }
+
+        // Horizontal scroll container
+        panel.innerHTML = `
+            <h3>Nearby Places</h3>
+            <div class="nearby-list-horizontal" id="nearby-list"></div>
+        `;
+
+        const list = document.getElementById("nearby-list");
+
+        places.forEach(place => {
+            const item = document.createElement("div");
+            item.className = "nearby-item";
+
+            item.innerHTML = `
+                <strong>${place.name}</strong><br>
+                <small>${place.address}</small><br>
+                <small>Distance: ${place.distance_km} km</small><br>
+                <button class="nearby-add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            `;
+
+            item.querySelector(".nearby-add-btn").addEventListener("click", () => {
+                PLACES.push({
+                    id: PLACES.length + 1,
+                    pk: place.pk,
+                    name: place.name,
+                    lat: place.lat,
+                    lon: place.lon,
+                    address: place.address,
+                    tags: place.tags || {},
+                    stay: place.tags?.duration || 30
+                });
+
+                const itineraryList = renderItinerary(PLACES);
+                if (itineraryList) initDragAndDrop(itineraryList);
+            });
+
+            list.appendChild(item);
+        });
+    }
+
     initApp();
 });
-
-
-

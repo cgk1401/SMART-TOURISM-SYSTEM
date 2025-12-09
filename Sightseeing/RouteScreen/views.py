@@ -102,54 +102,78 @@ def match_tags(base_tags, other_tags):
     
     return scores
 
+
 def get_similar_locations(request):
-    base_name = request.GET.get("base_location")
+    bases_json = request.GET.get("bases")
+    per_base = int(request.GET.get("per_base", 1))
 
-    #base_location = Location.objects.get(name = base_name)
-    base_location = Location.objects.filter(name=base_name).first()
-    
-    limit = int(request.GET.get("limit"))
-    
-    base_tags = base_location.tags 
-    all_location = Location.objects.exclude(pk = base_location.pk)
-    
-    if not base_tags:
-        # nếu địa điểm truyền vào không có tags thì sẽ lấy các tags mặc đinh sau đây
-        # tags này của Thảo cầm viên sài gòn
-        base_tags = {
-            "interest": ["nature"], 
-            "budget": "budget", 
-            "activity_level": "relaxed", 
-            "group_type": "all"
-            }
-        
-    results = []
-    
-    for loc in all_location:
-        loc_tags = loc.tags
-        scores = 0
-        
-        for key, base_value_tags in base_tags.items():
-            other_value_tags = loc_tags.get(key)
-            if other_value_tags is not None:
-                scores += match_tags(base_value_tags, other_value_tags)
-        if scores > 0:    
-            results.append({
-                # trả về thông tin của các location theo một form
-                "score": scores,
-                "name": loc.name,
-                "lat": loc.latitude,
-                "lon": loc.longtitude,
-                "rating": loc.rating,
-                "address": loc.address,
-            })
-                
+    try:
+        base_names = json.loads(bases_json) if bases_json else []
+    except:
+        return HttpResponseBadRequest("Invalid bases format")
 
-    results.sort(key = lambda x : x["score"], reverse = True)
-    
-    return JsonResponse(results[:limit], safe = False) 
-   
-      
+    if not base_names:
+        return JsonResponse([], safe=False)
+
+    DEFAULT_TAGS = {
+        "interest": ["nature"],
+        "budget": "budget",
+        "activity_level": "relaxed",
+        "group_type": "all"
+    }
+
+    used_pk = set()
+    final_results = []
+
+    for base_name in base_names:
+
+        base_location = Location.objects.filter(name=base_name).first()
+        if not base_location:
+            continue
+
+        base_tags = base_location.tags or DEFAULT_TAGS
+        candidate_locations = Location.objects.exclude(pk=base_location.pk)
+
+        scored = []
+
+        for loc in candidate_locations:
+            loc_tags = loc.tags
+            if not loc_tags:
+                continue
+
+            score = 0
+            for key, base_tag in base_tags.items():
+                other_tag = loc_tags.get(key)
+                if other_tag is not None:
+                    score += match_tags(base_tag, other_tag)
+
+            if score > 0:
+                scored.append({
+                    "pk": loc.pk,
+                    "score": score,
+                    "name": loc.name,
+                    "lat": loc.latitude,
+                    "lon": loc.longtitude,
+                    "rating": loc.rating,
+                    "address": loc.address,
+                })
+
+        scored.sort(key=lambda x: x["score"], reverse=True)
+
+        count = 0
+        for item in scored:
+            if item["pk"] in used_pk:
+                continue
+
+            used_pk.add(item["pk"])
+            final_results.append(item)
+            count += 1
+
+            if count >= per_base:
+                break
+
+    return JsonResponse(final_results, safe=False)
+
 
 def autocomplete_places(request):
     q = request.GET.get("q", "")
@@ -261,7 +285,15 @@ def estimate_route(lat1, lon1, lat2, lon2):
 
 @lru_cache(maxsize=None)
 def cached_segment(lat1, lon1, lat2, lon2):
-    return estimate_route(float(lat1), float(lon1), float(lat2), float(lon2))
+    #return estimate_route(float(lat1), float(lon1), float(lat2), float(lon2))
+    from math import radians, sin, cos, sqrt, atan2
+    R = 6371
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+    distance = R * 2 * atan2(sqrt(a), sqrt(1-a))
+    return [distance, distance * 2]
 
 
 
@@ -331,7 +363,7 @@ def format_location_data(input_location_dict, order_index):
         "lat": lat_val,                             
         "lon": lon_val,                     
         "order": order_index + 1,                    
-        "stay": 30,                          
+        "stay": input_location_dict.get("tags").get("duration"),
         "tags": input_location_dict.get("tags"),
     }
     
@@ -431,6 +463,8 @@ def total_route_view(request):
 
 
 def optimize_route_fast_view(request):
+    print("optimize_route_fast_view() is called")
+
     if request.method != 'POST':
         return HttpResponseBadRequest("require POST and JSON Body.")
 
@@ -441,7 +475,6 @@ def optimize_route_fast_view(request):
         return HttpResponseBadRequest("json in request body need to check again.")
     except Exception as e:
         return HttpResponseBadRequest("request error: " + str(e))
-
 
     if not locations_dict or not isinstance(locations_dict, list):
         return HttpResponseBadRequest("location error.")
@@ -495,6 +528,8 @@ def test_optimize_route_view(request):
     """
     Demo endpoint (using SAMPLE_LOCATIONS).
     """
+    print("test_optimize_route_view() is called")
+
     locations_dict = request.session["itinerary_data"]
     
     n = len(locations_dict)
@@ -832,3 +867,53 @@ def calculate_route_hash(stops_data):
         
     return hashlib.md5(coords_str.encode()).hexdigest()
 
+
+@login_required
+def find_nearby(request):
+    category = request.GET.get("category")
+    lat = float(request.GET.get("lat"))
+    lon = float(request.GET.get("lon"))
+    radius = 1.5  # km
+
+    queryset = Location.objects.all()
+
+    results = []
+    for loc in queryset:
+        amenity = loc.tags.get("amenity")
+        if not amenity:
+            continue
+
+        if category == "restaurant":
+            if amenity != category:
+                continue
+
+            from PreferenceScreen.models import UserPref
+            pref, __ = UserPref.objects.get_or_create(user=request.user)
+            eating_pref = pref.eating_habits or []
+            eating_habit = loc.tags.get("eating_habit")
+            if eating_pref:     # if pref empty then whatever
+                if eating_habit not in eating_pref:
+                    continue
+        elif category == "bar":
+            if amenity not in ["bar", "pub"]:
+                continue
+        elif category != amenity:
+            continue
+
+        d_km, _ = cached_segment(lat, lon, loc.latitude, loc.longtitude)
+
+        if d_km <= radius:
+            results.append({
+                "pk": loc.pk,
+                "name": loc.name,
+                "lat": loc.latitude,
+                "lon": loc.longtitude,
+                "address": loc.address,
+                "tags": loc.tags,
+                "rating": loc.rating,
+                "distance_km": round(d_km, 2)
+            })
+
+    results = sorted(results, key=lambda x: x["rating"], reverse=True)
+
+    return JsonResponse(results[:6], safe=False)

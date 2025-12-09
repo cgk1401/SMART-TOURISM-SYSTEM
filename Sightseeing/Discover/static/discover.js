@@ -1,46 +1,44 @@
-let slideIndex = 1;
-showSlides(slideIndex);
+const map = L.map('map').setView([10.78, 106.69], 13);
 
-// Next/previous controls
-function plusSlides(n) {
-  showSlides(slideIndex += n);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+locations.forEach(loc => {
+    L.marker([loc.lat, loc.lng])
+        .addTo(map)
+        .bindPopup(loc.name)
+        .on("click", () => showCard(loc.id));
+});
+
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener("click", () => {
+        const id = card.id.replace("card", "");
+        const loc = locations.find(l => l.id == id);
+        map.setView([loc.lat, loc.lng], 16);
+    });
+});
+
+function showCard(id) {
+    document.getElementById(`card${id}`).scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 }
 
-// Thumbnail image controls
-function currentSlide(n) {
-  showSlides(slideIndex = n);
+function showDetail(id) {
+    const container = document.getElementById("detail-container");
+    const loc = locations.find(l => l.id === id);
+
+    container.innerHTML = `
+        <div class="detail-card">
+            <h2>${loc.name}</h2>
+            <p>${loc.fullDescription}</p>
+        </div>
+    `;
+
+    container.scrollIntoView({ behavior: "smooth" });
+
+    // Center map on click
+    map.setView([loc.lat, loc.lng], 16);
 }
-
-function showSlides(n) {
-  let i;
-  let slides = document.getElementsByClassName("mySlides");
-  let dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
-  }
-  for (i = 0; i < dots.length; i++) {
-    dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";
-  dots[slideIndex-1].className += " active";
-}
-
-function showDes(n) {
-    let i;
-    let contents = document.getElementsByClassName("content");
-    for (i = 0; i < contents.length; i++) {
-        contents[i].style.display = "none";
-    }
-    contents[n-1].style.display = "block";
-    contents[n-1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-  // Initialize the map, centered on specific coordinates and zoom level
-  var map = L.map('map').setView([10.77718, 106.69527], 15); 
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);

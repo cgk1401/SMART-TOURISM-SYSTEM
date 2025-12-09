@@ -94,8 +94,9 @@ def save_preference(request):
             'time_end_hours': end_hours_list,
             'prefs': pref,
             'default_candidates': candidates,
+            'is_after_preference': True
         }
-        
+
         return render(request, 'preference.html', context)
         # return redirect('/PreferenceScreen/')
 
@@ -145,7 +146,6 @@ def generate_itinerary(request):
     return redirect('/MainScreen/RouteScreen/?from_preference=true')
 
 
-
 def ranking_loc(pref):
     print("User preferences:", pref.interests, pref.group_type, pref.budget)
 
@@ -157,11 +157,11 @@ def ranking_loc(pref):
     options = []
 
     WEIGHTS = {
-        "rating": 0.55,
-        "interest": 0.21,
-        "budget": 0.08,
-        "activity": 0.08,
-        "group": 0.08
+        "rating": 0.4,
+        "interest": 0.3,
+        "budget": 0.1,
+        "activity": 0.1,
+        "group": 0.1
     }
 
     BUDGET_SCORE = {
@@ -251,7 +251,8 @@ def choose_main_loc(pref, options):
     # return candidates[choice-1]['location']
 
     if candidates:
-        return candidates
+        return [{'location': loc, 'score': next(o['score'] for o in options if o['location'] == loc)}
+                for loc in candidates]
     
     return None, []
 
@@ -365,18 +366,23 @@ def build_list(pref, options, main_loc):
 
     # build the actual lists
     N = 1  # too lazy to change
-    LOC_PER = 6
+    LOC_PER = 5
 
     # init with main_loc
     main_loc.tags["duration"] = get_duration(main_loc, pref.visit_duration)
     itineraries = [[main_loc] for _ in range(N)]
+
+    amenity_sets = [set() for _ in range(N)]
+    main_amenity = main_loc.tags.get("amenity")
+    if main_amenity:
+        for s in amenity_sets:
+            s.add(main_amenity)
 
     # remove main_loc from buckets
     for b in buckets.values():
         b[:] = [opt for opt in b if opt['location'].pk != main_loc.pk]
 
     while any(len(it) < LOC_PER for it in itineraries):
-
         # interest-cycle pass
         for interest in pref.interests:
 
@@ -393,15 +399,21 @@ def build_list(pref, options, main_loc):
                         opt_dict = bucket[j]
                         if opt_dict['location'].pk not in location_ids_in_itinerary:
                             # found a unique location
+                            amenity = opt_dict['location'].tags.get("amenity")
+                            if amenity is not None and amenity in amenity_sets[i]:
+                                continue
+
                             loc = opt_dict['location']
                             loc.tags["duration"] = get_duration(loc, pref.visit_duration)
                             itineraries[i].append(loc)
+                            if amenity is not None:
+                                amenity_sets[i].add(amenity)
+                            print([loc, amenity])
                             bucket.pop(j)
                             break
 
             if all(len(it) == LOC_PER for it in itineraries):
                 break
-
         # free-slot pass
         remaining = [loc for bl in buckets.values() for loc in bl]
         if not remaining:
@@ -417,7 +429,10 @@ def build_list(pref, options, main_loc):
                 for j in range(len(remaining)):
                     opt = remaining[j]
                     if opt['location'].pk not in location_ids_in_itinerary:
-                        # Found a unique location, use this one
+                        amenity = opt['location'].tags.get("amenity")
+                        if amenity is not None and amenity in amenity_sets[i]:
+                            continue
+                        # found a unique location, use this one
                         selected_opt = remaining.pop(j)
                         break
 
@@ -428,6 +443,12 @@ def build_list(pref, options, main_loc):
                 loc = selected_opt['location']
                 loc.tags["duration"] = get_duration(loc, pref.visit_duration)
                 itineraries[i].append(loc)
+                if amenity is not None:
+                    amenity_sets[i].add(amenity)
+                print([loc, amenity])
+
+    print("amenity_sets: ", end=" ")
+    print(amenity_sets[0])
 
     return itineraries[0]
 

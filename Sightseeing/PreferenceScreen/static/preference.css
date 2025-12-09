@@ -104,6 +104,23 @@ h2 {
     white-space: nowrap; 
 }
 
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.tag-pill {
+    padding: 3px 8px;
+    font-size: 0.75em;
+    background-color: #e6f2f2;
+    color: #276968;
+    border-radius: 10px;
+    border: 1px solid #c7e0e0;
+    white-space: nowrap;
+}
+
 .candidate-card:hover {
     background-color: #f0f0f0;
     border-color: #ccc;
