@@ -28,7 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const bubble = document.createElement('div');
         bubble.classList.add('message-bubble');
-        bubble.textContent = message;
+        let formattedMessage = message;
+        if (!isTyping) {
+            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedMessage = formattedMessage.replace(/\n/g, '<br>');
+        }
+        
+        bubble.innerHTML = formattedMessage; 
         messageDiv.appendChild(bubble);
 
         chatMessages.appendChild(messageDiv);
